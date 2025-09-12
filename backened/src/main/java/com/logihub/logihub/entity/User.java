@@ -22,7 +22,7 @@ public class User {
 
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;  // ADMIN, AGENT, CUSTOMER
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private Role role;  // ADMIN, AGENT, CUSTOMER
 }

@@ -21,16 +21,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserDto userDto) {
+    public ResponseEntity<User> login(@RequestBody UserDto userDto) {
         User user = userService.login(userDto.getEmail(), userDto.getPassword());
-
-        String redirectUrl = switch (user.getRole()) {
-            case ADMIN -> "/admin/dashboard";
-            case AGENT -> "/agent/dashboard";
-            case CUSTOMER -> "/customer/dashboard";
-        };
-
-        return ResponseEntity.ok(redirectUrl);
+        return  ResponseEntity.ok(user);
     }
 }
 
