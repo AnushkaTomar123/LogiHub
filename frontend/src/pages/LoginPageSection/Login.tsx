@@ -26,7 +26,7 @@ const Login: React.FC = () => {
 
       alert(res.data.message); // backend sends { message: "Login successful" }
       // Redirect or handle login success
-      window.location.href = "/dashboard"; 
+      window.location.href = "/dashboard/customer"; 
     } catch (err: any) {
       console.error(err);
       if (err.response) {
