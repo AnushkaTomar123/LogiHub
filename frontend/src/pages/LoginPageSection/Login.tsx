@@ -1,35 +1,39 @@
 "use client";
-import Image from "next/image";
-import axios from "axios";
 import { FormEvent, useState } from "react";
-//import { signInWithPopup } from "firebase/auth";
-//import { auth, provider } from "@/firebase";
+import axios from "axios";
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Normal email/password login
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     const target = e.target as typeof e.target & {
-      email: { value: string };
+      username: { value: string };
       password: { value: string };
     };
 
-    const email = target.email.value;
+    const username = target.username.value;
     const password = target.password.value;
 
     try {
       const res = await axios.post(
         "http://localhost:8080/api/auth/login",
-        { email, password },
-        { withCredentials: true }
+        { username, password } ,
+        { withCredentials: true } 
       );
-      // Handle login success (e.g., redirect, show message)
-    } catch (error) {
-      // Handle login error (e.g., show error message)
+
+      alert(res.data.message); // backend sends { message: "Login successful" }
+      // Redirect or handle login success
+      window.location.href = "/dashboard"; 
+    } catch (err: any) {
+      console.error(err);
+      if (err.response) {
+        alert("Login Failed: " + (err.response.data.message || err.response.data));
+      } else {
+        alert("Login Failed: Something went wrong");
+      }
     } finally {
       setLoading(false);
     }
@@ -56,9 +60,9 @@ const Login: React.FC = () => {
 
           <form className="w-full space-y-4" onSubmit={handleLogin}>
             <input 
-              name="email"
+              name="username" // changed from "email" to "username"
               type="text" 
-              placeholder="Enter email address or phone" 
+              placeholder="Enter username" 
               className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input 
@@ -88,7 +92,6 @@ const Login: React.FC = () => {
 
             <button 
               type="button"
-              
               className={`w-full border border-gray-300 py-2 rounded-md hover:bg-gray-100 transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={loading}
             >
@@ -96,7 +99,7 @@ const Login: React.FC = () => {
             </button>
 
             <p className="text-center text-gray-500 mt-4">
-              Don’t have an account yet? <a href="#" className="text-blue-500 hover:underline">Signup Now</a>
+              Don’t have an account yet? <a href="/auth/signup" className="text-blue-500 hover:underline">Signup Now</a>
             </p>
           </form>
         </div>

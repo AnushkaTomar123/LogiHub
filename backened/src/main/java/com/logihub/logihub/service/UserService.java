@@ -1,9 +1,10 @@
 package com.logihub.logihub.service;
 
-import com.logihub.logihub.dto.UserDto;
-import com.logihub.logihub.entity.User;
+import com.logihub.logihub.dto.AuthResponse;
+import com.logihub.logihub.dto.LoginRequest;
+import com.logihub.logihub.dto.SignUpRequest;
 
 public interface UserService {
-    User signup(UserDto userDto);
-    User login(String email, String password);
+    AuthResponse signup(SignUpRequest signUpRequest);
+    AuthResponse login(LoginRequest loginRequest);
 }

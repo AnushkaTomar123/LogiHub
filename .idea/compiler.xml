@@ -13,6 +13,9 @@
         <module name="logihub" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="logihub" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

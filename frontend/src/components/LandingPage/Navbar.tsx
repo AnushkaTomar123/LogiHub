@@ -1,26 +1,22 @@
 "use client";
-import {
-    FaBars,
-    FaTimes,
-  FaTruck,
-  
-} from 'react-icons/fa';
+import { FaBars, FaTimes, FaTruck } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-const Navbar=()=>{
-     const [isMenuOpen, setIsMenuOpen] = useState(false);
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const router = useRouter(); // Next.js router
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-    return(
-        <>
-         <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrollY > 50 ? 'bg-white/95 backdrop-blur-lg shadow-lg' : 'bg-transparent'
-      }`}>
+
+  return (
+    <>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrollY > 50 ? 'bg-white/95 backdrop-blur-lg shadow-lg' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
@@ -43,11 +39,19 @@ const Navbar=()=>{
               <a href="#benefits" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Benefits</a>
               <a href="#success" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Success Stories</a>
               <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Contact</a>
-              <button className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-2.5 rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-semibold">
-               Login
+
+              {/* Redirect buttons */}
+              <button 
+                onClick={() => router.push("/auth/login")} // Redirect to login
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-2.5 rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-semibold"
+              >
+                Login
               </button>
-               <button className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-2.5 rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-semibold">
-               Sign up
+              <button 
+                onClick={() => router.push("/auth/signup")} // Redirect to signup
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-2.5 rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 font-semibold"
+              >
+                Sign up
               </button>
             </div>
 
@@ -68,15 +72,25 @@ const Navbar=()=>{
               <a href="#benefits" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Benefits</a>
               <a href="#success" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Success Stories</a>
               <a href="#contact" className="block text-gray-700 hover:text-blue-600 transition-colors font-medium">Contact</a>
-              <button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-2.5 rounded-xl font-semibold">
-                Get Started Free
+
+              <button 
+                onClick={() => router.push("/auth/signup")} // Mobile redirect to signup
+                className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-2.5 rounded-xl font-semibold"
+              >
+                Sign up
+              </button>
+              <button 
+                onClick={() => router.push("/auth/login")} // Mobile redirect to login
+                className="w-full border border-gray-300 px-6 py-2.5 rounded-xl font-semibold mt-2"
+              >
+                Login
               </button>
             </div>
           </div>
         )}
       </nav>
+    </>
+  );
+};
 
-        </>
-    )
-}
 export default Navbar;

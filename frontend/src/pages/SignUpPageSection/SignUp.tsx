@@ -10,29 +10,38 @@ const Signup: React.FC = () => {
     setLoading(true);
 
     const target = e.target as typeof e.target & {
-      name: { value: string };
+      username: { value: string };
       email: { value: string };
       password: { value: string };
     };
 
-    const name = target.name.value;
+    const username = target.username.value;
     const email = target.email.value;
     const password = target.password.value;
 
     try {
-      const res = await axios.post("http://localhost:8080/api/auth/signup", {
-        name,
-        email,
-        password,
-      });
+      const res = await axios.post(
+  "http://localhost:8080/api/auth/signup",
+  {
+    username,
+    email,
+    password,
+  },
+  {
+    withCredentials: true, // important when allowCredentials=true
+  }
+);
 
-      alert("Signup Successful! Welcome " + res.data.name);
-      window.location.href = "/login";
+
+
+      // backend sends { message: "User registered successfully" }
+      alert(res.data.message);
+      window.location.href = "/auth/login";
     } catch (err: any) {
       console.error(err);
       if (err.response) {
         // Backend error
-        alert("Signup Failed: " + err.response.data);
+        alert("Signup Failed: " + err.response.data.message || err.response.data);
       } else {
         alert("Signup Failed: Something went wrong");
       }
@@ -47,7 +56,7 @@ const Signup: React.FC = () => {
 
         {/* Left Panel */}
         <div className="hidden md:flex flex-col justify-center items-start bg-green-600 text-white p-10 md:w-1/2">
-          <h2 className="text-3xl font-bold mb-6">Join Tomar Cargo Carriers!</h2>
+          <h2 className="text-3xl font-bold mb-6">Join Logihub</h2>
           <ul className="space-y-3 text-lg">
             <li>✔ Fast registration and easy account setup.</li>
             <li>✔ Track shipments immediately after signup.</li>
@@ -62,9 +71,9 @@ const Signup: React.FC = () => {
 
           <form className="w-full space-y-4" onSubmit={handleSignup}>
             <input
-              name="name"
+              name="username" // changed from "name" to "username"
               type="text"
-              placeholder="Full Name"
+              placeholder="Username"
               className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <input
