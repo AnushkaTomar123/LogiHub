@@ -21,20 +21,14 @@ const Login: React.FC = () => {
     const password = target.password.value;
 
     try {
-      const res = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!res.ok) throw new Error("Login failed");
-
-      const redirectUrl = await res.text();
-      alert("Login Successful! Redirecting...");
-      window.location.href = redirectUrl;
-    } catch (err) {
-      console.error(err);
-      alert("Login Failed!");
+      const res = await axios.post(
+        "http://localhost:8080/api/auth/login",
+        { email, password },
+        { withCredentials: true }
+      );
+      // Handle login success (e.g., redirect, show message)
+    } catch (error) {
+      // Handle login error (e.g., show error message)
     } finally {
       setLoading(false);
     }
