@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+
 import { FormEvent, useState } from "react";
 //import { signInWithPopup } from "firebase/auth";
 //import { auth, provider } from "@/firebase";
@@ -46,7 +46,7 @@ const Login: React.FC = () => {
 
         {/* Left Panel */}
         <div className="hidden md:flex flex-col justify-center items-start bg-blue-600 text-white p-10 md:w-1/2">
-          <h2 className="text-3xl font-bold mb-6">Welcome to Tomar Cargo Carriers!</h2>
+          <h2 className="text-3xl font-bold mb-6">Welcome to LogiHub</h2>
           <ul className="space-y-3 text-lg">
             <li>✔ Track your shipments in real-time with ease.</li>
             <li>✔ Get digital receipts and transparent updates.</li>
