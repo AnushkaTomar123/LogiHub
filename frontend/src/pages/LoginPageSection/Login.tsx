@@ -24,9 +24,25 @@ const Login: React.FC = () => {
         { withCredentials: true } 
       );
 
+       const { message, role, username: userName, email } = res.data;
       alert(res.data.message); // backend sends { message: "Login successful" }
-      // Redirect or handle login success
-      window.location.href = "/dashboard/customer"; 
+
+      localStorage.setItem("username", userName);
+      localStorage.setItem("email", email);
+      localStorage.setItem("role",role)
+      // ✅ Role-based redirect
+  if (role === "ADMIN") {
+    window.location.href = "/dashboard/admin";
+  } else if (role === "CUSTOMER") {
+    window.location.href = "/dashboard/customer";
+  } else if (role === "AGENT") {
+    window.location.href = "/dashboard/transporter";
+  } else {
+    alert("Unknown role, please contact support");
+  }
+      
+
+
     } catch (err: any) {
       console.error(err);
       if (err.response) {

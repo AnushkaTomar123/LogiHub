@@ -2,6 +2,7 @@ package com.logihub.logihub.service.impl;
 
 import com.logihub.logihub.dto.AuthResponse;
 import com.logihub.logihub.dto.LoginRequest;
+import com.logihub.logihub.dto.LoginResponse;
 import com.logihub.logihub.dto.SignUpRequest;
 import com.logihub.logihub.entity.User;
 import com.logihub.logihub.repository.UserRepository;
@@ -38,13 +39,13 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public AuthResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         if(passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return new AuthResponse("Login successful");
+            return new LoginResponse("Login successful" , user.getRole() , user.getUsername(),user.getEmail());
         } else {
-            return new AuthResponse("Invalid credentials");
+            return new LoginResponse("Invalid credentials" , null,null,null);
         }
     }
 }

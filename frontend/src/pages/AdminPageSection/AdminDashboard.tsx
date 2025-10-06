@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MdOutlineLocalShipping,
   MdPeople,
@@ -8,6 +8,7 @@ import {
   MdDashboard,
   MdSecurity,
   MdAnalytics,
+   MdLogout,
 } from "react-icons/md";
 
 interface Role {
@@ -23,8 +24,15 @@ interface User {
   role: string;
 }
 
+interface Admin{
+  username: string;
+  email: string;
+  role: string;
+}
+
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<string>("overview");
+  const [admin, setAdmin] = useState<Admin | null>(null); 
 
   const roles: Role[] = [
     { id: 1, name: "Admin", permissions: ["Manage Users", "View Reports", "Change Roles"] },
@@ -37,6 +45,21 @@ const AdminDashboard = () => {
     { id: 2, name: "Riya Patel", email: "riya@logihub.com", role: "Customer" },
     { id: 3, name: "Admin User", email: "admin@logihub.com", role: "Admin" },
   ];
+
+  useEffect(() => {
+    const username = localStorage.getItem("username");
+    const email = localStorage.getItem("email");
+    const role = localStorage.getItem("role");
+    if (username && email && role) {
+      setAdmin({ username, email, role });
+    }
+  }, []);
+
+  // ✅ Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.href = "/auth/login"; // redirect to login
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
@@ -80,13 +103,22 @@ const AdminDashboard = () => {
          <div className="absolute bottom-4 left-4 right-4">
           <div className=" rounded-lg p-4 flex items-center space-x-3">
             <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-cent600text-gray-800  font-semibold">
-              R
+                {admin ? admin.username.charAt(0).toUpperCase() : "A"}
             </div>
             <div>
-              <p className="font-medium">Rajesh (Admin)</p>
-              <p className="text-sm text-slate-400">admin@logihub.com</p>
+              <p className="font-medium">
+                 {admin ? `${admin.username} (${admin.role})` : "Admin (Admin)"}
+              </p>
+              <p className="text-sm text-slate-400">
+                {admin ? admin.email : "admin@example.com"}
+              </p>
             </div>
           </div>
+          <button
+                     onClick={handleLogout}
+                    className="mt-3 flex item-center text-sm text-blue-500 hover:text-red-600 transition px-2">
+                      <MdLogout /> Logout
+                    </button>
         </div>
       </aside>
 
