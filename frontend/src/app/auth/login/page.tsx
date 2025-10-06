@@ -1,9 +1,9 @@
 "use client";
-import Login from "@/pages/LoginPageSection/Login";
+import LoginForm from "../../../components/Form/LoginForm";
 const LoginPage=()=>{
     return(
         <>
-        <Login/>
+        <LoginForm/>
         </>
     )
 }

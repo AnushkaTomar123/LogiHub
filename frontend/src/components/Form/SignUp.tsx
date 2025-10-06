@@ -2,7 +2,7 @@
 import { FormEvent, useState } from "react";
 import axios from "axios";
 
-const Signup: React.FC = () => {
+const Signup= () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
@@ -55,7 +55,7 @@ const Signup: React.FC = () => {
       <div className="flex w-full max-w-4xl bg-white shadow-lg rounded-lg overflow-hidden">
 
         {/* Left Panel */}
-        <div className="hidden md:flex flex-col justify-center items-start bg-green-600 text-white p-10 md:w-1/2">
+        <div className="hidden md:flex flex-col justify-center items-start bg-gradient-to-br from-blue-600 to-cyan-600 text-white p-10 md:w-1/2">
           <h2 className="text-3xl font-bold mb-6">Join Logihub</h2>
           <ul className="space-y-3 text-lg">
             <li>✔ Fast registration and easy account setup.</li>
@@ -74,31 +74,31 @@ const Signup: React.FC = () => {
               name="username" // changed from "name" to "username"
               type="text"
               placeholder="Username"
-              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               name="email"
               type="text"
               placeholder="Email"
-              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               name="password"
               type="password"
               placeholder="Password"
-              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
             <button
               type="submit"
               disabled={loading}
-              className={`w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`w-full bg-gradient-to-br from-blue-600 to-cyan-600 text-white py-2 rounded-md hover:bg-blue-600 transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               {loading ? "Signing up..." : "Signup"}
             </button>
 
             <p className="text-center text-gray-500 mt-4">
-              Already have an account? <a href="/login" className="text-green-500 hover:underline">Login Here</a>
+              Already have an account? <a href="/login" className="text-blue-500 hover:underline">Login Here</a>
             </p>
           </form>
         </div>
