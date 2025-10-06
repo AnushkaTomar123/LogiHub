@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaTruck,
   FaMapMarkerAlt,
@@ -22,7 +22,15 @@ interface Order {
   eta: string;
 }
 
+
+interface User {
+  username: string;
+  email: string;
+  role: string;
+}
+
 export default function CustomerDashboard() {
+
   const [orders] = useState<Order[]>([
     { id: "1", transporter: "Raj Logistics", price: 14500, status: "Delivered", eta: "2 Days" },
     { id: "2", transporter: "FastWay Transports", price: 16200, status: "In Transit", eta: "1 Day" },
@@ -30,6 +38,7 @@ export default function CustomerDashboard() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("Dashboard");
+  const [user, setUser] = useState<User | null>(null);
 
   const menuItems = [
     { label: "Dashboard", icon: <FaHome />, href: "#" },
@@ -39,6 +48,21 @@ export default function CustomerDashboard() {
     { label: "Billing", icon: <FaFileInvoice />, href: "#billing" },
     { label: "Support", icon: <FaHeadset />, href: "#support" },
   ];
+
+  useEffect(() => {
+  const username = localStorage.getItem("username");
+  const email = localStorage.getItem("email");
+  const role = localStorage.getItem("role");
+  if (username && email && role) {
+    setUser({ username, email, role });
+  }
+}, []);
+
+  // ✅ Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.href = "/auth/login"; // redirect to login
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -82,14 +106,20 @@ export default function CustomerDashboard() {
         <div className="absolute bottom-4 left-0 w-full px-4 text-center">
           <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-3 shadow-sm">
             <div className="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full text-lg font-semibold">
-              A
+                {user ? user.username.charAt(0).toUpperCase() : "U"}
             </div>
             <div>
-              <p className="font-medium text-gray-800 text-sm">Anushka (Customer)</p>
-              <p className="text-xs text-gray-400">customer@logihub.com</p>
+              <p className="font-medium text-gray-800 text-sm">
+                 {user ? `${user.username} (${user.role})` : "User (Customer)"}
+              </p>
+              <p className="text-xs text-gray-400">
+                {user ? user.email : "user@example.com"}
+              </p>
             </div>
           </div>
-          <button className="mt-3 flex item-center text-sm text-blue-500 hover:text-red-600 transition px-2">
+          <button
+           onClick={handleLogout}
+          className="mt-3 flex item-center text-sm text-blue-500 hover:text-red-600 transition px-2">
             <FaSignOutAlt /> Logout
           </button>
         </div>

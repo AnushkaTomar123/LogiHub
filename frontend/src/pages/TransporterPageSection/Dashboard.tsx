@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState ,useEffect} from "react";
+
 import {
   MdOutlineLocalShipping,
   MdLocationPin,
@@ -57,8 +58,16 @@ type Trip = {
   payment: string;
 };
 
+interface User {
+  username: string;
+  email: string;
+  role: string;
+}
+
+
 const TransporterDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+   const [user, setUser] = useState<User | null>(null);
 
   const fleetData: Fleet[] = [
     { id: "LH-TR001", route: "Delhi → Mumbai", status: "In Transit", progress: 72, eta: "3h 40m", distance: "310 km", load: "15,000 kg" },
@@ -88,6 +97,19 @@ const TransporterDashboard = () => {
     { id: "TRP-2024004", company: "UrbanMart", route: "Kolkata → Patna", status: "Confirmed", payment: "₹16,800" },
   ];
 
+  useEffect(() => {
+    const username = localStorage.getItem("username");
+    const email = localStorage.getItem("email");
+    const role = localStorage.getItem("role");
+    if (username && email && role) {
+      setUser({ username, email, role });
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.href = "/auth/login"; // redirect to login
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Sidebar */}
@@ -132,13 +154,18 @@ const TransporterDashboard = () => {
         <div className="absolute bottom-4 left-4 right-4">
           <div className=" rounded-lg p-4 flex items-center space-x-3">
             <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-cent600text-gray-800  font-semibold">
-              R
+                 {user ? user.username.charAt(0).toUpperCase() : "T"}
             </div>
             <div>
-              <p className="font-medium">Rajesh Transport Co.</p>
-              <p className="text-sm text-slate-400">transporter@logihub.com</p>
+              <p className="font-medium">
+                {user ? `${user.username} (${user.role})` : "User (Transporter)"}
+              </p>
+              <p className="text-sm text-slate-400">
+                {user ? user.email : "transporter@example.com"}
+              </p>
             </div>
           </div>
+          
         </div>
       </aside>
 

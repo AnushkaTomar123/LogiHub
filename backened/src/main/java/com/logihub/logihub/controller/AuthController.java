@@ -2,6 +2,7 @@ package com.logihub.logihub.controller;
 
 import com.logihub.logihub.dto.AuthResponse;
 import com.logihub.logihub.dto.LoginRequest;
+import com.logihub.logihub.dto.LoginResponse;
 import com.logihub.logihub.dto.SignUpRequest;
 import com.logihub.logihub.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequest request){
+    public LoginResponse login(@RequestBody LoginRequest request){
         return authService.login(request);
     }
 }
