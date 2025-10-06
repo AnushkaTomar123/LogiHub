@@ -1,4 +1,5 @@
-import SignUp from "@/pages/SignUpPageSection";
+"use client"
+import SignUp from "../../../components/Form/SignUp";
 const Sign=()=>{
     return(
         <>
