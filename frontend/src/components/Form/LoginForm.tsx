@@ -46,7 +46,7 @@ const LoginForm = () => {
           window.location.href = "/admin/dashboard";
         } else if (role === "CUSTOMER") {
           window.location.href = "/customer/dashboard";
-        } else if (role === "AGENT") {
+        } else if (role === "TRANSPORTER") {
           window.location.href = "/transporter/dashboard";
         } else {
           window.location.href = "/";

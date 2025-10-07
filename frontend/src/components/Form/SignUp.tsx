@@ -2,7 +2,7 @@
 import { FormEvent, useState } from "react";
 import axios from "axios";
 
-const Signup= () => {
+const Signup = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
@@ -21,16 +21,16 @@ const Signup= () => {
 
     try {
       const res = await axios.post(
-  "http://localhost:8080/api/auth/signup",
-  {
-    username,
-    email,
-    password,
-  },
-  {
-    withCredentials: true, // important when allowCredentials=true
-  }
-);
+        "http://localhost:8080/api/auth/signup",
+        {
+          username,
+          email,
+          password,
+        },
+        {
+          withCredentials: true, // important when allowCredentials=true
+        }
+      );
 
 
 
@@ -88,6 +88,13 @@ const Signup= () => {
               placeholder="Password"
               className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            <select
+              name="role"
+              className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            > <option >Role</option>
+              <option value="transporter">Transporter</option>
+              <option value="customer">Customer</option>
+            </select>
 
             <button
               type="submit"
