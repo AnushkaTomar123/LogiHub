@@ -33,13 +33,40 @@ export default function Sidebar() {
     }
   }, []);
 
-  const menuItems = [
-    { href: "/admin/dashboard", label: "Dashboard", icon: MdDashboard },
-    { href: "/admin/users", label: "User Management", icon: MdPeople },
-    { href: "/admin/roles", label: "Roles & Permissions", icon: MdAssignmentInd },
-    { href: "/admin/analytics", label: "Analytics", icon: MdAnalytics },
-    { href: "/admin/settings", label: "Settings", icon: MdSettings },
-    { href: "/admin/security", label: "Security", icon: MdSecurity },
+  const sections = [
+    {
+      title: "MAIN MENU",
+      items: [
+        { href: "/admin/dashboard", label: "Dashboard", icon: MdDashboard },
+        { href: "/admin/users", label: "User Management", icon: MdPeople },
+       
+        {
+          href: "/admin/roles",
+          label: "Roles & Permissions",
+          icon: MdAssignmentInd,
+        },
+        { href: "/admin/analytics", label: "Analytics", icon: MdAnalytics },
+       
+        
+      ],
+    },
+
+     {
+      title: "GENERAL",
+      items: [
+       
+        { href: "/admin/Feedback", label: "Feedback", icon: MdPeople },
+        { href: "/admin/account", label: "Account", icon: MdSecurity },
+      ],
+    },
+    
+    {
+      title: "OTHERS",
+      items: [
+        { href: "/admin/settings", label: "Settings", icon: MdSettings },
+        { href: "/auth/login", label: "Log out", icon: MdLogout },
+      ],
+    },
   ];
 
   return (
@@ -55,20 +82,32 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <nav className="space-y-2">
-          {menuItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition ${
-                pathname === item.href
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              <item.icon size={18} />
-              {item.label}
-            </Link>
+        <nav className="space-y-4">
+          {sections.map((section, idx) => (
+            <div key={idx}>
+              <h4 className="text-xs font-semibold text-gray-400 uppercase mb-2">
+                {section.title}
+              </h4>
+              <div className="space-y-1">
+                {section.items.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center justify-between gap-3 px-4 py-2 rounded-lg transition ${
+                      pathname === item.href
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <item.icon size={18} />
+                      {item.label}
+                    </div>
+                   
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
       </div>
@@ -88,15 +127,6 @@ export default function Sidebar() {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => {
-            localStorage.clear();
-            window.location.href = "/auth/login";
-          }}
-          className="flex items-center text-sm text-red-500 hover:text-red-600 px-2 mt-2"
-        >
-          <MdLogout className="mr-1" /> Logout
-        </button>
       </div>
     </aside>
   );
