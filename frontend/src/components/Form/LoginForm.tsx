@@ -1,3 +1,4 @@
+
 "use client";
 import { FormEvent, useState } from "react";
 import axios from "axios";
@@ -37,12 +38,16 @@ const LoginForm = () => {
       toast.success("Login successful!", {
         position: "top-right",
         theme: "colored",
-        style: { background: "linear-gradient(to right, #1e3a8a, #f97316)", color: "white" },
+        style: {
+          background: "linear-gradient(to right, #1e3a8a, #f97316)",
+          color: "white",
+        },
       });
 
       // 🔹 Redirect based on role
       setTimeout(() => {
-        if (role === "ADMIN") {
+        // LoginForm.tsx me
+        if (role === "ADMIN"||role==="SUPER_ADMIN") {
           window.location.href = "/admin/dashboard";
         } else if (role === "CUSTOMER") {
           window.location.href = "/customer/dashboard";
@@ -52,19 +57,18 @@ const LoginForm = () => {
           window.location.href = "/";
         }
       }, 1800);
-
     } catch (err: any) {
       console.error(err);
 
       // 🔹 Show error toast instead of alert
-      toast.error(
-        err.response?.data?.message || "Login failed!.",
-        {
-          position: "top-right",
-          theme: "colored",
-          style: { background: "linear-gradient(to right, #dc2626, #f87171)", color: "white" },
-        }
-      );
+      toast.error(err.response?.data?.message || "Login failed!.", {
+        position: "top-right",
+        theme: "colored",
+        style: {
+          background: "linear-gradient(to right, #dc2626, #f87171)",
+          color: "white",
+        },
+      });
     } finally {
       setLoading(false);
     }
@@ -77,7 +81,9 @@ const LoginForm = () => {
         <div className="flex w-full max-w-5xl bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100">
           {/* Left Panel */}
           <div className="hidden md:flex flex-col justify-center items-start p-10 md:w-1/2 bg-gradient-to-br from-blue-600 to-cyan-600  text-white">
-            <h1 className="text-4xl font-extrabold mb-6">Welcome to LogiHub 🚚</h1>
+            <h1 className="text-4xl font-extrabold mb-6">
+              Welcome to LogiHub 🚚
+            </h1>
             <p className="text-lg mb-6 text-blue-50">
               Your one-stop logistics and transport management platform.
             </p>
@@ -90,7 +96,9 @@ const LoginForm = () => {
 
           {/* Right Panel */}
           <div className="flex flex-col justify-center items-center p-10 w-full md:w-1/2">
-            <h2 className="text-3xl font-bold mb-2 text-gray-800">Login to LogiHub</h2>
+            <h2 className="text-3xl font-bold mb-2 text-gray-800">
+              Login to LogiHub
+            </h2>
             <p className="text-gray-500 mb-6">
               Access your dashboard and manage logistics
             </p>
@@ -124,8 +132,9 @@ const LoginForm = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full bg-blue-600 text-white py-2.5 rounded-md font-medium hover:bg-blue-700 transition duration-200 ${loading ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                className={`w-full bg-blue-600 text-white py-2.5 rounded-md font-medium hover:bg-blue-700 transition duration-200 ${
+                  loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
                 {loading ? "Logging in..." : "Login"}
               </button>
@@ -135,15 +144,19 @@ const LoginForm = () => {
               <button
                 type="button"
                 disabled={loading}
-                className={`w-full border border-gray-300 py-2.5 rounded-md text-gray-700 font-medium hover:bg-gray-50 transition duration-200 ${loading ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                className={`w-full border border-gray-300 py-2.5 rounded-md text-gray-700 font-medium hover:bg-gray-50 transition duration-200 ${
+                  loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
                 {loading ? "Please wait..." : "Continue with Google"}
               </button>
 
               <p className="text-center text-gray-600 mt-4 text-sm">
                 Don’t have an account?{" "}
-                <a href="/auth/signup" className="text-blue-600 hover:underline font-medium">
+                <a
+                  href="/auth/signup"
+                  className="text-blue-600 hover:underline font-medium"
+                >
                   Sign up
                 </a>
               </p>

@@ -1,28 +1,33 @@
 "use client";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
-
-// React Icons (Font Awesome) का उपयोग किया जा रहा है, जैसा कि आपने अनुरोध किया है।
-// Note: इस online environment में यह 'resolve' error दे सकता है, लेकिन आपके local setup पर यह काम करना चाहिए।
 import {
-  FaUserPlus,    // Lucide UserPlus का विकल्प
-  FaSearch,      // Lucide Search का विकल्प
-  FaTrashAlt,    // Lucide Trash2 का विकल्प
-  FaEdit,        // Lucide Edit का विकल्प
-  FaTimes        // Lucide X का विकल्प
-} from 'react-icons/fa';
+  FaUserPlus,
+  FaSearch,
+  FaTrashAlt,
+  FaEdit,
+  FaTimes,
+} from "react-icons/fa";
 
-// Interface for User data structure
+// ========================= Interfaces =========================
 interface User {
   id: number;
   name: string;
   email: string;
-  role: "Admin" | "Customer" | "Transporter";
+  role: "Super Admin" | "Admin" | "Customer" | "Transporter";
   status: "Active" | "Inactive";
 }
 
-
-function ConfirmationModal({ message, onConfirm, onClose }: { message: string; onConfirm: () => void; onClose: () => void }) {
+// ========================= Confirmation Modal =========================
+function ConfirmationModal({
+  message,
+  onConfirm,
+  onClose,
+}: {
+  message: string;
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50 p-4">
       <motion.div
@@ -31,15 +36,14 @@ function ConfirmationModal({ message, onConfirm, onClose }: { message: string; o
         className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-sm"
       >
         <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Confirm Action</h3>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                {/* Lucide X को FaTimes से बदला गया */}
-                <FaTimes size={24} />
-            </button>
+          <h3 className="text-lg font-semibold text-gray-800">
+            Confirm Action
+          </h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <FaTimes size={24} />
+          </button>
         </div>
-        
         <p className="text-gray-600 mb-6">{message}</p>
-        
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
@@ -59,10 +63,7 @@ function ConfirmationModal({ message, onConfirm, onClose }: { message: string; o
   );
 }
 
-
-// ===================================================================
-// User Modal (Includes Validation Logic)
-// ===================================================================
+// ========================= User Modal =========================
 function UserModal({
   onClose,
   onSave,
@@ -81,52 +82,45 @@ function UserModal({
       status: "Active",
     }
   );
-  
-  // State to hold validation errors
+
   const [errors, setErrors] = useState({ name: "", email: "" });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // Clear error instantly when the user starts typing/changing
     setErrors({ ...errors, [e.target.name]: "" });
   };
-  
-  // Validation function
+
   const validate = (): boolean => {
     const tempErrors = { name: "", email: "" };
     let isValid = true;
-
-    // 1. Name validation
     if (!formData.name.trim()) {
       tempErrors.name = "Full Name is required.";
       isValid = false;
     }
-
-    // 2. Email validation
     if (!formData.email.trim()) {
       tempErrors.email = "Email is required.";
       isValid = false;
-    } 
-    // Basic email format check
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-        tempErrors.email = "Invalid email format.";
-        isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      tempErrors.email = "Invalid email format.";
+      isValid = false;
     }
-
     setErrors(tempErrors);
     return isValid;
   };
 
-  // Handler for Save button click
   const handleSubmit = () => {
     if (validate()) {
       onSave(formData);
     }
   };
-  
-  // Check if the form meets basic requirements (used to enable/disable button)
+
   const isFormValid = useMemo(() => {
-    return formData.name.trim() !== '' && /\S+@\S+\.\S+/.test(formData.email.trim());
+    return (
+      formData.name.trim() !== "" &&
+      /\S+@\S+\.\S+/.test(formData.email.trim())
+    );
   }, [formData]);
 
   return (
@@ -139,37 +133,44 @@ function UserModal({
         <h2 className="text-xl font-semibold mb-6">
           {user ? "Edit User" : "Add New User"}
         </h2>
-
-        <div className="space-y-4"> {/* Increased spacing for error messages */}
+        <div className="space-y-4">
           <div>
             <input
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Full Name (Required)"
+              placeholder="Full Name"
               className={`w-full border px-3 py-2 rounded-lg focus:ring-2 transition-colors ${
-                errors.name ? 'border-red-500 ring-red-200' : 'border-gray-300 focus:border-blue-500'
+                errors.name
+                  ? "border-red-500 ring-red-200"
+                  : "border-gray-300 focus:border-blue-500"
               }`}
             />
-            {errors.name && <p className="text-red-500 text-xs mt-1 font-medium">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
           </div>
-          
           <div>
             <input
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Email (Required)"
+              placeholder="Email"
               className={`w-full border px-3 py-2 rounded-lg focus:ring-2 transition-colors ${
-                errors.email ? 'border-red-500 ring-red-200' : 'border-gray-300 focus:border-blue-500'
+                errors.email
+                  ? "border-red-500 ring-red-200"
+                  : "border-gray-300 focus:border-blue-500"
               }`}
             />
-            {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            )}
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Role
+            </label>
             <select
               name="role"
               value={formData.role}
@@ -182,7 +183,6 @@ function UserModal({
             </select>
           </div>
         </div>
-
         <div className="flex justify-end gap-3 mt-8">
           <button
             onClick={onClose}
@@ -191,13 +191,13 @@ function UserModal({
             Cancel
           </button>
           <button
-            onClick={handleSubmit} // Calls validation first
+            onClick={handleSubmit}
+            disabled={!isFormValid}
             className={`px-4 py-2 text-white rounded-lg transition-colors shadow-md ${
-                isFormValid 
+              isFormValid
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-blue-400 cursor-not-allowed opacity-70"
             }`}
-            disabled={!isFormValid} // Button is disabled if required fields are empty
           >
             {user ? "Update User" : "Save User"}
           </button>
@@ -207,9 +207,7 @@ function UserModal({
   );
 }
 
-// ===================================================================
-// Main Application Component
-// ===================================================================
+// ========================= MAIN COMPONENT =========================
 export default function UserManagementPage() {
   const [users, setUsers] = useState<User[]>([
     { id: 1, name: "John Doe", email: "john@example.com", role: "Customer", status: "Active" },
@@ -222,23 +220,27 @@ export default function UserManagementPage() {
   const [sortBy, setSortBy] = useState("name");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  
-  // States for custom Confirmation Modal
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
   const [confirmMessage, setConfirmMessage] = useState("");
 
-  // 🔍 Search, Filter, and Sort Logic
+  // 🧩 get current role
+  const [currentRole, setCurrentRole] = useState<string | null>(null);
+  useEffect(() => {
+    setCurrentRole(localStorage.getItem("role"));
+  }, []);
+
   const filteredUsers = useMemo(() => {
     return users
       .filter((u) =>
         `${u.name} ${u.email}`.toLowerCase().includes(search.toLowerCase())
       )
       .filter((u) => (filterRole === "All" ? true : u.role === filterRole))
-      .sort((a, b) => (a[sortBy as keyof User] > b[sortBy as keyof User] ? 1 : -1));
+      .sort((a, b) =>
+        a[sortBy as keyof User] > b[sortBy as keyof User] ? 1 : -1
+      );
   }, [users, search, filterRole, sortBy]);
 
-  // 💾 Save User (Add or Edit)
   const handleSave = (user: User) => {
     if (editingUser) {
       setUsers(users.map((u) => (u.id === user.id ? user : u)));
@@ -249,25 +251,26 @@ export default function UserManagementPage() {
     setEditingUser(null);
   };
 
-  // 🗑 Delete User (Uses custom modal instead of confirm())
-  const handleDelete = useCallback((id: number) => {
-    setConfirmMessage(`Are you sure you want to delete the user with ID ${id}? This action cannot be undone.`);
-    
-    // Set the action to be performed upon confirmation
-    setConfirmAction(() => () => {
-      setUsers(users.filter((u) => u.id !== id));
-      setIsConfirmOpen(false); // Close modal after successful action
-    });
-    
-    setIsConfirmOpen(true); // Open the confirmation modal
-  }, [users]);
+  const handleDelete = useCallback(
+    (id: number) => {
+      setConfirmMessage(
+        `Are you sure you want to delete user with ID ${id}?`
+      );
+      setConfirmAction(() => () => {
+        setUsers(users.filter((u) => u.id !== id));
+        setIsConfirmOpen(false);
+      });
+      setIsConfirmOpen(true);
+    },
+    [users]
+  );
 
-
-  // 🔄 Toggle Active/Inactive
   const toggleStatus = (id: number) => {
     setUsers(
       users.map((u) =>
-        u.id === id ? { ...u, status: u.status === "Active" ? "Inactive" : "Active" } : u
+        u.id === id
+          ? { ...u, status: u.status === "Active" ? "Inactive" : "Active" }
+          : u
       )
     );
   };
@@ -277,24 +280,27 @@ export default function UserManagementPage() {
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex flex-wrap justify-between items-center gap-4 bg-white p-6 rounded-xl shadow-lg">
-          <h1 className="text-3xl font-extrabold text-gray-900">👥 User Management Dashboard</h1>
-          <button
-            onClick={() => {
-              setEditingUser(null);
-              setModalOpen(true);
-            }}
-            className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-blue-700 transition-all transform hover:scale-[1.02] active:scale-95"
-          >
-            {/* Lucide UserPlus को FaUserPlus से बदला गया */}
-            <FaUserPlus size={22} /> Add New User
-            
-          </button>
+          <h1 className="text-3xl font-extrabold text-gray-900">
+            👥 User Management
+          </h1>
+
+          {/* Add User only if Admin or Super Admin */}
+          {(currentRole === "Super Admin" || currentRole === "Admin") && (
+            <button
+              onClick={() => {
+                setEditingUser(null);
+                setModalOpen(true);
+              }}
+              className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-blue-700 transition-all"
+            >
+              <FaUserPlus size={22} /> Add New User
+            </button>
+          )}
         </div>
 
-        {/* Filters and Controls */}
+        {/* Filters */}
         <div className="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center bg-gray-100 border border-gray-200 rounded-xl px-4 py-2 shadow-inner w-full sm:w-80">
-            {/* Lucide Search को FaSearch से बदला गया */}
             <FaSearch className="text-gray-500 mr-2" size={20} />
             <input
               type="text"
@@ -309,7 +315,7 @@ export default function UserManagementPage() {
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              className="px-4 py-2 border border-gray-300 rounded-xl bg-white shadow-sm"
             >
               <option value="All">All Roles</option>
               <option value="Admin">Admin</option>
@@ -320,7 +326,7 @@ export default function UserManagementPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-xl bg-white shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              className="px-4 py-2 border border-gray-300 rounded-xl bg-white shadow-sm"
             >
               <option value="name">Sort by Name</option>
               <option value="email">Sort by Email</option>
@@ -342,75 +348,89 @@ export default function UserManagementPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredUsers.map((user) => (
-                <motion.tr
-                  key={user.id}
-                  className="hover:bg-blue-50/50 transition-colors"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <td className="py-3 px-6 font-medium text-gray-900">{user.name}</td>
-                  <td className="py-3 px-6 text-gray-600">{user.email}</td>
-                  <td className="py-3 px-6">
-                    <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full shadow-sm ${
-                        user.role === "Admin"
-                          ? "bg-red-100 text-red-700"
-                          : user.role === "Customer"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {user.role}
-                    </span>
-                  </td>
-                  <td className="py-3 px-6 text-center">
-                    <button
-                      onClick={() => toggleStatus(user.id)}
-                      className={`px-3 py-1 rounded-full text-xs font-bold transition-colors shadow-sm ${
-                        user.status === "Active"
-                          ? "bg-green-200 text-green-800 hover:bg-green-300"
-                          : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-                      }`}
-                    >
-                      {user.status}
-                    </button>
-                  </td>
-                  <td className="py-3 px-6 text-center space-x-3">
-                    <button
-                      onClick={() => {
-                        setEditingUser(user);
-                        setModalOpen(true);
-                      }}
-                      className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-100 transition-colors"
-                      title="Edit User"
-                    >
-                      {/* Lucide Edit को FaEdit से बदला गया */}
-                      <FaEdit size={20} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-100 transition-colors"
-                      title="Delete User"
-                    >
-                      {/* Lucide Trash2 को FaTrashAlt से बदला गया */}
-                      <FaTrashAlt size={20} />
-                    </button>
-                  </td>
-                </motion.tr>
-              ))}
+              {filteredUsers.map((user) => {
+                const isLimited =
+                  currentRole === "Admin" &&
+                  (user.role === "Admin" || user.role === "Super Admin");
+                return (
+                  <motion.tr
+                    key={user.id}
+                    className="hover:bg-blue-50/50 transition-colors"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <td className="py-3 px-6 font-medium text-gray-900">
+                      {user.name}
+                    </td>
+                    <td className="py-3 px-6 text-gray-600">{user.email}</td>
+                    <td className="py-3 px-6">
+                      <span
+                        className={`px-3 py-1 text-xs font-semibold rounded-full shadow-sm ${
+                          user.role === "Admin"
+                            ? "bg-red-100 text-red-700"
+                            : user.role === "Customer"
+                            ? "bg-green-100 text-green-700"
+                            : user.role === "Transporter"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-purple-100 text-purple-700"
+                        }`}
+                      >
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="py-3 px-6 text-center">
+                      <button
+                        onClick={() => toggleStatus(user.id)}
+                        className={`px-3 py-1 rounded-full text-xs font-bold transition-colors shadow-sm ${
+                          user.status === "Active"
+                            ? "bg-green-200 text-green-800 hover:bg-green-300"
+                            : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                        }`}
+                      >
+                        {user.status}
+                      </button>
+                    </td>
+                    <td className="py-3 px-6 text-center space-x-3">
+                      {!isLimited && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setEditingUser(user);
+                              setModalOpen(true);
+                            }}
+                            className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-100"
+                            title="Edit"
+                          >
+                            <FaEdit size={20} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(user.id)}
+                            className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-100"
+                            title="Delete"
+                          >
+                            <FaTrashAlt size={20} />
+                          </button>
+                        </>
+                      )}
+                      {isLimited && (
+                        <span className="text-gray-400 text-sm italic">
+                          Restricted
+                        </span>
+                      )}
+                    </td>
+                  </motion.tr>
+                );
+              })}
             </tbody>
           </table>
-
           {filteredUsers.length === 0 && (
             <p className="text-center text-gray-500 py-10 text-lg">
-              No users found matching your filters.
+              No users found.
             </p>
           )}
         </div>
 
-        {/* User Modal (Add/Edit) */}
         {modalOpen && (
           <UserModal
             onClose={() => {
@@ -422,7 +442,6 @@ export default function UserManagementPage() {
           />
         )}
 
-        {/* Confirmation Modal (Delete) */}
         {isConfirmOpen && confirmAction && (
           <ConfirmationModal
             message={confirmMessage}
