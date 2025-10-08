@@ -23,18 +23,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public AuthResponse signup(SignUpRequest request) {
         if(userRepository.existsByUsername(request.getUsername())) {
-            return new AuthResponse("Username already exists");
+            return new AuthResponse(null,"Username already exists"  );
         }
         if(userRepository.existsByEmail(request.getEmail())) {
-            return new AuthResponse("Email already exists");
+            return new AuthResponse(null,"Email already exists");
         }
 
         User user = modelMapper.map(request, User.class);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole("USER"); // fixed role
         userRepository.save(user);
 
-        return new AuthResponse("User registered successfully");
+        return new AuthResponse(user.getRole(),"User registered successfully" );
     }
 
 
