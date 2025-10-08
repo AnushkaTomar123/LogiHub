@@ -15,11 +15,12 @@ public class Transporter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @OneToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     private String companyName;
     private String vehicleNo;
     private String licenseNo;
+    private String aadhaarNo; // fixed naming convention
 }
