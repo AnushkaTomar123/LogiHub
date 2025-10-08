@@ -1,6 +1,6 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import RoleTable from "../../../components/admin/RoleTable";
 import RoleModal from "../../../components/admin/RoleModal";
 import { MdAdd } from "react-icons/md";
@@ -13,6 +13,23 @@ interface Role {
 }
 
 export default function RolesPage() {
+  const router = useRouter();
+  const [allowed, setAllowed] = useState(false);
+
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    if (role === "Super Admin") {
+      setAllowed(true);
+    } else {
+      router.push("/access-denied"); // agar admin role hoga to redirect
+    }
+  }, [router]);
+
+  if (!allowed) {
+    return null; // jab tak check ho raha hai blank show karo
+  }
+
+  // ==== existing code starts here ====
   const [roles, setRoles] = useState<Role[]>([
     { id: 1, name: "Admin", description: "Full access", permissions: ["Manage Roles", "View Users", "Edit Users"] },
     { id: 2, name: "Customer Manager", description: "Manage customers", permissions: ["View Users", "Edit Users"] },
