@@ -6,7 +6,6 @@ import com.logihub.logihub.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -16,20 +15,28 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    // Create
-    @PostMapping
-    public ResponseEntity<String> createCustomer(@RequestBody CustomerDTO dto) {
+    // Create Customer (multipart form)
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<String> createCustomer(@ModelAttribute CustomerDTO dto) {
         customerService.createCustomer(dto);
         return ResponseEntity.ok("Customer registered successfully!");
     }
 
-    // Read all
+    // Update Customer (multipart form)
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<Customer> updateCustomer(
+            @PathVariable Long id, @ModelAttribute CustomerDTO dto) {
+        Customer updated = customerService.updateCustomer(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    // Get all customers
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomers() {
         return ResponseEntity.ok(customerService.getAllCustomers());
     }
 
-    // Read by ID
+    // Get customer by ID
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
         return customerService.getCustomerById(id)
@@ -37,14 +44,7 @@ public class CustomerController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Update
-    @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO dto) {
-        Customer updated = customerService.updateCustomer(id, dto);
-        return ResponseEntity.ok(updated);
-    }
-
-    // Delete
+    // Delete customer
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);

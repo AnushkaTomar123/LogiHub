@@ -15,12 +15,43 @@ public class Transporter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(nullable = false)
     private String companyName;
-    private String vehicleNo;
-    private String licenseNo;
-    private String aadhaarNo; // fixed naming convention
+
+    @Column(nullable = false)
+    private String contactPersonName;
+
+    @Column(nullable = false, length = 15)
+    private String contactNumber;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String address;
+
+    @Column(nullable = false, length = 10)
+    private String panNumber;
+
+    @Column(nullable = false, length = 12)
+    private String aadhaarNumber;
+
+    @Column(nullable = false)
+    private Integer totalVehicles;
+
+    @Column(nullable = true)
+    private String vehicleTypes;
+
+    // Store files as binary data (BLOB)
+    @Column(nullable = true)
+    private String profilePhotoUrl;
+
+    @Column(nullable = true)
+    private String rcProofDocumentUrl;
+//    @Column(nullable = false)
+//    private Boolean verified = false;
+//
+//    @Column(nullable = false)
+//    private Boolean active = true;
 }
