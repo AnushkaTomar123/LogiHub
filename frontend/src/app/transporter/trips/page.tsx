@@ -1,0 +1,146 @@
+"use client"
+
+import React, { useState } from "react";
+import { FaMapMarkerAlt, FaTruckMoving, FaUserAlt, FaRoute } from "react-icons/fa";
+import { IoMdSpeedometer } from "react-icons/io";
+import { MdAccessTimeFilled, MdClose } from "react-icons/md";
+
+export default function AssignedTrips() {
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTrip, setSelectedTrip] = useState(null);
+
+  const trips = [
+    {
+      id: 1,
+      truck: "MH 14 AB 2345",
+      driver: "Ravi Kumar",
+      route: "Indore → Pune",
+      status: "In Transit",
+      eta: "3 hrs 20 mins",
+      speed: "68 km/h",
+    },
+    {
+      id: 2,
+      truck: "MP 09 CD 9876",
+      driver: "Vikas Yadav",
+      route: "Bhopal → Jaipur",
+      status: "Departed",
+      eta: "5 hrs 15 mins",
+      speed: "62 km/h",
+    },
+    {
+      id: 3,
+      truck: "GJ 10 EF 1122",
+      driver: "Suresh Meena",
+      route: "Delhi → Surat",
+      status: "Idle",
+      eta: "Waiting for dispatch",
+      speed: "-",
+    },
+  ];
+
+  const handleTrackTrip = (trip) => {
+    setSelectedTrip(trip);
+    setShowModal(true);
+  };
+
+  return (
+    <div className="bg-[#f8fafc] min-h-screen py-10 px-8 font-sans">
+      <h1 className="text-3xl font-bold text-gray-800 mb-8 border-l-4 border-green-500 pl-3">
+        Assigned Trips
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {trips.map((trip) => (
+          <div
+            key={trip.id}
+            className="bg-white rounded-2xl shadow-md p-5 hover:shadow-lg transition-all border-t-4 border-blue-500"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <FaTruckMoving className="text-2xl text-blue-500" />
+              <h2 className="text-lg font-semibold text-gray-800">
+                Truck No: {trip.truck}
+              </h2>
+            </div>
+
+            <div className="space-y-2 text-gray-700">
+              <p className="flex items-center gap-2">
+                <FaUserAlt className="text-green-500" /> Driver:{" "}
+                <span className="font-medium">{trip.driver}</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <FaRoute className="text-blue-500" /> Route:{" "}
+                <span className="font-medium">{trip.route}</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <IoMdSpeedometer className="text-orange-500" /> Speed:{" "}
+                <span className="font-medium">{trip.speed}</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <MdAccessTimeFilled className="text-purple-500" /> ETA:{" "}
+                <span className="font-medium">{trip.eta}</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <FaMapMarkerAlt className="text-red-500" /> Status:{" "}
+                <span
+                  className={`font-semibold ${
+                    trip.status === "In Transit"
+                      ? "text-green-600"
+                      : trip.status === "Departed"
+                      ? "text-yellow-600"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {trip.status}
+                </span>
+              </p>
+            </div>
+
+            <button
+              onClick={() => handleTrackTrip(trip)}
+              className="w-full mt-5 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition-all font-medium"
+            >
+              Track Trip
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {showModal && selectedTrip && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white w-[90%] max-w-lg rounded-2xl shadow-xl p-6 relative">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+            >
+              <MdClose size={24} />
+            </button>
+
+            <h2 className="text-2xl font-semibold text-gray-800 mb-3">
+              Tracking: {selectedTrip.truck}
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Driver: <span className="font-medium">{selectedTrip.driver}</span>
+              <br />
+              Route: <span className="font-medium">{selectedTrip.route}</span>
+            </p>
+
+            {/* Mock Map Preview */}
+            <div className="bg-gray-200 rounded-xl h-60 flex items-center justify-center text-gray-600">
+              🗺️ Real-Time Map Tracking Preview
+            </div>
+
+            <div className="mt-4 text-center">
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-green-600 text-white px-6 py-2 rounded-xl hover:bg-green-700 transition-all"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
