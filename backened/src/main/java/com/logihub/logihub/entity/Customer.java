@@ -25,4 +25,5 @@ public class Customer {
     private String contactNo;
     private String address;
     private String city;
+    private String profilePhotoUrl;
 }

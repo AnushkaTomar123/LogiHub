@@ -6,7 +6,6 @@ import com.logihub.logihub.service.TransporterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -16,27 +15,26 @@ public class TransporterController {
 
     private final TransporterService transporterService;
 
-    // Create Transporter
-    @PostMapping
-    public ResponseEntity<String> createTransporter(@RequestBody TransporterDTO dto) {
-      transporterService.createTransporter(dto);
+    // Create Transporter (multipart form)
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<String> createTransporter(@ModelAttribute TransporterDTO dto) {
+        transporterService.createTransporter(dto);
         return ResponseEntity.ok("Transporter registered successfully!");
     }
 
     // Update Transporter
-    @PutMapping("/{id}")
-    public ResponseEntity<Transporter> updateTransporter(@PathVariable Long id, @RequestBody TransporterDTO dto) {
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<Transporter> updateTransporter(
+            @PathVariable Long id, @ModelAttribute TransporterDTO dto) {
         Transporter updated = transporterService.updateTransporter(id, dto);
         return ResponseEntity.ok(updated);
     }
 
-    // Get all Transporters
     @GetMapping
     public ResponseEntity<List<Transporter>> getAllTransporters() {
         return ResponseEntity.ok(transporterService.getAllTransporters());
     }
 
-    // Get Transporter by ID
     @GetMapping("/{id}")
     public ResponseEntity<Transporter> getTransporterById(@PathVariable Long id) {
         return transporterService.getTransporterById(id)
@@ -44,7 +42,6 @@ public class TransporterController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Delete Transporter
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransporter(@PathVariable Long id) {
         transporterService.deleteTransporter(id);
