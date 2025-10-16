@@ -1,4 +1,5 @@
 "use client";
+import axios from 'axios';
 import { useState, FormEvent } from 'react';
 import {
   FaTruck,
@@ -17,6 +18,7 @@ interface TransporterFormData {
   companyName: string;
   contactPersonName: string;
   contactNumber: string;
+  userEmail:string;
   address: string;
   panNumber: string;
   aadhaarNumber: string;
@@ -31,6 +33,7 @@ const Transporter = () => {
     companyName: '',
     contactPersonName: '',
     contactNumber: '',
+    userEmail:'',
     address: '',
     panNumber: '',
     aadhaarNumber: '',
@@ -74,46 +77,79 @@ const Transporter = () => {
     }
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setStatus('idle');
-    setMessage('');
+const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setStatus("idle");
+  setMessage("");
 
-    const totalVehiclesValue = Number(formData.totalVehicles);
+  const totalVehiclesValue = Number(formData.totalVehicles);
 
-    if (
-      !formData.companyName ||
-      !formData.contactPersonName ||
-      !formData.contactNumber ||
-      !formData.address ||
-      !formData.panNumber ||
-      !formData.aadhaarNumber ||
-      !formData.profilePhoto ||
-      !formData.rcProofDocument ||
-      totalVehiclesValue < 1
-    ) {
-      setStatus('error');
-      setMessage('Please fill all required fields, upload documents, and ensure total vehicles is at least 1.');
-      setLoading(false);
-      return;
+  // Validation
+  if (
+    !formData.companyName ||
+    !formData.contactPersonName ||
+    !formData.contactNumber ||
+    !formData.userEmail ||
+    !formData.address ||
+    !formData.panNumber ||
+    !formData.aadhaarNumber ||
+    !formData.vehicleTypes||
+    
+    totalVehiclesValue < 1
+  ) {
+    setStatus("error");
+    setMessage(
+      "Please fill all required fields, upload documents, and ensure total vehicles is at least 1."
+    );
+    setLoading(false);
+    return;
+  }
+
+  try {
+    // Prepare form data for backend
+    const data = new FormData();
+    data.append("companyName", formData.companyName);
+    data.append("contactPersonName", formData.contactPersonName);
+    data.append("contactNumber", formData.contactNumber);
+    data.append("userEmail", formData.userEmail);
+    data.append("address", formData.address);
+    data.append("panNumber", formData.panNumber);
+    data.append("aadhaarNumber", formData.aadhaarNumber);
+    data.append("vehicleTypes", formData.vehicleTypes);
+    data.append("totalVehicles", formData.totalVehicles.toString());
+
+    if (formData.profilePhoto) {
+      data.append("profilePhoto", formData.profilePhoto);
     }
 
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setStatus('success');
-      setMessage('Profile saved successfully! Redirecting to login after verification...');
+    if (formData.rcProofDocument) {
+      data.append("rcProofDocument", formData.rcProofDocument);
+    }
+
+    // 🚀 Send data to backend API
+    const response = await axios.post("http://localhost:8080/api/transporters", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (response.status === 200 || response.status === 201) {
+      setStatus("success");
+      setMessage("Profile saved successfully! Redirecting to login after verification...");
       setTimeout(() => {
-        window.location.href = '/auth/login';
+        window.location.href = "/auth/login";
       }, 2000);
-    } catch (error: any) {
-      console.error('Onboarding failed:', error);
-      setStatus('error');
-      setMessage(error.response?.data?.message || 'Failed to save profile.');
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error: any) {
+    console.error("Onboarding failed:", error);
+    setStatus("error");
+    setMessage(error.response?.data?.message || "Failed to save profile.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const vehicleOptions = ['Truck (Full Load)', 'Mini-Truck (LTL)', 'Tempo', 'Cargo Van'];
 
@@ -167,6 +203,17 @@ const Transporter = () => {
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
               required
             />
+            <input
+              name="userEmail"
+              type="email"
+              placeholder="Enter your email"
+              value={formData.userEmail}
+              onChange={handleChange}
+              maxLength={50}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+            
 
             <textarea
               name="address"
@@ -233,7 +280,7 @@ const Transporter = () => {
                 accept="image/*"
                 onChange={handleFileChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                required
+              
               />
               {formData.profilePhoto && (
                 <p className="text-xs text-green-600 mt-1">Selected: {formData.profilePhoto.name}</p>
@@ -250,7 +297,7 @@ const Transporter = () => {
                 accept=".pdf, image/*"
                 onChange={handleFileChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                required
+                
               />
               {formData.rcProofDocument && (
                 <p className="text-xs text-green-600 mt-1">Selected: {formData.rcProofDocument.name}</p>
