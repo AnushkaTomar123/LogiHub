@@ -75,7 +75,9 @@ export default function DriverManagement() {
 
   // ------------------- UI -------------------
   return (
+    
     <div className="bg-gradient-to-b from-[#f9fafb] to-[#e9eef5] min-h-screen py-10 px-6 sm:px-10 font-sans">
+      
       <h1 className="text-3xl font-bold text-gray-800 mb-10 border-l-4 border-blue-600 pl-3">
         Driver Management
       </h1>

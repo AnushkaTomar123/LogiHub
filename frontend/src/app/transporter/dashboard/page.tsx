@@ -9,6 +9,7 @@ import {
   MdOutlineRoute,
   MdCircle,
 } from "react-icons/md";
+import TransporterHeader from "@/components/transporter/TransporterHeader";
 
 export default function TransporterDashboard() {
   const [username, setUsername] = useState("Transporter");
@@ -41,6 +42,7 @@ export default function TransporterDashboard() {
 
   return (
     <div className="space-y-8">
+      <TransporterHeader/>
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
