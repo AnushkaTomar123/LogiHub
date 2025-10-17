@@ -5,26 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e4e6f79-6896-4601-a29d-37fab24430d0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/config/SecurityConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/dto/AuthResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/dto/LoginRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/dto/SignUpRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backened/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backened/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/LogihubApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/LogihubApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/config/CorsConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/dto/UserDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backened/src/main/java/com/logihub/logihub/service/impl/UserServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backened/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backened/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/LandingPage/Navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/LandingPage/Navbar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/LoginPageSection/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/LoginPageSection/Login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/SignUpPageSection/SignUp.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/SignUpPageSection/SignUp.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,9 +36,10 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.LogihubApplication.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "feature/anushka/admin",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/piyus/LogiHub/backened",
