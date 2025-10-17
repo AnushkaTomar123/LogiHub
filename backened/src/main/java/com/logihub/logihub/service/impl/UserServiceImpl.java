@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         if(passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return new LoginResponse("Login successful" , user.getRole() , user.getUsername(),user.getEmail());
