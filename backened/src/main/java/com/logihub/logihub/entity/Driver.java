@@ -18,6 +18,7 @@ public class Driver {
     private String driverName;
     private String licenseNumber;
     private String phoneNumber;
+//    private String aadhaarCardUrl;
     @ManyToOne
     @JoinColumn(name = "transporter_id", nullable = false)
     private Transporter transporter;
