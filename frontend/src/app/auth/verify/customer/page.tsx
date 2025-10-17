@@ -1,6 +1,6 @@
 "use client";
 import { useState, FormEvent } from "react";
-//import axios from "axios";
+import axios from "axios";
 import {
   FaUser,
   FaMapMarkerAlt,
@@ -19,7 +19,7 @@ interface CustomerFormData {
   fullName: string;
   contactNumber: string;
   customerAddress: string;
-  companyName: string;
+  userEmail : string;
   aadhaarNumber: string;
   profilePhoto: File | null;
 }
@@ -29,7 +29,7 @@ const Customer = () => {
     fullName: "",
     contactNumber: "",
     customerAddress: "",
-    companyName: "",
+    userEmail: "",
     aadhaarNumber: "",
     profilePhoto: null,
   });
@@ -53,44 +53,64 @@ const Customer = () => {
   };
 
   // Submit Form
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setStatus("idle");
-    setMessage("");
+  // Submit Form
+const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setStatus("idle");
+  setMessage("");
 
-    // Basic Validation
-    if (
-      !formData.fullName ||
-      !formData.contactNumber ||
-      !formData.customerAddress ||
-      !formData.aadhaarNumber ||
-      !formData.profilePhoto
-    ) {
-      setStatus("error");
-      setMessage("Please fill all required fields and upload a profile photo.");
-      setLoading(false);
-      return;
+  // Validation
+  if (
+    !formData.fullName ||
+    !formData.contactNumber ||
+    !formData.customerAddress ||
+    !formData.aadhaarNumber ||
+    !formData.profilePhoto
+  ) {
+    setStatus("error");
+    setMessage("Please fill all required fields and upload a profile photo.");
+    setLoading(false);
+    return;
+  }
+
+  try {
+    // Prepare form data for backend
+    const data = new FormData();
+    data.append("fullName", formData.fullName);
+    data.append("contactNumber", formData.contactNumber);
+    data.append("customerAddress", formData.customerAddress);
+    data.append("userEmail", formData.userEmail);
+    data.append("aadhaarNumber", formData.aadhaarNumber);
+    if (formData.profilePhoto) {
+      data.append("profilePhoto", formData.profilePhoto);
     }
 
-    try {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Send to backend
+    const response = await axios.post("http://localhost:8080/api/customers", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
+    if (response.status === 200 || response.status === 201) {
       setStatus("success");
       setMessage("Profile saved successfully! Redirecting to login page...");
 
+      // Redirect after delay
       setTimeout(() => {
         window.location.href = "/auth/login";
       }, 2000);
-    } catch (error: any) {
-      console.error("Customer Onboarding failed:", error);
-      setStatus("error");
-      setMessage("Failed to save profile. Please try again.");
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error: any) {
+    console.error("Customer Onboarding failed:", error);
+    setStatus("error");
+    setMessage("Failed to save profile. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 flex items-center justify-center p-4">
@@ -127,13 +147,13 @@ const Customer = () => {
               />
             </div>
 
-            {/* Company Name (Optional) */}
+            {/* Emial id */}
             <div className="md:col-span-2">
               <input
-                name="companyName"
-                type="text"
-                placeholder="Company Name (Optional)"
-                value={formData.companyName}
+                name="userEmail"
+                type="email"
+                placeholder="enter your email"
+                value={formData.userEmail}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
               />
