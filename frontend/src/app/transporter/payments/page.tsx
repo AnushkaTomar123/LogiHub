@@ -97,7 +97,7 @@ export default function Payments() {
       <TransporterHeader/>
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 border-l-4 border-green-600 pl-3">
+        <h1 className="text-2xl font-bold text-gray-800">
           Payments Management
         </h1>
         <button

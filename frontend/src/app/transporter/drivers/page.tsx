@@ -75,8 +75,8 @@ export default function DriverManagement() {
       <TransporterHeader />
 
       {/* Page Header */}
-      <div className="flex items-center justify-between mb-8 px-6 pt-6">
-        <h1 className="text-3xl font-bold text-gray-800">Driver Management</h1>
+      <div className="flex items-center justify-between mb-8 px-2 py-3">
+        <h1 className="text-2xl font-bold text-gray-800">Driver Management</h1>
         <button
           onClick={() => setShowAddModal(true)}
           className="bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition flex items-center gap-2"

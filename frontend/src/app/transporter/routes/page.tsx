@@ -54,8 +54,8 @@ export default function RoutePlanning() {
   return (
     <div className="bg-white min-h-screen ">
       <TransporterHeader/>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 px-2 py-3">
+      <div className="flex items-center justify-between mb-8 px-2 py-3">
+        <h1 className="text-2xl font-bold text-gray-800">
           Route Planning
         </h1>
         <button

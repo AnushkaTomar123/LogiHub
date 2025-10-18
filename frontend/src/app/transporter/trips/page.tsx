@@ -4,7 +4,7 @@ import TransporterHeader from "@/components/transporter/TransporterHeader";
 import React, { useState } from "react";
 import { FaMapMarkerAlt, FaTruckMoving, FaUserAlt, FaRoute } from "react-icons/fa";
 import { IoMdSpeedometer } from "react-icons/io";
-import { MdAccessTimeFilled, MdClose } from "react-icons/md";
+import { MdAccessTimeFilled, MdClose,MdPeople} from "react-icons/md";
 
 export default function AssignedTrips() {
   const [showModal, setShowModal] = useState(false);
@@ -18,7 +18,7 @@ export default function AssignedTrips() {
       route: "Indore → Pune",
       status: "In Transit",
       eta: "3 hrs 20 mins",
-      speed: "68 km/h",
+     
     },
     {
       id: 2,
@@ -27,7 +27,7 @@ export default function AssignedTrips() {
       route: "Bhopal → Jaipur",
       status: "Departed",
       eta: "5 hrs 15 mins",
-      speed: "62 km/h",
+     
     },
     {
       id: 3,
@@ -36,7 +36,7 @@ export default function AssignedTrips() {
       route: "Delhi → Surat",
       status: "Idle",
       eta: "Waiting for dispatch",
-      speed: "-",
+     
     },
   ];
 
@@ -48,9 +48,17 @@ export default function AssignedTrips() {
   return (
     <div className="bg-white min-h-screen">
       <TransporterHeader/>
-      <h1 className="text-3xl font-bold text-gray-800 mb-8 px-2 py-3">
-        Assigned Trips
-      </h1>
+      <div className="flex items-center justify-between mb-8 px-2 py-3">
+             <h1 className="text-2xl font-bold text-gray-800">
+              Assigned Trips
+             </h1>
+             <button
+              
+               className="bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition flex items-center gap-2"
+             >
+               <MdPeople size={20} /> Assign Trip
+             </button>
+           </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {trips.map((trip) => (
@@ -74,10 +82,7 @@ export default function AssignedTrips() {
                 <FaRoute className="text-blue-500" /> Route:{" "}
                 <span className="font-medium">{trip.route}</span>
               </p>
-              <p className="flex items-center gap-2">
-                <IoMdSpeedometer className="text-orange-500" /> Speed:{" "}
-                <span className="font-medium">{trip.speed}</span>
-              </p>
+              
               <p className="flex items-center gap-2">
                 <MdAccessTimeFilled className="text-purple-500" /> ETA:{" "}
                 <span className="font-medium">{trip.eta}</span>
