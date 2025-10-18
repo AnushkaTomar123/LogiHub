@@ -44,7 +44,7 @@ export default function TransporterDashboard() {
     <div className="space-y-8">
       <TransporterHeader/>
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center px-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Welcome back, {username} 👋</h1>
           <p className="text-gray-500 mt-1">Here’s your operational overview today.</p>

@@ -24,6 +24,7 @@ export default function TransporterSettings() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
+  
       <h2 className="text-2xl font-semibold mb-6">Transporter Settings</h2>
 
       {/* Notifications Section */}

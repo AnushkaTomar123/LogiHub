@@ -1,5 +1,6 @@
 "use client"
 
+import TransporterHeader from "@/components/transporter/TransporterHeader";
 import React, { useState } from "react";
 import { FaMapMarkerAlt, FaTruckMoving, FaUserAlt, FaRoute } from "react-icons/fa";
 import { IoMdSpeedometer } from "react-icons/io";
@@ -45,8 +46,9 @@ export default function AssignedTrips() {
   };
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen py-10 px-8 font-sans">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8 border-l-4 border-green-500 pl-3">
+    <div className="bg-white min-h-screen">
+      <TransporterHeader/>
+      <h1 className="text-3xl font-bold text-gray-800 mb-8 px-2 py-3">
         Assigned Trips
       </h1>
 
@@ -107,7 +109,7 @@ export default function AssignedTrips() {
       </div>
 
       {showModal && selectedTrip && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white w-[90%] max-w-lg rounded-2xl shadow-xl p-6 relative">
             <button
               onClick={() => setShowModal(false)}
@@ -133,7 +135,7 @@ export default function AssignedTrips() {
             <div className="mt-4 text-center">
               <button
                 onClick={() => setShowModal(false)}
-                className="bg-green-600 text-white px-6 py-2 rounded-xl hover:bg-green-700 transition-all"
+                className="bg--600 text-white px-6 py-2 rounded-xl hover:bg-green-700 transition-all"
               >
                 Close
               </button>

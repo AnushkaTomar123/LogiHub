@@ -1,9 +1,9 @@
-
 "use client";
 import { FormEvent, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Link from "next/link";
 
 const LoginForm = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -13,28 +13,28 @@ const LoginForm = () => {
     setLoading(true);
 
     const target = e.target as typeof e.target & {
-      username: { value: string };
+      email: { value: string };
       password: { value: string };
     };
 
-    const username = target.username.value;
+    const email = target.email.value;
     const password = target.password.value;
 
     try {
       const res = await axios.post(
         "http://localhost:8080/api/auth/login",
-        { username, password },
+        { email, password },
         { withCredentials: true }
       );
 
-      const { role, username: userName, email } = res.data;
+      const { role, username: userName, email: userEmail } = res.data;
 
       // 🔹 Save user data silently
       localStorage.setItem("username", userName);
-      localStorage.setItem("email", email);
+      localStorage.setItem("email", userEmail);
       localStorage.setItem("role", role);
 
-      // 🔹 Show success toast
+      // 🔹 Success toast
       toast.success("Login successful!", {
         position: "top-right",
         theme: "colored",
@@ -44,10 +44,9 @@ const LoginForm = () => {
         },
       });
 
-      // 🔹 Redirect based on role
+      // 🔹 Redirect by role
       setTimeout(() => {
-        // LoginForm.tsx me
-        if (role === "ADMIN"||role==="SUPER_ADMIN") {
+        if (role === "ADMIN" || role === "SUPER_ADMIN") {
           window.location.href = "/admin/dashboard";
         } else if (role === "CUSTOMER") {
           window.location.href = "/customer/dashboard";
@@ -59,9 +58,7 @@ const LoginForm = () => {
       }, 1800);
     } catch (err: any) {
       console.error(err);
-
-      // 🔹 Show error toast instead of alert
-      toast.error(err.response?.data?.message || "Login failed!.", {
+      toast.error(err.response?.data?.message || "Login failed!", {
         position: "top-right",
         theme: "colored",
         style: {
@@ -74,13 +71,13 @@ const LoginForm = () => {
     }
   };
 
-  // UI
+  // 🔹 UI
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-orange-50">
         <div className="flex w-full max-w-5xl bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100">
           {/* Left Panel */}
-          <div className="hidden md:flex flex-col justify-center items-start p-10 md:w-1/2 bg-gradient-to-br from-blue-600 to-cyan-600  text-white">
+          <div className="hidden md:flex flex-col justify-center items-start p-10 md:w-1/2 bg-gradient-to-br from-blue-600 to-cyan-600 text-white">
             <h1 className="text-4xl font-extrabold mb-6">
               Welcome to LogiHub 🚚
             </h1>
@@ -105,9 +102,9 @@ const LoginForm = () => {
 
             <form className="w-full space-y-4" onSubmit={handleLogin}>
               <input
-                name="username"
-                type="text"
-                placeholder="Username"
+                name="email"
+                type="email"
+                placeholder="Email address"
                 className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               />
@@ -124,9 +121,12 @@ const LoginForm = () => {
                   <input type="checkbox" className="accent-blue-500" />
                   <span>Remember me</span>
                 </label>
-                <a href="#" className="text-red-500 hover:underline">
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-red-500 hover:underline"
+                >
                   Forgot Password?
-                </a>
+                </Link>
               </div>
 
               <button
@@ -165,7 +165,6 @@ const LoginForm = () => {
         </div>
       </div>
 
-      {/* Toast container */}
       <ToastContainer
         position="top-right"
         autoClose={2500}

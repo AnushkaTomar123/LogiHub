@@ -1,5 +1,6 @@
 "use client";
 
+import TransporterHeader from "@/components/transporter/TransporterHeader";
 import React, { useState } from "react";
 import { FaRoute, FaClock, FaMapMarkerAlt, FaRoad } from "react-icons/fa";
 import { MdAddLocationAlt, MdClose, MdCheckCircle } from "react-icons/md";
@@ -51,9 +52,10 @@ export default function RoutePlanning() {
   };
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen py-10 px-8 font-sans">
+    <div className="bg-white min-h-screen ">
+      <TransporterHeader/>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 border-l-4 border-blue-600 pl-3">
+        <h1 className="text-3xl font-bold text-gray-800 px-2 py-3">
           Route Planning
         </h1>
         <button
@@ -113,7 +115,7 @@ export default function RoutePlanning() {
 
       {/* ------------------ ADD ROUTE MODAL ------------------ */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white w-[90%] max-w-md rounded-2xl shadow-xl p-6 relative">
             <button
               onClick={() => setShowModal(false)}
@@ -174,7 +176,7 @@ export default function RoutePlanning() {
 
               <button
                 onClick={handleAddRoute}
-                className="w-full bg-green-600 text-white py-2 rounded-xl hover:bg-green-700 transition-all flex items-center justify-center gap-2"
+                className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
               >
                 <MdCheckCircle size={20} /> Confirm Route
               </button>
