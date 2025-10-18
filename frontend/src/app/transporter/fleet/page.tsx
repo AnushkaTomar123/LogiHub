@@ -10,6 +10,7 @@ import {
   MdLocationOn,
   MdAccessTime,
 } from "react-icons/md";
+import TransporterHeader from "@/components/transporter/TransporterHeader";
 
 export default function FleetTracking() {
   const [username, setUsername] = useState("Transporter");
@@ -64,6 +65,7 @@ export default function FleetTracking() {
   return (
     <div className="space-y-8">
       {/* Header */}
+      <TransporterHeader/>
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Fleet Tracking 🚚</h1>

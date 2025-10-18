@@ -24,7 +24,7 @@ export default function TransporterHeader() {
   }, []);
 
   return (
-    <header className="w-full bg-white dark:bg-gray-800 shadow flex justify-between items-center px-6 py-3 sticky top-0 z-50">
+    <header className="w-full bg-white dark:bg-gray-800 shadow flex justify-between items-center px-4 py-3 sticky top-0 z-50">
       {/* Search Bar */}
       <div className="flex-1 max-w-md">
         <div className="relative">

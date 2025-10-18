@@ -1,5 +1,6 @@
 "use client";
 
+import TransporterHeader from "@/components/transporter/TransporterHeader";
 import React, { useState } from "react";
 import {
   FaCreditCard,
@@ -93,6 +94,7 @@ export default function Payments() {
 
   return (
     <div className="bg-[#f9fafb] min-h-screen px-8 py-10 font-sans">
+      <TransporterHeader/>
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-800 border-l-4 border-green-600 pl-3">
