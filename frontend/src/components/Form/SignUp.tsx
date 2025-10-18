@@ -3,6 +3,7 @@
 "use client";
 import { FormEvent, useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 
 function StatusMessage({ message, type, onClose }: { message: string, type: 'success' | 'error', onClose: () => void }) {
   const baseClasses = "fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300";
@@ -177,7 +178,9 @@ const Signup = () => {
             </button>
 
             <p className="text-center text-gray-500 mt-4 text-sm">
-              Already have an account? <a href="/login" className="text-blue-600 hover:underline font-medium">Login Here</a>
+              Already have an account?   <Link href="/auth/login" className="text-blue-600 hover:underline font-medium">
+      Login Here
+    </Link>
             </p>
           </form>
         </div>

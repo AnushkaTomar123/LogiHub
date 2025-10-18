@@ -67,7 +67,7 @@ export default function FleetTracking() {
       {/* Header */}
       <TransporterHeader/>
       <div className="flex justify-between items-center">
-        <div>
+        <div className="px-3">
           <h1 className="text-2xl font-bold text-gray-800">Fleet Tracking 🚚</h1>
           <p className="text-gray-500 mt-1">Monitor and track all your vehicles in real time.</p>
         </div>
