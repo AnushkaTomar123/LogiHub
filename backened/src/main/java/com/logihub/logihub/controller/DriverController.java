@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/drivers")
+@RequestMapping("/api/transporters/drivers")
 public class DriverController {
 
     @Autowired
@@ -28,7 +28,7 @@ public class DriverController {
     }
 
     // ✅ Get Drivers by Transporter
-    @GetMapping("/transporter/{transporterId}")
+    @GetMapping("/{transporterId}")
     public ResponseEntity<List<DriverDTO>> getDriversByTransporter(@PathVariable Long transporterId) {
         return ResponseEntity.ok(driverService.getDriversByTransporter(transporterId));
     }
