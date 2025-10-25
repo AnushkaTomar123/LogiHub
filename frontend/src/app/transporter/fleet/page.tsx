@@ -32,28 +32,28 @@ export default function FleetTracking() {
   const [model, setModel] = useState("");
   const [adding, setAdding] = useState(false);
 
-  // Step 1: Fetch transporterId using email
+  // 1️⃣ Fetch transporter by email from backend
   useEffect(() => {
     const fetchTransporter = async () => {
       const email = localStorage.getItem("email");
-      if (!email) return alert("Email not found. Login again.");
+      if (!email) return alert("Email not found. Please login again.");
 
       try {
-        const res = await axios.get(
-          `http://localhost:8080/api/transporters/by-email?email=${email}`
-        );
-        setTransporterId(res.data.id);
-        localStorage.setItem("transporterId", res.data.id.toString());
-        setUsername(res.data.user.username);
+        const res = await axios.get(`http://localhost:8080/api/transporters/by-email?email=${email}`);
+        const transporter = res.data;
+        setTransporterId(transporter.id);
+        localStorage.setItem("transporterId", transporter.id.toString());
+        setUsername(transporter.user.username);
       } catch (err: any) {
         console.error("Error fetching transporter:", err.response || err.message);
         alert("Failed to fetch transporter details.");
       }
     };
+
     fetchTransporter();
   }, []);
 
-  // Step 2: Fetch vehicles once transporterId is available
+  // 2️⃣ Fetch vehicles once transporterId is available
   useEffect(() => {
     if (transporterId) fetchVehicles(transporterId);
   }, [transporterId]);
@@ -61,48 +61,50 @@ export default function FleetTracking() {
   const fetchVehicles = async (id: number) => {
     setLoading(true);
     try {
-      const res = await axios.get<Vehicle[]>(
-        `http://localhost:8080/api/vehicles/transporter/${id}`
-      );
+      const res = await axios.get<Vehicle[]>(`http://localhost:8080/api/vehicles/transporter/${id}`);
       setVehicles(res.data);
     } catch (err) {
       console.error("Error fetching vehicles:", err);
+      alert("Failed to fetch vehicles.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Step 3: Add vehicle
+  // 3️⃣ Add vehicle
   const handleAddVehicle = async (e: FormEvent) => {
     e.preventDefault();
-    if (!transporterId) return alert("Transporter not ready yet.");
+    if (!transporterId) return alert("Transporter info not ready yet.");
 
     setAdding(true);
     try {
       await axios.post(`http://localhost:8080/api/vehicles/add`, {
         vehicleNumber,
-        model,
         vehicleType,
+        model,
         transporterId,
       });
 
+      // Reset form
       setVehicleNumber("");
       setModel("");
       setVehicleType("Active");
+
+      // Refresh vehicles
       fetchVehicles(transporterId);
     } catch (err: any) {
       console.error("Error adding vehicle:", err.response?.data || err.message);
-      alert("Failed to add vehicle. Check console.");
+      alert("Failed to add vehicle. Check console for details.");
     } finally {
       setAdding(false);
     }
   };
 
-  // Vehicle Stats
+  // 🚦 Vehicle stats
   const totalVehicles = vehicles.length;
-  const activeVehicles = vehicles.filter((v) => v.vehicleType === "Active").length;
-  const idleVehicles = vehicles.filter((v) => v.vehicleType === "Idle").length;
-  const maintenanceVehicles = vehicles.filter((v) => v.vehicleType === "Maintenance").length;
+  const activeVehicles = vehicles.filter(v => v.vehicleType === "Active").length;
+  const idleVehicles = vehicles.filter(v => v.vehicleType === "Idle").length;
+  const maintenanceVehicles = vehicles.filter(v => v.vehicleType === "Maintenance").length;
 
   const stats = [
     { label: "Total Vehicles", value: totalVehicles, icon: MdLocalShipping, color: "bg-blue-100 text-blue-600" },
@@ -115,6 +117,7 @@ export default function FleetTracking() {
     <div className="space-y-8 bg-white min-h-screen">
       <TransporterHeader />
 
+      {/* Header */}
       <div className="flex justify-between items-center px-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Fleet Tracking 🚚</h1>
