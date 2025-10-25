@@ -1,12 +1,14 @@
 package com.logihub.logihub.service;
 
 import com.logihub.logihub.dto.VehicleDTO;
+import com.logihub.logihub.dto.VehicleResponseDTO;
+
 import java.util.List;
 
 public interface VehicleService {
-    VehicleDTO addVehicle(VehicleDTO vehicleDTO);
-    List<VehicleDTO> getAllVehicles();
-    List<VehicleDTO> getVehiclesByTransporter(Long transporterId);
-    VehicleDTO updateVehicle(Long id, VehicleDTO vehicleDTO);
+    VehicleResponseDTO addVehicle(VehicleDTO vehicleDTO);
+    List<VehicleResponseDTO> getAllVehicles();
+    List<VehicleResponseDTO> getVehiclesByTransporter(Long transporterId);
+    VehicleResponseDTO updateVehicle(Long id, VehicleDTO vehicleDTO);
     void deleteVehicle(Long id);
 }
