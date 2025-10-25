@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public class CustomerDTO {
 
-    private String userEmail;     // to auto fetch User from email
+    private String userEmail;
     private String contactNo;
     private String address;
     private String city;

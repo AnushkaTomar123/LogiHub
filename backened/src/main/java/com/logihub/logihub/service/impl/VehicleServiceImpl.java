@@ -1,6 +1,7 @@
 package com.logihub.logihub.service.impl;
 
 import com.logihub.logihub.dto.VehicleDTO;
+import com.logihub.logihub.dto.VehicleResponseDTO;
 import com.logihub.logihub.entity.Transporter;
 import com.logihub.logihub.entity.Vehicle;
 import com.logihub.logihub.repository.TransporterRepository;
@@ -26,23 +27,26 @@ public class VehicleServiceImpl implements VehicleService {
     private ModelMapper modelMapper;
 
     @Override
-    public VehicleDTO addVehicle(VehicleDTO vehicleDTO) {
+    public VehicleResponseDTO addVehicle(VehicleDTO vehicleDTO) {
         Transporter transporter = transporterRepository.findById(vehicleDTO.getTransporterId())
                 .orElseThrow(() -> new RuntimeException("Transporter not found with ID: " + vehicleDTO.getTransporterId()));
 
         Vehicle vehicle = modelMapper.map(vehicleDTO, Vehicle.class);
+        vehicle.setId(null);
         vehicle.setTransporter(transporter);
 
         Vehicle saved = vehicleRepository.save(vehicle);
-        return modelMapper.map(saved, VehicleDTO.class);
+        VehicleResponseDTO response = modelMapper.map(saved, VehicleResponseDTO.class);
+        response.setTransporterId(transporter.getId());
+        return response;
     }
 
     @Override
-    public List<VehicleDTO> getAllVehicles() {
+    public List<VehicleResponseDTO> getAllVehicles() {
         return vehicleRepository.findAll()
                 .stream()
                 .map(vehicle -> {
-                    VehicleDTO dto = modelMapper.map(vehicle, VehicleDTO.class);
+                    VehicleResponseDTO dto = modelMapper.map(vehicle, VehicleResponseDTO.class);
                     dto.setTransporterId(vehicle.getTransporter().getId());
                     return dto;
                 })
@@ -50,11 +54,11 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public List<VehicleDTO> getVehiclesByTransporter(Long transporterId) {
+    public List<VehicleResponseDTO> getVehiclesByTransporter(Long transporterId) {
         return vehicleRepository.findByTransporterId(transporterId)
                 .stream()
                 .map(vehicle -> {
-                    VehicleDTO dto = modelMapper.map(vehicle, VehicleDTO.class);
+                    VehicleResponseDTO dto = modelMapper.map(vehicle, VehicleResponseDTO.class);
                     dto.setTransporterId(vehicle.getTransporter().getId());
                     return dto;
                 })
@@ -62,7 +66,7 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public VehicleDTO updateVehicle(Long id, VehicleDTO vehicleDTO) {
+    public VehicleResponseDTO updateVehicle(Long id, VehicleDTO vehicleDTO) {
         Vehicle existing = vehicleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Vehicle not found with ID: " + id));
 
@@ -71,7 +75,9 @@ public class VehicleServiceImpl implements VehicleService {
         existing.setModel(vehicleDTO.getModel());
 
         Vehicle updated = vehicleRepository.save(existing);
-        return modelMapper.map(updated, VehicleDTO.class);
+        VehicleResponseDTO response = modelMapper.map(updated, VehicleResponseDTO.class);
+        response.setTransporterId(updated.getTransporter().getId());
+        return response;
     }
 
     @Override
