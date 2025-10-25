@@ -17,9 +17,9 @@ public class TransporterController {
 
     // Create Transporter (multipart form)
     @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<String> createTransporter(@ModelAttribute TransporterDTO dto) {
-        transporterService.createTransporter(dto);
-        return ResponseEntity.ok("Transporter registered successfully!");
+    public ResponseEntity<Transporter> createTransporter(@ModelAttribute TransporterDTO dto) {
+        Transporter savedTransporter = transporterService.createTransporter(dto);
+        return ResponseEntity.ok(savedTransporter);
     }
 
     // Update Transporter

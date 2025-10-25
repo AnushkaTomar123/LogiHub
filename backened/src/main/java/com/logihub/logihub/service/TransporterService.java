@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface TransporterService {
 
-    void createTransporter(TransporterDTO dto);
+    Transporter createTransporter(TransporterDTO dto);
 
     Transporter updateTransporter(Long id, TransporterDTO dto);
 
