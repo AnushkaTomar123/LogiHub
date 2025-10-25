@@ -1,6 +1,7 @@
 package com.logihub.logihub.service.impl;
 
 import com.logihub.logihub.dto.DriverDTO;
+import com.logihub.logihub.dto.DriverResponseDTO;
 import com.logihub.logihub.entity.Driver;
 import com.logihub.logihub.entity.Transporter;
 import com.logihub.logihub.repository.DriverRepository;
@@ -26,22 +27,27 @@ public class DriverServiceImpl implements DriverService {
     private ModelMapper modelMapper;
 
     @Override
-    public DriverDTO addDriver(DriverDTO driverDTO) {
+    public DriverResponseDTO addDriver(DriverDTO driverDTO) {
         Transporter transporter = transporterRepository.findById(driverDTO.getTransporterId())
                 .orElseThrow(() -> new RuntimeException("Transporter not found with ID: " + driverDTO.getTransporterId()));
 
+        // Map DTO -> Entity
         Driver driver = modelMapper.map(driverDTO, Driver.class);
         driver.setTransporter(transporter);
+        driver.setId(null); // ensure new driver
 
+        // Save and return DTO
         Driver saved = driverRepository.save(driver);
-        return modelMapper.map(saved, DriverDTO.class);
+        DriverResponseDTO response = modelMapper.map(saved, DriverResponseDTO.class);
+        response.setTransporterId(transporter.getId());
+        return response;
     }
 
     @Override
-    public List<DriverDTO> getAllDrivers() {
+    public List<DriverResponseDTO> getAllDrivers() {
         return driverRepository.findAll().stream()
                 .map(driver -> {
-                    DriverDTO dto = modelMapper.map(driver, DriverDTO.class);
+                    DriverResponseDTO dto = modelMapper.map(driver, DriverResponseDTO.class);
                     dto.setTransporterId(driver.getTransporter().getId());
                     return dto;
                 })
@@ -49,10 +55,10 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public List<DriverDTO> getDriversByTransporter(Long transporterId) {
+    public List<DriverResponseDTO> getDriversByTransporter(Long transporterId) {
         return driverRepository.findByTransporterId(transporterId).stream()
                 .map(driver -> {
-                    DriverDTO dto = modelMapper.map(driver, DriverDTO.class);
+                    DriverResponseDTO dto = modelMapper.map(driver, DriverResponseDTO.class);
                     dto.setTransporterId(driver.getTransporter().getId());
                     return dto;
                 })
@@ -60,7 +66,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverDTO updateDriver(Long id, DriverDTO driverDTO) {
+    public DriverResponseDTO updateDriver(Long id, DriverDTO driverDTO) {
         Driver existing = driverRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Driver not found with ID: " + id));
 
@@ -69,7 +75,9 @@ public class DriverServiceImpl implements DriverService {
         existing.setPhoneNumber(driverDTO.getPhoneNumber());
 
         Driver updated = driverRepository.save(existing);
-        return modelMapper.map(updated, DriverDTO.class);
+        DriverResponseDTO response = modelMapper.map(updated, DriverResponseDTO.class);
+        response.setTransporterId(updated.getTransporter().getId());
+        return response;
     }
 
     @Override
