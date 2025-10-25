@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { motion } from "framer-motion";
 import {
   MdLocalShipping,
@@ -13,24 +14,82 @@ import TransporterHeader from "@/components/transporter/TransporterHeader";
 
 export default function TransporterDashboard() {
   const [username, setUsername] = useState("Transporter");
+  const [transporterId, setTransporterId] = useState<number | null>(null);
 
   useEffect(() => {
+    // Get username from localStorage
     const storedName = localStorage.getItem("username");
     if (storedName) setUsername(storedName);
+
+    // Fetch transporter by email and store transporterId
+    const storedEmail = localStorage.getItem("email");
+    if (storedEmail) {
+      axios
+        .get(`http://localhost:8080/api/transporters/by-email/${storedEmail}`)
+        .then((res) => {
+          const id = res.data.transporterId;
+          setTransporterId(id);
+          localStorage.setItem("transporterId", id);
+          console.log("✅ Transporter ID fetched successfully:", id);
+        })
+        .catch((err) =>
+          console.error("❌ Error fetching transporter by email:", err)
+        );
+    }
   }, []);
 
   const stats = [
-    { label: "Total Trips", value: 124, icon: MdOutlineRoute, color: "bg-blue-100 text-blue-600" },
-    { label: "Active Drivers", value: 18, icon: MdPeople, color: "bg-green-100 text-green-600" },
-    { label: "Active Vehicles", value: 12, icon: MdLocalShipping, color: "bg-yellow-100 text-yellow-600" },
-    { label: "Pending Payments", value: "₹52,340", icon: MdCurrencyRupee, color: "bg-red-100 text-red-600" },
+    {
+      label: "Total Trips",
+      value: 124,
+      icon: MdOutlineRoute,
+      color: "bg-blue-100 text-blue-600",
+    },
+    {
+      label: "Active Drivers",
+      value: 18,
+      icon: MdPeople,
+      color: "bg-green-100 text-green-600",
+    },
+    {
+      label: "Active Vehicles",
+      value: 12,
+      icon: MdLocalShipping,
+      color: "bg-yellow-100 text-yellow-600",
+    },
+    {
+      label: "Pending Payments",
+      value: "₹52,340",
+      icon: MdCurrencyRupee,
+      color: "bg-red-100 text-red-600",
+    },
   ];
 
   const deliveries = [
-    { id: "#4521", route: "Indore → Bhopal", status: "Delivered", date: "15 Oct 2025" },
-    { id: "#4522", route: "Delhi → Jaipur", status: "In Transit", date: "15 Oct 2025" },
-    { id: "#4523", route: "Pune → Mumbai", status: "Delayed", date: "14 Oct 2025" },
-    { id: "#4524", route: "Lucknow → Kanpur", status: "Delivered", date: "14 Oct 2025" },
+    {
+      id: "#4521",
+      route: "Indore → Bhopal",
+      status: "Delivered",
+      date: "15 Oct 2025",
+    },
+    {
+      id: "#4522",
+      route: "Delhi → Jaipur",
+      status: "In Transit",
+      date: "15 Oct 2025",
+    },
+    {
+      id: "#4523",
+      route: "Pune → Mumbai",
+      status: "Delayed",
+      date: "14 Oct 2025",
+    },
+    {
+      id: "#4524",
+      route: "Lucknow → Kanpur",
+      status: "Delivered",
+      date: "14 Oct 2025",
+    },
   ];
 
   const drivers = [
@@ -42,12 +101,22 @@ export default function TransporterDashboard() {
 
   return (
     <div className="space-y-8">
-      <TransporterHeader/>
+      <TransporterHeader />
+
       {/* Header */}
       <div className="flex justify-between items-center px-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Welcome back, {username} 👋</h1>
-          <p className="text-gray-500 mt-1">Here’s your operational overview today.</p>
+          <h1 className="text-2xl font-bold text-gray-800">
+            Welcome back, {username} 👋
+          </h1>
+          <p className="text-gray-500 mt-1">
+            Here’s your operational overview today.
+          </p>
+          {transporterId && (
+            <p className="text-sm text-gray-400 mt-1">
+              Transporter ID: <span className="font-medium">{transporterId}</span>
+            </p>
+          )}
         </div>
         <p className="text-gray-500 text-sm">
           {new Date().toLocaleDateString("en-IN", {
@@ -82,13 +151,15 @@ export default function TransporterDashboard() {
         ))}
       </div>
 
-      {/* Trip Performance (simple custom chart look) */}
+      {/* Trip Performance */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm"
       >
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Trip Performance (Last 7 Days)</h2>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+          Trip Performance (Last 7 Days)
+        </h2>
         <div className="flex items-end gap-3 h-40">
           {[50, 80, 65, 100, 75, 90, 60].map((value, i) => (
             <div
@@ -111,7 +182,9 @@ export default function TransporterDashboard() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm"
       >
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Recent Deliveries</h2>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+          Recent Deliveries
+        </h2>
         <table className="w-full text-sm text-left border-collapse">
           <thead>
             <tr className="text-gray-500 border-b">
@@ -171,13 +244,17 @@ export default function TransporterDashboard() {
               <div className="flex items-center gap-2">
                 <MdCircle
                   className={`${
-                    driver.status === "Online" ? "text-green-500" : "text-gray-400"
+                    driver.status === "Online"
+                      ? "text-green-500"
+                      : "text-gray-400"
                   }`}
                   size={10}
                 />
                 <span
                   className={`text-sm ${
-                    driver.status === "Online" ? "text-green-600" : "text-gray-500"
+                    driver.status === "Online"
+                      ? "text-green-600"
+                      : "text-gray-500"
                   }`}
                 >
                   {driver.status}
