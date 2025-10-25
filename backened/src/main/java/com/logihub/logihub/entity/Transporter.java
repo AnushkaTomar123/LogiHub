@@ -3,6 +3,9 @@ package com.logihub.logihub.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "transporters")
 @Data
@@ -54,4 +57,7 @@ public class Transporter {
 //
 //    @Column(nullable = false)
 //    private Boolean active = true;
+
+    @OneToMany(mappedBy = "transporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Driver> drivers = new ArrayList<>();
 }
