@@ -93,6 +93,11 @@ public class TransporterServiceImpl implements TransporterService {
         transporterRepository.deleteById(id);
     }
 
+    @Override
+    public Optional<Transporter> getTransporterByUserEmail(String email) {
+        return transporterRepository.findByUserEmail(email);
+    }
+
     // 🔹 Helper method to upload to Cloudinary
     private String uploadToCloudinary(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(),

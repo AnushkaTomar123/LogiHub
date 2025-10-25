@@ -47,4 +47,11 @@ public class TransporterController {
         transporterService.deleteTransporter(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/by-email")
+    public ResponseEntity<Transporter> getTransporterByUserEmail(@RequestParam String email) {
+        return transporterService.getTransporterByUserEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
