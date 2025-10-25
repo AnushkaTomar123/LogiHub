@@ -1,6 +1,7 @@
 package com.logihub.logihub.controller;
 
 import com.logihub.logihub.dto.VehicleDTO;
+import com.logihub.logihub.dto.VehicleResponseDTO;
 import com.logihub.logihub.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,25 +18,25 @@ public class VehicleController {
 
     // ✅ Add new vehicle
     @PostMapping("/add")
-    public ResponseEntity<VehicleDTO> addVehicle(@RequestBody VehicleDTO vehicleDTO) {
+    public ResponseEntity<VehicleResponseDTO> addVehicle(@RequestBody VehicleDTO vehicleDTO) {
         return ResponseEntity.ok(vehicleService.addVehicle(vehicleDTO));
     }
 
     // ✅ Get all vehicles
     @GetMapping("/all")
-    public ResponseEntity<List<VehicleDTO>> getAllVehicles() {
+    public ResponseEntity<List<VehicleResponseDTO>> getAllVehicles() {
         return ResponseEntity.ok(vehicleService.getAllVehicles());
     }
 
     // ✅ Get vehicles by transporter
     @GetMapping("/transporter/{transporterId}")
-    public ResponseEntity<List<VehicleDTO>> getVehiclesByTransporter(@PathVariable Long transporterId) {
+    public ResponseEntity<List<VehicleResponseDTO>> getVehiclesByTransporter(@PathVariable Long transporterId) {
         return ResponseEntity.ok(vehicleService.getVehiclesByTransporter(transporterId));
     }
 
     // ✅ Update vehicle
     @PutMapping("/{id}")
-    public ResponseEntity<VehicleDTO> updateVehicle(@PathVariable Long id, @RequestBody VehicleDTO vehicleDTO) {
+    public ResponseEntity<VehicleResponseDTO> updateVehicle(@PathVariable Long id, @RequestBody VehicleDTO vehicleDTO) {
         return ResponseEntity.ok(vehicleService.updateVehicle(id, vehicleDTO));
     }
 

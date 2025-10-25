@@ -62,4 +62,8 @@ public class Transporter {
     @OneToMany(mappedBy = "transporter", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Driver> drivers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "transporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Vehicle> vehicles = new ArrayList<>();
 }
