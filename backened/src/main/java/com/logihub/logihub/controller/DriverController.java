@@ -1,6 +1,7 @@
 package com.logihub.logihub.controller;
 
 import com.logihub.logihub.dto.DriverDTO;
+import com.logihub.logihub.dto.DriverResponseDTO;
 import com.logihub.logihub.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,25 +18,25 @@ public class DriverController {
 
     // ✅ Add Driver
     @PostMapping("/add")
-    public ResponseEntity<DriverDTO> addDriver(@RequestBody DriverDTO driverDTO) {
+    public ResponseEntity<DriverResponseDTO> addDriver(@RequestBody DriverDTO driverDTO) {
         return ResponseEntity.ok(driverService.addDriver(driverDTO));
     }
 
     // ✅ Get All Drivers
     @GetMapping("/all")
-    public ResponseEntity<List<DriverDTO>> getAllDrivers() {
+    public ResponseEntity<List<DriverResponseDTO>> getAllDrivers() {
         return ResponseEntity.ok(driverService.getAllDrivers());
     }
 
     // ✅ Get Drivers by Transporter
     @GetMapping("/{transporterId}")
-    public ResponseEntity<List<DriverDTO>> getDriversByTransporter(@PathVariable Long transporterId) {
+    public ResponseEntity<List<DriverResponseDTO>> getDriversByTransporter(@PathVariable Long transporterId) {
         return ResponseEntity.ok(driverService.getDriversByTransporter(transporterId));
     }
 
     // ✅ Update Driver
     @PutMapping("/{id}")
-    public ResponseEntity<DriverDTO> updateDriver(@PathVariable Long id, @RequestBody DriverDTO driverDTO) {
+    public ResponseEntity<DriverResponseDTO> updateDriver(@PathVariable Long id, @RequestBody DriverDTO driverDTO) {
         return ResponseEntity.ok(driverService.updateDriver(id, driverDTO));
     }
 
