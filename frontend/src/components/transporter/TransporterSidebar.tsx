@@ -50,9 +50,9 @@ export default function TransporterSidebar() {
           label: "Customer Management",
           icon: MdPeopleAlt,
           subItems: [
-            { href: "/transporter/customers/requests", label: "Customer Requests", icon: MdRequestPage },
-            { href: "/transporter/customers/chats", label: "Customer Chats", icon: MdChat },
-            { href: "/transporter/customers/history", label: "Feedback / History", icon: MdHistory },
+            { href: "/transporter/custmgmnt/cus-req", label: "Customer Requests", icon: MdRequestPage },
+            { href: "/transporter/custmgmnt/cus-chat", label: "Customer Chats", icon: MdChat },
+            { href: "/transporter/custmgmnt/cus-feedback", label: "Feedback / History", icon: MdHistory },
           ],
         },
       ],

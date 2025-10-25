@@ -3,66 +3,109 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
-import {
-  FaPhoneAlt,
-  FaIdCard,
-} from "react-icons/fa";
-import {
-  MdDeleteForever,
-  MdClose,
-  MdPeople,
-} from "react-icons/md";
+import { FaPhoneAlt } from "react-icons/fa";
+import { MdDeleteForever, MdClose, MdPeople, MdVisibility } from "react-icons/md";
 import TransporterHeader from "@/components/transporter/TransporterHeader";
 
-export default function DriverManagement() {
-  const [driverList, setDriverList] = useState<any[]>([]);
-  const [showProfile, setShowProfile] = useState(false);
-  const [showRemove, setShowRemove] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedDriver, setSelectedDriver] = useState<any>(null);
+interface Driver {
+  id: number;
+  driverName: string;
+  licenseNumber: string;
+  phoneNumber: string;
+  transporterId?: number;
+}
 
-  // Form state for adding a new driver
+export default function DriverManagement() {
+  const [driverList, setDriverList] = useState<Driver[]>([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showRemove, setShowRemove] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
   const [newDriver, setNewDriver] = useState({
     driverName: "",
     licenseNumber: "",
     phoneNumber: "",
-    transporterId: 1, // later dynamically fetched from login
   });
+  const [transporterId, setTransporterId] = useState<number | null>(null);
 
-  // ✅ Fetch all drivers on mount
+  // ✅ Fetch Transporter by Email
   useEffect(() => {
-    fetchDrivers();
+    const fetchTransporterByEmail = async () => {
+      const email = localStorage.getItem("email");
+      if (!email) {
+        alert("Email not found in localStorage. Please log in again.");
+        return;
+      }
+
+      try {
+        const res = await axios.get(
+          `http://localhost:8080/api/transporters/by-email?email=${email}`
+        );
+        console.log("✅ Transporter fetched:", res.data);
+        const id = res.data.id;
+        setTransporterId(id);
+        localStorage.setItem("transporterId", id.toString());
+      } catch (err) {
+        console.error("❌ Error fetching transporter:", err);
+        alert("Failed to fetch transporter details.");
+      }
+    };
+
+    fetchTransporterByEmail();
   }, []);
 
-  const fetchDrivers = async () => {
+  // ✅ Fetch Drivers when transporterId is ready
+  useEffect(() => {
+    if (transporterId) fetchDrivers(transporterId);
+  }, [transporterId]);
+
+  const fetchDrivers = async (id: number) => {
     try {
-      const res = await axios.get("http://localhost:8080/api/drivers/all");
+      const res = await axios.get<Driver[]>(
+        `http://localhost:8080/api/transporters/drivers/${id}`
+      );
       setDriverList(res.data);
+      console.log("✅ Drivers fetched:", res.data);
     } catch (err) {
       console.error("❌ Error fetching drivers:", err);
     }
   };
 
-  // ✅ Add new driver
+  // ✅ Add Driver
   const handleAddDriver = async (e: React.FormEvent) => {
     e.preventDefault();
+    const id = transporterId || Number(localStorage.getItem("transporterId"));
+    if (!id) {
+      alert("Transporter ID not found yet. Please wait.");
+      return;
+    }
+
+    const driverToAdd = { ...newDriver, transporterId: id };
     try {
-      await axios.post("http://localhost:8080/api/drivers/add", newDriver, {
-        headers: { "Content-Type": "application/json" },
-      });
-      fetchDrivers();
+      const res = await axios.post(
+        "http://localhost:8080/api/transporters/drivers/add",
+        driverToAdd,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      console.log("✅ Driver added:", res.data);
+      fetchDrivers(id);
       setShowAddModal(false);
-      setNewDriver({ driverName: "", licenseNumber: "", phoneNumber: "", transporterId: 1 });
+      setNewDriver({ driverName: "", licenseNumber: "", phoneNumber: "" });
     } catch (err) {
       console.error("❌ Error adding driver:", err);
+      alert("Failed to add driver.");
     }
   };
 
-  // ✅ Delete driver
+  // ✅ Delete Driver
   const confirmRemoveDriver = async () => {
+    if (!selectedDriver) return;
     try {
-      await axios.delete(`http://localhost:8080/api/drivers/${selectedDriver.id}`);
-      fetchDrivers();
+      await axios.delete(
+        `http://localhost:8080/api/transporters/drivers/${selectedDriver.id}`
+      );
+      console.log("🗑️ Driver deleted!");
+      if (transporterId) fetchDrivers(transporterId);
       setShowRemove(false);
       setSelectedDriver(null);
     } catch (err) {
@@ -74,7 +117,6 @@ export default function DriverManagement() {
     <div className="bg-white min-h-screen">
       <TransporterHeader />
 
-      {/* Page Header */}
       <div className="flex items-center justify-between mb-8 px-2 py-3">
         <h1 className="text-2xl font-bold text-gray-800">Driver Management</h1>
         <button
@@ -85,7 +127,6 @@ export default function DriverManagement() {
         </button>
       </div>
 
-      {/* ✅ Driver Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 pb-10">
         {driverList.length > 0 ? (
           driverList.map((driver) => (
@@ -111,11 +152,9 @@ export default function DriverManagement() {
                 </div>
               </div>
 
-              <div className="text-gray-700 text-sm">
-                <p className="flex items-center gap-2">
-                  <FaPhoneAlt className="text-green-500" /> {driver.phoneNumber}
-                </p>
-              </div>
+              <p className="flex items-center gap-2 text-gray-700 text-sm">
+                <FaPhoneAlt className="text-green-500" /> {driver.phoneNumber}
+              </p>
 
               <div className="flex gap-3 mt-5">
                 <button
@@ -123,11 +162,10 @@ export default function DriverManagement() {
                     setSelectedDriver(driver);
                     setShowProfile(true);
                   }}
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition-all text-sm font-medium"
+                  className="flex-1 bg-yellow-500 text-white py-2 rounded-xl hover:bg-yellow-600 transition-all text-sm font-medium flex items-center justify-center gap-1"
                 >
-                  View Profile
+                  <MdVisibility size={18} /> View Profile
                 </button>
-
                 <button
                   onClick={() => {
                     setSelectedDriver(driver);
@@ -141,13 +179,15 @@ export default function DriverManagement() {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 col-span-full text-center">No drivers found.</p>
+          <p className="text-gray-500 col-span-full text-center">
+            No drivers found.
+          </p>
         )}
       </div>
 
-      {/* ✅ Add New Driver Modal */}
+      {/* Add Driver Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-white bg-opacity-40 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md relative">
             <button
               onClick={() => setShowAddModal(false)}
@@ -161,53 +201,36 @@ export default function DriverManagement() {
             </h3>
 
             <form onSubmit={handleAddDriver} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Driver Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter driver name"
-                  value={newDriver.driverName}
-                  onChange={(e) =>
-                    setNewDriver({ ...newDriver, driverName: e.target.value })
-                  }
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  License Number
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter license number"
-                  value={newDriver.licenseNumber}
-                  onChange={(e) =>
-                    setNewDriver({ ...newDriver, licenseNumber: e.target.value })
-                  }
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter phone number"
-                  value={newDriver.phoneNumber}
-                  onChange={(e) =>
-                    setNewDriver({ ...newDriver, phoneNumber: e.target.value })
-                  }
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  required
-                />
-              </div>
+              <input
+                type="text"
+                placeholder="Driver Name"
+                value={newDriver.driverName}
+                onChange={(e) =>
+                  setNewDriver({ ...newDriver, driverName: e.target.value })
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                required
+              />
+              <input
+                type="text"
+                placeholder="License Number"
+                value={newDriver.licenseNumber}
+                onChange={(e) =>
+                  setNewDriver({ ...newDriver, licenseNumber: e.target.value })
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Phone Number"
+                value={newDriver.phoneNumber}
+                onChange={(e) =>
+                  setNewDriver({ ...newDriver, phoneNumber: e.target.value })
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                required
+              />
 
               <div className="flex justify-end gap-3 mt-4">
                 <button
@@ -229,80 +252,61 @@ export default function DriverManagement() {
         </div>
       )}
 
-      {/* ✅ Profile Modal */}
+      {/* View Profile Modal */}
       {showProfile && selectedDriver && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white w-[90%] max-w-md rounded-2xl shadow-xl p-6 relative">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md relative">
             <button
               onClick={() => setShowProfile(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-black"
             >
               <MdClose size={24} />
             </button>
-
-            <div className="text-center">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+              Driver Profile
+            </h3>
+            <div className="flex flex-col items-center text-gray-700">
               <Image
                 src={`https://i.pravatar.cc/150?u=${selectedDriver.id}`}
-                alt={selectedDriver.driverName}
+                alt="Profile"
                 width={100}
                 height={100}
-                className="rounded-full mx-auto mb-3 border-2 border-gray-200"
+                className="rounded-full mb-4 border"
               />
-              <h2 className="text-xl font-semibold text-gray-800">
-                {selectedDriver.driverName}
-              </h2>
-              <p className="text-gray-600 mb-4">
-                License: {selectedDriver.licenseNumber}
-              </p>
-            </div>
-
-            <div className="text-gray-700 space-y-2">
-              <p className="flex items-center gap-2">
-                <FaPhoneAlt className="text-green-500" /> Contact:{" "}
-                <span className="font-medium">{selectedDriver.phoneNumber}</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <FaIdCard className="text-blue-500" /> ID:{" "}
-                <span className="font-medium">{selectedDriver.id}</span>
-              </p>
-            </div>
-
-            <div className="mt-5 text-center">
-              <button
-                onClick={() => setShowProfile(false)}
-                className="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition-all"
-              >
-                Close
-              </button>
+              <p><strong>Name:</strong> {selectedDriver.driverName}</p>
+              <p><strong>License No:</strong> {selectedDriver.licenseNumber}</p>
+              <p><strong>Phone:</strong> {selectedDriver.phoneNumber}</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* ✅ Remove Confirmation Modal */}
+      {/* Remove Driver Modal */}
       {showRemove && selectedDriver && (
-        <div className="fixed inset-0 bg-white bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-sm text-center">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              Remove Driver?
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md text-center relative">
+            <button
+              onClick={() => setShowRemove(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+            >
+              <MdClose size={24} />
+            </button>
+            <h3 className="text-lg font-semibold mb-4">
+              Remove {selectedDriver.driverName}?
             </h3>
-            <p className="text-gray-600 mb-5">
-              Are you sure you want to remove{" "}
-              <span className="font-semibold text-red-600">
-                {selectedDriver.driverName}
-              </span>
-              ?
+            <p className="text-gray-600 mb-6">
+              This action cannot be undone.
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex justify-center gap-4">
               <button
                 onClick={confirmRemoveDriver}
-                className="bg-red-600 text-white px-5 py-2 rounded-xl hover:bg-red-700"
+                className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700"
               >
                 Yes, Remove
               </button>
               <button
                 onClick={() => setShowRemove(false)}
-                className="bg-gray-200 text-gray-700 px-5 py-2 rounded-xl hover:bg-gray-300"
+                className="bg-gray-300 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-400"
               >
                 Cancel
               </button>
