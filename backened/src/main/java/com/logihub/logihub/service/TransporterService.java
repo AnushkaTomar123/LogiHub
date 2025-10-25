@@ -16,5 +16,7 @@ public interface TransporterService {
 
     Optional<Transporter> getTransporterById(Long id);
 
+    Optional<Transporter> getTransporterByUserEmail(String email);
+
     void deleteTransporter(Long id);
 }
