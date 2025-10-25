@@ -28,7 +28,7 @@ public class TransporterServiceImpl implements TransporterService {
     private final Cloudinary cloudinary;
 
     @Override
-    public void createTransporter(TransporterDTO dto) {
+    public Transporter createTransporter(TransporterDTO dto) {
         User user = userRepository.findByEmail(dto.getUserEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + dto.getUserEmail()));
 
@@ -51,7 +51,7 @@ public class TransporterServiceImpl implements TransporterService {
             throw new RuntimeException("Error processing uploaded files", e);
         }
 
-        transporterRepository.save(transporter);
+          return transporterRepository.save(transporter);
     }
 
     @Override
