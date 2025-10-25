@@ -1,10 +1,7 @@
 package com.logihub.logihub.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "customers")
@@ -12,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Customer {
 
     @Id
@@ -26,4 +25,5 @@ public class Customer {
     private String address;
     private String city;
     private String profilePhotoUrl;
+
 }

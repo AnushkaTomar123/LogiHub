@@ -1,5 +1,6 @@
 package com.logihub.logihub.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -59,5 +60,6 @@ public class Transporter {
 //    private Boolean active = true;
 
     @OneToMany(mappedBy = "transporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Driver> drivers = new ArrayList<>();
 }
