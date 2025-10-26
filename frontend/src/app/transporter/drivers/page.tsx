@@ -187,7 +187,7 @@ export default function DriverManagement() {
 
       {/* Add Driver Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-gray-100 bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md relative">
             <button
               onClick={() => setShowAddModal(false)}
@@ -254,7 +254,7 @@ export default function DriverManagement() {
 
       {/* View Profile Modal */}
       {showProfile && selectedDriver && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-gray-100 bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md relative">
             <button
               onClick={() => setShowProfile(false)}
@@ -283,7 +283,7 @@ export default function DriverManagement() {
 
       {/* Remove Driver Modal */}
       {showRemove && selectedDriver && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-gray-100 bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-[90%] max-w-md text-center relative">
             <button
               onClick={() => setShowRemove(false)}
