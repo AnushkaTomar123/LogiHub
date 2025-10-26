@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { motion } from "framer-motion";
 import {
@@ -11,6 +12,7 @@ import {
   MdCircle,
 } from "react-icons/md";
 import TransporterHeader from "@/components/transporter/TransporterHeader";
+import { FaUsers,FaTruckMoving } from "react-icons/fa";
 
 // Interfaces
 interface Driver {
@@ -27,6 +29,7 @@ interface Vehicle {
 }
 
 export default function TransporterDashboard() {
+  const router=useRouter();
   const [username, setUsername] = useState("Transporter");
   const [transporterId, setTransporterId] = useState<number | null>(null);
 
@@ -163,80 +166,110 @@ export default function TransporterDashboard() {
         ))}
       </div>
 
-      {/* Drivers Section */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm"
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col" // flex-col added for button placement
+>
+  <h2 className="text-lg font-semibold text-gray-800 mb-4">Driver Status</h2>
+  
+  {/* Display only the first 4 drivers */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4"> 
+    {drivers.slice(0, 4).map((driver) => ( // drivers.slice(0, 4) का उपयोग करके केवल पहले 4 ड्राइवर दिखाए गए हैं
+      <div
+        key={driver.id}
+        className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
       >
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Driver Status</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {drivers.map((driver) => (
-            <div
-              key={driver.id}
-              className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
-                  {driver.driverName.charAt(0)}
-                </div>
-                <div>
-                  <p className="font-medium text-gray-800">{driver.driverName}</p>
-                  <p className="text-sm text-gray-500">Truck Driver</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <MdCircle
-                  className={`${
-                    driver.status?.toLowerCase() === "online"
-                      ? "text-green-500"
-                      : "text-gray-400"
-                  }`}
-                  size={10}
-                />
-                <span
-                  className={`text-sm ${
-                    driver.status?.toLowerCase() === "online"
-                      ? "text-green-600"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {driver.status || "Offline"}
-                </span>
-              </div>
-            </div>
-          ))}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
+            {driver.driverName.charAt(0)}
+          </div>
+          <div>
+            <p className="font-medium text-gray-800">{driver.driverName}</p>
+            <p className="text-sm text-gray-500">Truck Driver</p>
+          </div>
         </div>
-      </motion.div>
+        <div className="flex items-center gap-2">
+          <MdCircle
+            className={`${
+              driver.status?.toLowerCase() === "online"
+                ? "text-green-500"
+                : "text-gray-400"
+            }`}
+            size={10}
+          />
+          <span
+            className={`text-sm ${
+              driver.status?.toLowerCase() === "online"
+                ? "text-green-600"
+                : "text-gray-500"
+            }`}
+          >
+            {driver.status || "Offline"}
+          </span>
+        </div>
+      </div>
+    ))}
+  </div>
 
+  {/* View All Button */}
+  {drivers.length > 4 && ( 
+    <button 
+      onClick={() =>router.push('/transporter/drivers')} // यहां नेविगेशन पाथ बदला गया है
+      className="w-full py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2 text-lg mt-2" 
+    >
+      <FaUsers /> View All Drivers ({drivers.length})
+    </button>
+  )}
+</motion.div>
       {/* Vehicles Section */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm"
-      >
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Vehicles</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left border-collapse">
-            <thead>
-              <tr className="text-gray-500 border-b">
-                <th className="py-2">Vehicle Number</th>
-                <th>Type</th>
-                <th>Model</th>
-              </tr>
-            </thead>
-            <tbody>
-              {vehicles.map((v) => (
-                <tr key={v.id} className="border-b hover:bg-gray-50">
-                  <td className="py-2 font-medium text-gray-800">{v.vehicleNumber}</td>
-                  <td>{v.vehicleType}</td>
-                  <td>{v.model}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </motion.div>
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex flex-col" // flex-col added for button placement
+>
+  <h2 className="text-lg font-semibold text-gray-800 mb-4">Vehicles</h2>
+  
+  <div className="overflow-x-auto">
+    <table className="w-full text-sm text-left border-collapse">
+      <thead>
+        <tr className="text-gray-500 border-b">
+          <th className="py-2">Vehicle Number</th>
+          <th>Type</th>
+          <th>Model</th>
+        </tr>
+      </thead>
+      <tbody>
+        {/* vehicles.slice(0, 4) का उपयोग करके केवल पहले 4 वाहन दिखाए गए हैं */}
+        {vehicles.slice(0, 4).map((v) => (
+          <tr key={v.id} className="border-b hover:bg-gray-50">
+            <td className="py-2 font-medium text-gray-800">{v.vehicleNumber}</td>
+            <td>{v.vehicleType}</td>
+            <td>{v.model}</td>
+          </tr>
+        ))}
+        {/* अगर vehicles array खाली है, तो एक खाली अवस्था (empty state) दिखाएँ */}
+        {vehicles.length === 0 && (
+          <tr>
+            <td colSpan="3" className="py-4 text-center text-gray-500">
+              No vehicles found.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+  
+  {/* View All Button - यह तभी दिखेगा जब 4 से ज़्यादा वाहन हों */}
+  {vehicles.length > 4 && (
+    <button 
+      onClick={() => router.push('/transporter/fleet')} // Navigation to the full fleet management page
+      className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2 text-lg mt-4" 
+    >
+      <FaTruckMoving /> View All Vehicles ({vehicles.length})
+    </button>
+  )}
+</motion.div>
     </div>
   );
 }
