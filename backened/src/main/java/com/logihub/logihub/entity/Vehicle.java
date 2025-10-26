@@ -16,9 +16,15 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING) // Enum ko DB me string ke form me store karega
+    private VehicleType vehicleType;
+
+    @Enumerated(EnumType.STRING)
+    private VehicleModel model;
+
     private String vehicleNumber;
-    private String vehicleType;
-    private String model;
+    private Double capacity;
+
     @ManyToOne
     @JoinColumn(name = "transporter_id", nullable = false)
     @JsonBackReference

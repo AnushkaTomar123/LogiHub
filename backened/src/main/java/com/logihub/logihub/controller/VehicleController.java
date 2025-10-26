@@ -2,11 +2,14 @@ package com.logihub.logihub.controller;
 
 import com.logihub.logihub.dto.VehicleDTO;
 import com.logihub.logihub.dto.VehicleResponseDTO;
+import com.logihub.logihub.entity.VehicleModel;
+import com.logihub.logihub.entity.VehicleType;
 import com.logihub.logihub.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -45,5 +48,17 @@ public class VehicleController {
     public ResponseEntity<String> deleteVehicle(@PathVariable Long id) {
         vehicleService.deleteVehicle(id);
         return ResponseEntity.ok("Vehicle deleted successfully");
+    }
+    @GetMapping("/api/vehicle/types")
+    public List<String> getVehicleTypes() {
+        return Arrays.stream(VehicleType.values())
+                .map(Enum::name)
+                .toList();
+    }
+    @GetMapping("/api/vehicle/models")
+    public List<String> getVehicleModels() {
+        return Arrays.stream(VehicleModel.values())
+                .map(Enum::name)
+                .toList();
     }
 }
