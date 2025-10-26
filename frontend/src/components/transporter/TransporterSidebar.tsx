@@ -58,9 +58,9 @@ export default function TransporterSidebar() {
       ],
     },
     {
-      title: "AI & FINANCE",
+      title: " FINANCE",
       items: [
-        { href: "/transporter/insights", label: "AI Insights", icon: MdFlashOn },
+        { href: "/transporter/freights", label: "Freight Opportunities", icon: MdFlashOn },
         {
           label: "Payments",
           icon: MdCurrencyRupee,
