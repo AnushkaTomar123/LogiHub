@@ -10,5 +10,6 @@ public class VehicleDTO {
     private String vehicleNumber;
     private String vehicleType;
     private String model;
+    private Double capacity;
     private Long transporterId;
 }
