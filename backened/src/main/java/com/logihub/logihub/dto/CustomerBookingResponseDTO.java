@@ -1,7 +1,7 @@
 package com.logihub.logihub.dto;
 
-import com.logihub.logihub.entity.BookingStatus;
-import com.logihub.logihub.entity.PaymentStatus;
+import com.logihub.logihub.enums.BookingStatus;
+import com.logihub.logihub.enums.PaymentStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;

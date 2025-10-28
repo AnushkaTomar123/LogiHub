@@ -1,5 +1,6 @@
 package com.logihub.logihub.entity;
 
+import com.logihub.logihub.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;

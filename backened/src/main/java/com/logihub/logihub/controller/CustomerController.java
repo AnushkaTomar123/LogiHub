@@ -50,4 +50,13 @@ public class CustomerController {
         customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
     }
+
+    // Get customer by user email
+    @GetMapping("/by-email")
+    public ResponseEntity<Customer> getCustomerByUserEmail(@RequestParam String email) {
+        return customerService.getCustomerByUserEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }

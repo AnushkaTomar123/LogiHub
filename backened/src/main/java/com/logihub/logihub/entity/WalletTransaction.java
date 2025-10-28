@@ -1,5 +1,7 @@
 package com.logihub.logihub.entity;
 
+import com.logihub.logihub.enums.TransactionType;
+import com.logihub.logihub.enums.WalletOwnerType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -18,12 +20,17 @@ public class WalletTransaction {
 
     private Long walletId;
 
-    private Double amount;
-
     @Enumerated(EnumType.STRING)
-    private TransactionType type; // CREDIT or DEBIT
+    private TransactionType transactionType; // ADD / TRANSFER
+
+    private Double amount;
 
     private String description;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime timestamp;
+
+    private Long relatedWalletId; // For transfer tracking
+
+    @Enumerated(EnumType.STRING)
+    private WalletOwnerType ownerType;
 }

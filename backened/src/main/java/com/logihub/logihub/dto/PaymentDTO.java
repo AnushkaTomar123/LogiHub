@@ -1,7 +1,7 @@
 package com.logihub.logihub.dto;
 
-import com.logihub.logihub.entity.PaymentStatus;
-import com.logihub.logihub.entity.PaymentType;
+import com.logihub.logihub.enums.PaymentStatus;
+import com.logihub.logihub.enums.PaymentType;
 import lombok.*;
 
 @Data

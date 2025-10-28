@@ -1,6 +1,7 @@
 package com.logihub.logihub.repository;
 
 import com.logihub.logihub.entity.*;
+import com.logihub.logihub.enums.WalletOwnerType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

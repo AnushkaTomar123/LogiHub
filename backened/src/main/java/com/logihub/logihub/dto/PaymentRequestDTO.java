@@ -1,6 +1,5 @@
 package com.logihub.logihub.dto;
 
-import com.logihub.logihub.entity.PaymentType;
 import lombok.*;
 
 @Data

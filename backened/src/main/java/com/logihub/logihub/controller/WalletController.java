@@ -1,36 +1,44 @@
 package com.logihub.logihub.controller;
 
-import com.logihub.logihub.entity.*;
-import com.logihub.logihub.repository.WalletRepository;
+import com.logihub.logihub.dto.*;
+import com.logihub.logihub.entity.Wallet;
+import com.logihub.logihub.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDateTime;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/wallets")
 @RequiredArgsConstructor
 public class WalletController {
 
-    private final WalletRepository walletRepository;
+    private final WalletService walletService;
 
     @PostMapping("/create")
-    public ResponseEntity<Wallet> createWallet(@RequestParam Long ownerId,
-                                               @RequestParam WalletOwnerType ownerType) {
-        Wallet wallet = Wallet.builder()
-                .ownerId(ownerId)
-                .ownerType(ownerType)
-                .balance(10000.0)
-                .lastUpdated(LocalDateTime.now())
-                .build();
+    public ResponseEntity<Wallet> createWallet(@RequestBody WalletRequestDTO request) {
+        return ResponseEntity.ok(walletService.createWallet(request));
+    }
 
-        return ResponseEntity.ok(walletRepository.save(wallet));
+    @PostMapping("/add-money")
+    public ResponseEntity<Wallet> addMoney(@RequestBody AddMoneyRequestDTO request) {
+        return ResponseEntity.ok(walletService.addMoney(request));
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<String> transferMoney(@RequestBody TransferMoneyRequestDTO request) {
+        return ResponseEntity.ok(walletService.transferMoney(request));
     }
 
     @GetMapping("/{ownerType}/{ownerId}")
-    public ResponseEntity<Wallet> getWallet(@PathVariable WalletOwnerType ownerType, @PathVariable Long ownerId) {
-        Wallet wallet = walletRepository.findByOwnerIdAndOwnerType(ownerId, ownerType)
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
-        return ResponseEntity.ok(wallet);
+    public ResponseEntity<Wallet> getWallet(@PathVariable String ownerType, @PathVariable Long ownerId) {
+        return ResponseEntity.ok(walletService.getWallet(ownerId, ownerType));
+    }
+
+    @GetMapping("/transactions/{ownerType}/{ownerId}")
+    public ResponseEntity<List<WalletTransactionResponseDTO>> getTransactionHistory(@PathVariable String ownerType,
+                                                                                    @PathVariable Long ownerId) {
+        return ResponseEntity.ok(walletService.getTransactionHistory(ownerId, ownerType));
     }
 }

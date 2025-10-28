@@ -1,6 +1,8 @@
 package com.logihub.logihub.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.logihub.logihub.enums.VehicleModel;
+import com.logihub.logihub.enums.VehicleType;
 import jakarta.persistence.*;
 import lombok.*;
 
