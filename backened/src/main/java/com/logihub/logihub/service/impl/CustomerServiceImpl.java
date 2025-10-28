@@ -94,4 +94,10 @@ public class CustomerServiceImpl implements CustomerService {
                 ObjectUtils.asMap("resource_type", "auto"));
         return uploadResult.get("secure_url").toString();
     }
+
+    @Override
+    public Optional<Customer> getCustomerByUserEmail(String email) {
+        return customerRepository.findByUserEmail(email);
+    }
+
 }
