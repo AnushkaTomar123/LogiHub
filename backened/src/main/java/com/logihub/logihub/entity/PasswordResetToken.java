@@ -23,4 +23,7 @@ public class PasswordResetToken {
     private User user;
 
     private LocalDateTime expiryDate;
+
+    @Column(nullable = false)
+    private boolean used = false;
 }
