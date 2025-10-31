@@ -2,6 +2,7 @@ package com.logihub.logihub.controller;
 
 import com.logihub.logihub.dto.CustomerBookingRequestDTO;
 import com.logihub.logihub.dto.CustomerBookingResponseDTO;
+import com.logihub.logihub.enums.BookingStatus;
 import com.logihub.logihub.service.CustomerBookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class CustomerBookingController {
 
     // Get bookings by status (e.g., REQUESTED, ACCEPTED)
     @GetMapping("/status")
-    public List<CustomerBookingResponseDTO> getBookingsByStatus(@RequestParam String status) {
+    public List<CustomerBookingResponseDTO> getBookingsByStatus(@RequestParam BookingStatus status) {
         return bookingService.getBookingsByStatus(status);
     }
 }

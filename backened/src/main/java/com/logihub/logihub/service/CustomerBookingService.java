@@ -2,6 +2,7 @@ package com.logihub.logihub.service;
 
 import com.logihub.logihub.dto.CustomerBookingRequestDTO;
 import com.logihub.logihub.dto.CustomerBookingResponseDTO;
+import com.logihub.logihub.enums.BookingStatus;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface CustomerBookingService {
     List<CustomerBookingResponseDTO> getBookingsByCustomer(Long customerId);
 
     // Get all bookings by status
-    List<CustomerBookingResponseDTO> getBookingsByStatus(String status);
+    List<CustomerBookingResponseDTO> getBookingsByStatus(BookingStatus status);
 }

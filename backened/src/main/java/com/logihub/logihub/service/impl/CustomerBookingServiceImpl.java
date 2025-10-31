@@ -66,10 +66,11 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
     }
 
     @Override
-    public List<CustomerBookingResponseDTO> getBookingsByStatus(String status) {
-        return bookingRepository.findByStatus(status).stream()
+    public List<CustomerBookingResponseDTO> getBookingsByStatus(BookingStatus status) {
+        return bookingRepository.findByStatus(status)
+                .stream()
                 .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Manual mapping method
