@@ -33,15 +33,11 @@ interface Transporter {
 
 type ProfileTab = 'personal' | 'company' | 'documents' | 'fleet' | 'security';
 
-// --- Shared Components (Retained logic/styles for brevity) ---
-// Note: EditableField, TabButton, and DocumentUploadCard definitions are omitted here
-// but should be included from the previous response. Assuming they are correctly defined.
 
 
 
-// --- Helper Functions (From previous response) ---
 const EditableField: React.FC<any> = ({ label, value, type = 'text', onSave, disabled = false }) => {
-    // ... (Your EditableField JSX and logic here)
+   
     const [isEditing, setIsEditing] = useState(false);
     const [currentValue, setCurrentValue] = useState(value);
     
@@ -67,7 +63,7 @@ const EditableField: React.FC<any> = ({ label, value, type = 'text', onSave, dis
                 ) : (
                     <span className={`text-gray-900 dark:text-gray-50 font-medium ${disabled ? 'text-gray-500 dark:text-gray-400' : ''}`}>{value || "Not set"}</span>
                 )}
-                {/* Edit/Save/Cancel buttons */}
+               
                 {!disabled && (
                     isEditing ? (
                         <>

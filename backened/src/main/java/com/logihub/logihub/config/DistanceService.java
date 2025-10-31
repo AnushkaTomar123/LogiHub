@@ -1,4 +1,4 @@
-package com.logihub.logihub.service.impl;
+package com.logihub.logihub.config;
 
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
