@@ -5,6 +5,7 @@ import com.logihub.logihub.entity.PasswordResetToken;
 import com.logihub.logihub.entity.User;
 import com.logihub.logihub.repository.PasswordResetTokenRepository;
 import com.logihub.logihub.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,12 @@ public class ForgotPasswordService {
 
     private final long EXPIRATION_MINUTES = 30;
 
-    // Step 1: Create token & send email
+    // Step 1: Create token and send reset email with form link
     public void createTokenAndSendEmailIfUserExists(String email) {
         userRepository.findByEmail(email).ifPresent(user -> {
+            // Delete previous tokens (allow multiple requests safely)
+            tokenRepository.deleteByUserId(user.getId());
+
             String token = UUID.randomUUID().toString();
             PasswordResetToken prt = PasswordResetToken.builder()
                     .token(token)
@@ -38,14 +42,7 @@ public class ForgotPasswordService {
         });
     }
 
-    // Step 2: Verify token
-    public boolean isTokenValid(String token) {
-        return tokenRepository.findByToken(token)
-                .filter(t -> t.getExpiryDate().isAfter(LocalDateTime.now()))
-                .isPresent();
-    }
-
-    // Step 3: Reset password
+    // Step 2: Reset password from form
     public boolean resetPassword(String token, String newPassword) {
         return tokenRepository.findByToken(token)
                 .filter(t -> t.getExpiryDate().isAfter(LocalDateTime.now()))
@@ -53,8 +50,14 @@ public class ForgotPasswordService {
                     User user = t.getUser();
                     user.setPassword(passwordEncoder.encode(newPassword));
                     userRepository.save(user);
-                    tokenRepository.deleteByToken(token);
+                    tokenRepository.deleteByUserId(user.getId());
                     return true;
-                }).orElse(false);
+                })
+                .orElse(false);
     }
+
+//    @Transactional
+//    public void deleteOldTokens(String email) {
+//        tokenRepository.deleteByEmail(email);
+//    }
 }

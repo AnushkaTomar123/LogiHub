@@ -1,6 +1,9 @@
 package com.logihub.logihub.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.logihub.logihub.enums.VehicalStatus;
+import com.logihub.logihub.enums.VehicleModel;
+import com.logihub.logihub.enums.VehicleType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +27,9 @@ public class Vehicle {
 
     private String vehicleNumber;
     private Double capacity;
+
+    @Enumerated(EnumType.STRING)
+    private VehicalStatus status;
 
     @ManyToOne
     @JoinColumn(name = "transporter_id", nullable = false)

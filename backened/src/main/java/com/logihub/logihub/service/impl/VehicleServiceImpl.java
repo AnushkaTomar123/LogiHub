@@ -4,8 +4,9 @@ import com.logihub.logihub.dto.VehicleDTO;
 import com.logihub.logihub.dto.VehicleResponseDTO;
 import com.logihub.logihub.entity.Transporter;
 import com.logihub.logihub.entity.Vehicle;
-import com.logihub.logihub.entity.VehicleModel;
-import com.logihub.logihub.entity.VehicleType;
+import com.logihub.logihub.enums.VehicalStatus;
+import com.logihub.logihub.enums.VehicleModel;
+import com.logihub.logihub.enums.VehicleType;
 import com.logihub.logihub.repository.TransporterRepository;
 import com.logihub.logihub.repository.VehicleRepository;
 import com.logihub.logihub.service.VehicleService;
@@ -75,6 +76,7 @@ public class VehicleServiceImpl implements VehicleService {
         existing.setVehicleNumber(vehicleDTO.getVehicleNumber());
         existing.setVehicleType(VehicleType.valueOf(vehicleDTO.getVehicleType())); // String → Enum
         existing.setModel(VehicleModel.valueOf(vehicleDTO.getModel()));           // String → Enum
+        existing.setStatus(VehicalStatus.valueOf(vehicleDTO.getStatus()));           // String → Enum
         existing.setCapacity(vehicleDTO.getCapacity());
 
         Vehicle updated = vehicleRepository.save(existing);

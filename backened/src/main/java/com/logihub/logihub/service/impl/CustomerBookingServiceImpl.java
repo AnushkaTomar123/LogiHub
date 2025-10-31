@@ -3,8 +3,8 @@ package com.logihub.logihub.service.impl;
 import com.logihub.logihub.dto.CustomerBookingRequestDTO;
 import com.logihub.logihub.dto.CustomerBookingResponseDTO;
 import com.logihub.logihub.entity.CustomerBooking;
-import com.logihub.logihub.entity.BookingStatus;
-import com.logihub.logihub.entity.PaymentStatus;
+import com.logihub.logihub.enums.BookingStatus;
+import com.logihub.logihub.enums.PaymentStatus;
 import com.logihub.logihub.repository.CustomerBookingRepository;
 import com.logihub.logihub.service.CustomerBookingService;
 import lombok.RequiredArgsConstructor;
@@ -66,10 +66,11 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
     }
 
     @Override
-    public List<CustomerBookingResponseDTO> getBookingsByStatus(String status) {
-        return bookingRepository.findByStatus(status).stream()
+    public List<CustomerBookingResponseDTO> getBookingsByStatus(BookingStatus status) {
+        return bookingRepository.findByStatus(status)
+                .stream()
                 .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Manual mapping method

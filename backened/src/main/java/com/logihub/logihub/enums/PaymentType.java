@@ -1,4 +1,4 @@
-package com.logihub.logihub.entity;
+package com.logihub.logihub.enums;
 
 public enum PaymentType {
     WALLET,

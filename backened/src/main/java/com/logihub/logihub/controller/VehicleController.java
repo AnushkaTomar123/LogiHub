@@ -2,8 +2,8 @@ package com.logihub.logihub.controller;
 
 import com.logihub.logihub.dto.VehicleDTO;
 import com.logihub.logihub.dto.VehicleResponseDTO;
-import com.logihub.logihub.entity.VehicleModel;
-import com.logihub.logihub.entity.VehicleType;
+import com.logihub.logihub.enums.VehicleModel;
+import com.logihub.logihub.enums.VehicleType;
 import com.logihub.logihub.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

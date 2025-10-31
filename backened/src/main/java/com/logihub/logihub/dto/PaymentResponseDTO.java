@@ -1,7 +1,6 @@
 package com.logihub.logihub.dto;
 
-import com.logihub.logihub.entity.PaymentStatus;
-import com.logihub.logihub.entity.PaymentType;
+import com.logihub.logihub.enums.PaymentStatus;
 import lombok.*;
 import java.time.LocalDateTime;
 
