@@ -3,6 +3,7 @@ package com.logihub.logihub.controller;
 import com.logihub.logihub.dto.TransporterDTO;
 import com.logihub.logihub.entity.Transporter;
 import com.logihub.logihub.service.TransporterService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +18,14 @@ public class TransporterController {
 
     // Create Transporter (multipart form)
     @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<Transporter> createTransporter(@ModelAttribute TransporterDTO dto) {
+    public ResponseEntity<Transporter> createTransporter(@Valid  @ModelAttribute TransporterDTO dto) {
         Transporter savedTransporter = transporterService.createTransporter(dto);
         return ResponseEntity.ok(savedTransporter);
     }
 
     // Update Transporter
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
-    public ResponseEntity<Transporter> updateTransporter(
+    public ResponseEntity<Transporter> updateTransporter(@Valid
             @PathVariable Long id, @ModelAttribute TransporterDTO dto) {
         Transporter updated = transporterService.updateTransporter(id, dto);
         return ResponseEntity.ok(updated);

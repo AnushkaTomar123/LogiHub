@@ -49,6 +49,24 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
     }
 
     @Override
+    public CustomerBooking acceptBookingByTransporter(Long bookingId, Long transporterId) {
+        CustomerBooking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        // Check if already accepted
+        if (booking.getStatus() != BookingStatus.PENDING) {
+            throw new RuntimeException("Booking is not in pending state or already accepted.");
+        }
+
+        // Assign transporter ID
+        booking.setTransporterId(transporterId);
+        booking.setStatus(BookingStatus.ACCEPTED);
+        booking.setUpdatedAt(LocalDateTime.now());
+
+        return bookingRepository.save(booking);
+    }
+
+    @Override
     public CustomerBooking updateHalfPayment(CustomerPaymentDto dto) {
         CustomerBooking booking = bookingRepository.findById(dto.getBookingId())
                 .orElseThrow(() -> new RuntimeException("Booking not found"));

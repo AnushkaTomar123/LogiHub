@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface CustomerBookingService {
 
     CustomerBooking createBooking(CustomerBookingRequestDTO dto);
+    CustomerBooking acceptBookingByTransporter(Long bookingId, Long transporterId);
+
 
     CustomerBooking updateHalfPayment(CustomerPaymentDto dto);
 

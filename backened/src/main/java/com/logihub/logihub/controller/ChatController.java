@@ -1,23 +1,28 @@
 package com.logihub.logihub.controller;
 
-import com.logihub.logihub.config.OpenAIService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/chat")
+import com.logihub.logihub.dto.ChatMessage;
+import com.logihub.logihub.service.impl.ChatService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+
+@Controller
+@RequiredArgsConstructor
 public class ChatController {
 
-    @Autowired
-    private OpenAIService openAIService;
+    private final ChatService chatService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    @PostMapping
-    public String chat(@RequestBody String message) {
-        try {
-            return openAIService.ask(message);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error: " + e.getMessage();
-        }
+    @MessageMapping("/chat.sendMessage")
+    public void sendMessage(@Payload ChatMessage message) {
+        message.setTimestamp(java.time.LocalDateTime.now());
+        chatService.saveMessage(message);
+
+        messagingTemplate.convertAndSend(
+                "/topic/messages/" + message.getReceiverId(),
+                message
+        );
     }
 }
