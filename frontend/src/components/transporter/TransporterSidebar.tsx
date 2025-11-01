@@ -32,6 +32,19 @@ export default function TransporterSidebar() {
   });
   const { theme, setTheme } = useTheme();
 
+  // 🔹 Auto-collapse on mobile view
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setCollapsed(true);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // 🔹 Sync collapse state with localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("sidebarCollapsed", collapsed ? "true" : "false");
@@ -81,6 +94,13 @@ export default function TransporterSidebar() {
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
+  // 🔹 Prevent expanding on mobile
+  const handleCollapseToggle = () => {
+    if (window.innerWidth > 768) {
+      setCollapsed((s) => !s);
+    }
+  };
+
   return (
     <aside
       className={`fixed top-0 left-0 h-screen flex flex-col justify-between transition-all duration-300 z-50 
@@ -91,15 +111,15 @@ export default function TransporterSidebar() {
       {/* Header Section */}
       <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/10">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-purple-700">
             <MdOutlineLocalShipping size={18} />
           </div>
           {!collapsed && <span className="font-semibold text-lg tracking-wide">LogiHub</span>}
         </div>
 
         <button
-          onClick={() => setCollapsed((s) => !s)}
-          className="text-white/80 hover:text-white transition-all"
+          onClick={handleCollapseToggle} // 🔹 Modified here
+          className="hidden md:inline-flex text-white/80 hover:text-white  transition-all"
         >
           {collapsed ? <MdMenu size={22} /> : <MdClose size={22} />}
         </button>

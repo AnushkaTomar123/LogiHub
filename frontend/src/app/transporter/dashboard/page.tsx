@@ -26,6 +26,7 @@ const getDriverStatus = (id: number) => {
 // --- Interfaces (Kept same) ---
 
 interface Driver {
+  licenseNumber:string;
   id: number;
   driverName: string;
   status?: string;
@@ -138,11 +139,12 @@ export default function TransporterDashboard() {
       .then((res) => setVehicles(res.data))
       .catch((err) => console.error("Error fetching vehicles:", err));
   }, [transporterId]);
+  
 
   // --- Stats Calculation for Stat Cards ---
   const totalVehicles = vehicles.length;
   const totalDrivers = drivers.length;
-  const totalShipments = 134;
+  const totalShipments = vehicles.length;
   const totalRevenue = 4000;
 
   const STAT_CARDS = [
@@ -175,8 +177,6 @@ export default function TransporterDashboard() {
       fixedWidth: true,
     },
   ];
-  // ------------------------------------------
-
   const sidebarWidth = sidebarCollapsed ? 80 : 256;
 
   return (
@@ -186,15 +186,14 @@ export default function TransporterDashboard() {
     >
       <TransporterHeader />
 
-      <main className="p-6">
-        {/* Top Header Row (Welcome & Date) */}
-        <div className="flex flex-col lg:flex-row justify-between items-start gap-4 mb-6">
-          <div>
+      <main className="p-5">
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-4 mb-4">
+          <div className="col-span-1 dark:border-border">
             <h1 className="text-xl p-2 rounded-lg font-bold bg-card text-white">
               Welcome Back, {username}!!
             </h1>
           </div>
-          <div className="text-sm p-2 rounded-lg bg-card text-gray-500 dark:text-gray-400">
+          <div className="text-xl p-2 rounded-lg bg-card text-gray-500 dark:text-gray-400 dark:border-border">
             {new Date().toLocaleDateString("en-IN", {
               weekday: "long",
               day: "numeric",
@@ -203,95 +202,124 @@ export default function TransporterDashboard() {
             })}
           </div>
         </div>
-
-        {/* --- 4-COLUMN DASHBOARD LAYOUT (Adjusted) --- */}
-        <div className="grid grid-cols-4 gap-6">
-          {/* 1. Stat Cards (4 columns) */}
+        <div className="grid  grid-cols-1 md:grid-cols-4 gap-6">
+          {/* 1. Stat Cards */}
           {STAT_CARDS.map((item, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              className="p-4 rounded-xl border border-gray-700 dark:border-gray-800 bg-card shadow-lg col-span-1"
+              className="p-4 rounded-xl border border-gray-700 dark:border-border bg-card shadow-lg md:col-span-1"
             >
               <div className="flex flex-col h-full justify-between">
                 <p className="text-sm text-gray-400">{item.label}</p>
-                <h3 className="text-2xl font-bold text-gray-100">
+                <h3 className="text-xl md:text-2xl font-bold text-gray-100">
                   {item.value}
                 </h3>
               </div>
             </motion.div>
           ))}
+          <div className="grid grid-cols- md:grid-cols-3 md:col-span-3 gap-6">
+            {/* 2. Recent Shipments*/}
+            <div className="col-span-1 p-4 rounded-xl bg-card border border-gray-700 shadow-lg md:h-[200px]">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-md font-semibold text-gray-200">
+                  Recent Shipments
+                </h3>
+              </div>
 
-          {/* --- Second Row Content --- */}
-
-          {/* 2. Recent Shipments (Below Stat Card 1) */}
-          <div className="col-span-1 p-4 rounded-xl bg-card border border-gray-700 shadow-lg min-h-[250px]">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-md font-semibold text-gray-200">
-                Recent Shipments
-              </h3>
+              <div className="space-y-3">
+                {MOCK_SHIPMENTS.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-2 rounded-lg bg-background border border-gray-800 text-sm text-gray-300"
+                  >
+                    {item.label}
+                  </div>
+                ))}
+              </div>
             </div>
-
-            <div className="space-y-3">
-              {MOCK_SHIPMENTS.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-2 rounded-lg bg-background border border-gray-800 text-sm text-gray-300"
+            {/* 3. Driver Status  */}
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2 p-3 rounded-xl bg-card border border-border shadow-lg md:h-[200px]">
+              <div className="md:col-span-2 flex items-center justify-between mb-1">
+                <h3 className="text-md font-semibold text-gray-200">
+                  Driver Status
+                </h3>
+                <button
+                  onClick={() => router.push("/transporter/drivers")}
+                  className="text-xs px-2 py-1 rounded-md bg-violet-600 text-white hover:bg-violet-700 transition"
                 >
-                  {item.label}
+                  Show More
+                </button>
+              </div>
+
+              {drivers.slice(0,4).map((driver, index) => (
+                <div
+                  key={index}
+                  className="col-span-1 flex items-center gap-2 p-2 rounded-lg border border-gray-700 bg-[#0f172a] hover:bg-[#1a1f3d] transition-all duration-200"
+                >
+                  <div className="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center font-semibold text-sm">
+                    {driver.driverName.charAt(0)}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-xs text-gray-100">
+                      {driver.driverName}
+                    </p>
+                    <p className="text-[10px] text-gray-400"><span>License No.:{driver.licenseNumber}</span></p>
+                  </div>
+                  <MdCircle
+                    className={`ml-auto ${
+                      driver.status === "Available"
+                        ? "text-green-500"
+                        : "text-gray-400"
+                    }`}
+                    size={10}
+                  />
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* 3. Driver Status (Below Stat Cards 2 & 3 - now col-span-2) */}
-          <div className="col-span-2 grid grid-cols-2 gap-2 p-3 rounded-xl bg-card border border-border shadow-lg min-h-[220px]">
-            <div className="col-span-2 flex items-center justify-between mb-1">
-              <h3 className="text-md font-semibold text-gray-200">
-                Driver Status
-              </h3>
-              <button
-                onClick={() => router.push("/transporter/drivers")}
-                className="text-xs px-2 py-1 rounded-md bg-violet-600 text-white hover:bg-violet-700 transition"
-              >
-                Show More
-              </button>
-            </div>
-
-            {MOCK_DRIVER_UI.map((driver, index) => (
-              <div
-                key={index}
-                className="col-span-1 flex items-center gap-2 p-2 rounded-lg border border-gray-700 bg-[#0f172a] hover:bg-[#1a1f3d] transition-all duration-200"
-              >
-                <div className="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center font-semibold text-sm">
-                  {driver.name.charAt(0)}
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium text-xs text-gray-100">
-                    {driver.name}
-                  </p>
-                  <p className="text-[10px] text-gray-400">{driver.type}</p>
-                </div>
-                <MdCircle
-                  className={`ml-auto ${
-                    driver.status === "Online"
-                      ? "text-green-500"
-                      : "text-gray-400"
-                  }`}
-                  size={10}
-                />
+            {/* 5. Vehicle Status  */}
+            <div className="col-span-3 p-4 rounded-xl bg-card border border-gray-700 shadow-lg min-h-[150px]">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-md font-semibold text-gray-200">
+                  Vehicle Status
+                </h3>
+                <button
+                  onClick={() => router.push("/transporter/fleet")}
+                  className="px-3 py-1 rounded-md bg-violet-600 text-white hover:bg-violet-700 transition text-xs"
+                >
+                  Show More
+                </button>
               </div>
-            ))}
+
+              <div className="grid grid-cols-2 gap-4">
+                {vehicles.slice(0,4).map((v) => (
+                  <div
+                    key={v.id}
+                    className="col-span-1 flex items-center gap-4 p-3 rounded-lg bg-[#0f172a] border border-gray-800"
+                  >
+                    <div className="w-10 h-10 rounded-md bg-gray-700 flex items-center justify-center">
+                      <MdLocalShipping size={22} className="text-gray-200" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-sm text-gray-100">
+                        Vehicle number: {v.vehicleNumber}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        Vehicle type: {v.vehicleType}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* 4. Chart & Legend (Below Stat Card 4 - spanning 1 column) */}
+          {/* 4. Chart & Legend  */}
           <div className="col-span-1 space-y-6">
             <aside className="bg-card rounded-xl p-4 border border-gray-700 shadow-lg flex flex-col items-center">
-              {/* Chart Area */}
               <div className="w-full h-44 flex items-center justify-center">
-                {/* Placeholder Chart */}
                 <div className="w-40 h-40 bg-gray-700 rounded-full flex items-center justify-center">
                   <span className="text-gray-400 text-sm">
                     Chart Placeholder
@@ -299,7 +327,7 @@ export default function TransporterDashboard() {
                 </div>
               </div>
 
-              {/* Chart Legend (Horizontal Bars - Mocked) */}
+              {/* Chart Legend */}
               <div className="w-full mt-4 space-y-3">
                 {[
                   { label: "Truck", value: 80, color: "bg-violet-600" },
@@ -323,55 +351,16 @@ export default function TransporterDashboard() {
                 ))}
               </div>
             </aside>
-          </div>
-
-          {/* --- Third Row Content --- */}
-
-          {/* 5. Vehicle Status (Below Recent Shipments and Driver Status - spanning 3 columns) */}
-          <div className="col-span-3 p-4 rounded-xl bg-card border border-gray-700 shadow-lg min-h-[150px]">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-md font-semibold text-gray-200">
-                Vehicle Status
-              </h3>
-              <button
-                onClick={() => router.push("/transporter/fleet")}
-                className="px-3 py-1 rounded-md bg-violet-600 text-white hover:bg-violet-700 transition text-xs"
-              >
-                Show More
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              {MOCK_VEHICLE_UI.map((v) => (
-                <div
-                  key={v.id}
-                  className="col-span-1 flex items-center gap-4 p-3 rounded-lg bg-[#0f172a] border border-gray-800"
+            {/* 6. Tracking Shipment Button (Below Chart) */}
+            <div className="col-span-1">
+              <div className="bg-card rounded-xl p-0 border border-border shadow-lg">
+                <button
+                  onClick={() => router.push("/transporter/shipment")}
+                  className="w-full py-3 rounded-lg bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm transition"
                 >
-                  <div className="w-10 h-10 rounded-md bg-gray-700 flex items-center justify-center">
-                    <MdLocalShipping size={22} className="text-gray-200" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm text-gray-100">
-                      Vehicle number: {v.vehicleNumber}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      Vehicle type: {v.vehicleType}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 6. Tracking Shipment Button (Below Chart) */}
-          <div className="col-span-1">
-            <div className="bg-card rounded-xl p-4 border border-gray-700 shadow-lg">
-              <button
-                onClick={() => router.push("/transporter/shipment")}
-                className="w-full py-3 rounded-lg bg-violet-600 hover:bg-violet-700 text-white font-bold transition"
-              >
-                Tracking Shipment
-              </button>
+                  Tracking Shipment
+                </button>
+              </div>
             </div>
           </div>
         </div>
