@@ -1,5 +1,7 @@
 package com.logihub.logihub.service.impl;
 
+import com.logihub.logihub.config.DistanceService;
+import com.logihub.logihub.config.GeoCodingService;
 import com.logihub.logihub.dto.TripRequestDTO;
 import com.logihub.logihub.dto.TripResponseDTO;
 import com.logihub.logihub.entity.Customer;
@@ -20,8 +22,8 @@ public class TripService {
     private final CustomerRepository customerRepository;
     private final TransporterRepository transporterRepository;
     private final DriverRepository driverRepository;
-    private final com.logihub.logihub.service.impl.GeoCodingService geoCodingService;
-    private final com.logihub.logihub.service.impl.DistanceService distanceService;
+    private final GeoCodingService geoCodingService;
+    private  final DistanceService distanceService;
     private final ModelMapper modelMapper;
 
     public TripResponseDTO createTrip(TripRequestDTO dto) {

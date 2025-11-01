@@ -1,324 +1,496 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { 
-    FaTruckLoading,FaWeightHanging, FaCalendarAlt, 
-    FaSearch, FaFilter,  FaAngleRight, FaEye, FaBox, FaRoad, 
-    FaShippingFast, FaCheckCircle, FaTimes, FaRupeeSign, FaSpinner, FaPhoneAlt 
-} from 'react-icons/fa';
-//import axios from 'axios';
-import TransporterHeader from '@/components/transporter/TransporterHeader';
+import { useState, useEffect, useCallback } from "react";
+import {
+  FaTruckLoading,
+  FaWeightHanging,
+  FaCalendarAlt,
+  FaSearch,
+  FaFilter,
+  FaAngleRight,
+  FaEye,
+  FaBox,
+  FaRoad,
+  FaShippingFast,
+  FaCheckCircle,
+  FaTimes,
+  FaRupeeSign,
+  FaSpinner,
+  FaPhoneAlt,
+  FaTag, 
+} from "react-icons/fa";
+import axios from "axios";
+import TransporterHeader from "@/components/transporter/TransporterHeader";
+import { useTheme } from "next-themes"; 
 
-// --- Interfaces (Retained) ---
+// --- Interface ---
 interface Load {
-    id: number;
-    pickupLocation: string;
-    dropoffLocation: string;
-    commodity: string; // <--- COMMODITY IS HERE
-    weightTons: number;
-    vehicleTypeRequired: string;
-    requiredCapacityTons: number; 
-    expectedPickupDate: string; 
-    expectedPickupTime: string; 
-    expectedDeliveryDate: string; 
-    freightPrice: number;
+  id: number;
+  pickupLocation: string;
+  dropoffLocation: string;
+  commodity: string;
+  weightTons: number;
+  vehicleTypeRequired: string;
+  requiredCapacityTons: number;
+  expectedPickupDate: string;
+  expectedPickupTime: string;
+  expectedDeliveryDate: string;
+  freightPrice: number;
+  loadId: string;
+  vehicleType: string; 
+  rate: number;
 }
 
-// --- Mock Data (Retained) ---
-const mockLoads: Load[] = [
-    {
-        id: 1001,
-        pickupLocation: "Mumbai, MH (Bhiwandi)",
-        dropoffLocation: "Delhi, DL (Narela)",
-        commodity: "Industrial Pipes",
-        weightTons: 15.5,
-        requiredCapacityTons: 20,
-        vehicleTypeRequired: "Open Truck",
-        freightPrice: 55000,
-        expectedPickupDate: "2024-10-30",
-        expectedPickupTime: "10:00 AM",
-        expectedDeliveryDate: "2024-11-02",
-    },
-    {
-        id: 1002,
-        pickupLocation: "Bangalore, KA (Peenya)",
-        dropoffLocation: "Chennai, TN (Guindy)",
-        commodity: "Consumer Goods",
-        weightTons: 4.8,
-        requiredCapacityTons: 7,
-        vehicleTypeRequired: "Closed Container",
-        freightPrice: 32000,
-        expectedPickupDate: "2024-10-28",
-        expectedPickupTime: "04:30 PM",
-        expectedDeliveryDate: "2024-10-30",
-    },
-    {
-        id: 1003,
-        pickupLocation: "Pune, MH (Chakan)",
-        dropoffLocation: "Hyderabad, TS (Gachibowli)",
-        commodity: "Automotive Parts",
-        weightTons: 8,
-        requiredCapacityTons: 9,
-        vehicleTypeRequired: "Taurus Truck",
-        freightPrice: 40000,
-        expectedPickupDate: "2024-11-01",
-        expectedPickupTime: "09:00 AM",
-        expectedDeliveryDate: "2024-11-03",
-    },
+// --- Mock Data for Sidebar Sections (For UI consistency) ---
+const MOCK_SIDEBAR_DATA = [
+  { location: "Gwalior,M.P to Mumbai, MH", commodity: "Commodity: Household Items" },
+  { location: "Gwalior,M.P to Mumbai, MH", commodity: "Commodity: Household Items" },
+  { location: "Gwalior,M.P to Mumbai, MH", commodity: "Commodity: Household Items" },
+  { location: "Gwalior,M.P to Mumbai, MH", commodity: "Commodity: Household Items" },
+  { location: "Gwalior,M.P to Mumbai, MH", commodity: "Commodity: Household Items" },
+  { location: "Gwalior,M.P to Mumbai, MH", commodity: "Commodity: Household Items" },
+  { location: "Gwalior,M.P to Mumbai, MH", commodity: "Commodity: Household Items" },
 ];
 
-// --- Modal Component (Retained) ---
-const LoadDetailsModal: React.FC<{ load: Load, onClose: () => void }> = ({ load, onClose }) => {
+// --- Modal Component (Kept for completeness) ---
+const LoadDetailsModal: React.FC<{ load: Load; onClose: () => void }> = ({
+  load,
+  onClose,
+}) => {
+  const handleAccept = async () => {
+    try {
+      const transporterId = localStorage.getItem("transporterId");
+      const vehicleId = 1;
+      const driverId = 1;
+
+      await axios.put(
+        `http://localhost:8080/api/bookings/accept/${load.id}`,
+        null,
+        {
+          params: { transporterId, vehicleId, driverId },
+        }
+      );
+
+      alert(`Booking ${load.id} accepted successfully!`);
+      onClose();
+    } catch (error) {
+      console.error("Error accepting booking:", error);
+      alert("Failed to accept booking.");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4">
+      <div className="bg-[#1A1F26] rounded-xl shadow-2xl w-full max-w-2xl transform transition-all text-gray-100">
+        {/* Header */}
+        <div className="p-5 border-b border-gray-700 flex justify-between items-center bg-[#3C3D3F] rounded-t-xl">
+          <h2 className="text-2xl font-bold text-violet-400">
+            Load Details & Quote (ID: {load.loadId})
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-red-500 p-2"
+          >
+            <FaTimes size={20} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="p-6 space-y-5">
+          <div className="flex justify-between items-center p-4 bg-[#3C3D3F] rounded-lg">
+            <div>
+              <p className="text-base font-semibold text-gray-400">Route:</p>
+              <p className="text-xl font-extrabold text-white">
+                {load.pickupLocation} <FaAngleRight className="inline mx-1 text-violet-400" />{" "}
+                {load.dropoffLocation}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-medium text-gray-400">Freight Offer:</p>
+              <p className="text-2xl font-bold text-green-400 flex items-center justify-end">
+                <FaRupeeSign className="w-4 h-4" />
+                {load.freightPrice.toLocaleString("en-IN")}
+              </p>
+            </div>
+          </div>
+
+          {/* Details Grid */}
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            {[
+              { label: "Commodity", value: load.commodity, icon: FaBox },
+              { label: "Weight / Capacity", value: `${load.weightTons} T / ${load.requiredCapacityTons} T`, icon: FaWeightHanging },
+              { label: "Pickup By", value: `${load.expectedPickupDate} (${load.expectedPickupTime})`, icon: FaCalendarAlt },
+              { label: "Delivery By", value: load.expectedDeliveryDate, icon: FaShippingFast },
+            ].map((item, index) => (
+                <div key={index} className="p-3 border border-gray-700 rounded-lg bg-[#3C3D3F]">
+                  <p className="font-semibold text-gray-400 flex items-center gap-1">
+                    <item.icon className="text-violet-400" /> {item.label}:
+                  </p>
+                  <p className="font-bold text-white">{item.value}</p>
+                </div>
+              ))}
+            <div className="p-3 border border-gray-700 rounded-lg bg-[#3C3D3F] col-span-2">
+              <p className="font-semibold text-gray-400 flex items-center gap-1">
+                <FaPhoneAlt className="text-violet-400" /> Shipper Contact:
+              </p>
+              <p className="font-bold text-white">
+                Contact via Platform after Acceptance
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-5 bg-[#3C3D3F] rounded-b-xl flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-6 py-3 border border-gray-600 rounded-lg font-semibold text-gray-300 hover:bg-gray-600 transition"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleAccept}
+            className="px-6 py-3 bg-violet-600 text-white rounded-lg font-bold hover:bg-violet-700 transition flex items-center gap-2"
+          >
+            <FaCheckCircle /> Place Bid / Accept Load
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Load Card (UPDATED) ---
+const LoadCard: React.FC<{ load: Load; onDetailsClick: (load: Load) => void }> =
+  ({ load, onDetailsClick }) => {
+    
+    const handleAction = (action: 'Accept' | 'View' | 'Bid') => {
+        if (action === 'View') {
+            onDetailsClick(load);
+        } else if (action === 'Accept') {
+            alert(`Accepting Load ID: ${load.loadId}. Opening final confirmation modal...`);
+        } else if (action === 'Bid') {
+            alert(`Placing Bid for Load ID: ${load.loadId}. Opening bid modal...`);
+        }
+    };
+    
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl transform transition-all">
+        <div className="bg-[#1A1F26] rounded-xl p-5 border border-gray-700 shadow-xl text-gray-100">
+            {/* Top Row: Load ID & Route */}
+            <div className="flex justify-between items-center pb-3 mb-3 border-b border-gray-700">
+                <p className="text-sm font-semibold text-gray-400 flex items-center gap-1">
+                    <FaTag className="text-violet-400 w-3 h-3" /> Load ID:{load.loadId}
+                </p>
+                <p className="text-lg font-bold text-white flex items-center">
+                    {load.pickupLocation.split(",")[0]}
+                    <FaAngleRight className="text-sm mx-1 text-violet-400" />
+                    {load.dropoffLocation.split(",")[0]}
+                </p>
+            </div>
+
+            {/* Details Grid (Compact, Dark Theme) */}
+            <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-sm">
+                {[
+                    { label: "Commodity Type", value: load.commodity, icon: FaBox },
+                    { label: "Vehicle Type", value: load.vehicleType, icon: FaTruckLoading },
+                    { label: "Weight/Capacity", value: `${load.weightTons} ton`, icon: FaWeightHanging },
+                    { label: "Pickup Date", value: load.expectedPickupDate, icon: FaCalendarAlt },
+                    { label: "Expect Deliveriy", value: load.expectedDeliveryDate, icon: FaShippingFast },
+                ].map((item, index) => (
+                    <div key={index} className="flex flex-col">
+                        <p className="font-medium text-gray-500">{item.label} :</p>
+                        <p className="text-white font-semibold">{item.value}</p>
+                    </div>
+                ))}
                 
-                {/* Modal Header */}
-                <div className="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-blue-50 dark:bg-gray-700 rounded-t-xl">
-                    <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300">Load Details & Quote</h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-red-500 p-2"><FaTimes size={20} /></button>
+                {/* Rate Row (Stretched) */}
+                <div className="flex flex-col col-span-2">
+                    <p className="font-medium text-gray-500">Rate :</p>
+                    <p className="text-green-400 font-bold text-xl flex items-center">
+                        <FaRupeeSign className="w-3 h-3 mr-1" />
+                        {load.rate.toLocaleString("en-IN")}
+                    </p>
                 </div>
+            </div>
 
-                {/* Modal Body: Details */}
-                <div className="p-6 space-y-5">
-                    
-                    {/* Route & Price Banner */}
-                    <div className="flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                        <div>
-                            <p className="text-base font-semibold text-gray-800 dark:text-gray-100">Route:</p>
-                            <p className="text-xl font-extrabold text-blue-800 dark:text-blue-300">{load.pickupLocation} <FaAngleRight className='inline mx-1' /> {load.dropoffLocation}</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Freight Offer:</p>
-                            <p className="text-2xl font-bold text-green-700 dark:text-green-400 flex items-center"><FaRupeeSign className='w-4 h-4'/>{load.freightPrice.toLocaleString('en-IN')}</p>
-                        </div>
-                    </div>
-
-                    {/* Operational Details Grid */}
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="p-3 border rounded-lg bg-gray-50 dark:bg-gray-700">
-                            <p className="font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-1"><FaBox className='text-orange-500' /> Commodity:</p>
-                            <p className="font-bold text-gray-900 dark:text-gray-50">{load.commodity}</p>
-                        </div>
-                        <div className="p-3 border rounded-lg bg-gray-50 dark:bg-gray-700">
-                            <p className="font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-1"><FaWeightHanging className='text-orange-500' /> Weight / Capacity:</p>
-                            <p className="font-bold text-gray-900 dark:text-gray-50">{load.weightTons} T / {load.requiredCapacityTons} T</p>
-                        </div>
-                        <div className="p-3 border rounded-lg bg-gray-50 dark:bg-gray-700">
-                            <p className="font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-1"><FaCalendarAlt className='text-orange-500' /> Pickup By:</p>
-                            <p className="font-bold text-gray-900 dark:text-gray-50">{load.expectedPickupDate} ({load.expectedPickupTime})</p>
-                        </div>
-                        <div className="p-3 border rounded-lg bg-gray-50 dark:bg-gray-700">
-                            <p className="font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-1"><FaShippingFast className='text-orange-500' /> Delivery By:</p>
-                            <p className="font-bold text-gray-900 dark:text-gray-50">{load.expectedDeliveryDate}</p>
-                        </div>
-                        {/* Example Placeholder for Customer/Contact Info */}
-                        <div className="p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 col-span-2">
-                            <p className="font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-1"><FaPhoneAlt className='text-orange-500' /> Shipper Contact:</p>
-                            <p className="font-bold text-gray-900 dark:text-gray-50">Contact via Platform after Acceptance</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Modal Footer: Action */}
-                <div className="p-5 bg-gray-50 dark:bg-gray-700 rounded-b-xl flex justify-end gap-3">
-                    <button 
-                        onClick={onClose} 
-                        className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-600 transition"
-                    >
-                        Cancel
-                    </button>
-                    <button 
-                        onClick={() => alert(`Bid placed for Load ${load.id}`)}
-                        className="px-6 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition flex items-center gap-2"
-                    >
-                        <FaCheckCircle /> Place Bid / Accept Load
-                    </button>
-                </div>
+            {/* Buttons Row */}
+            <div className="flex justify-between gap-2 mt-4 pt-4 border-t border-gray-700">
+                <button
+                    onClick={() => handleAction('Accept')}
+                    className="flex-1 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition text-sm"
+                >
+                    Accept Load
+                </button>
+                <button
+                    onClick={() => handleAction('View')}
+                    className="flex-1 py-2 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition text-sm"
+                >
+                    View Details
+                </button>
+                <button
+                    onClick={() => handleAction('Bid')}
+                    className="flex-1 py-2 bg-violet-600 text-white rounded-lg font-semibold hover:bg-violet-700 transition text-sm"
+                >
+                    Place Bid
+                </button>
             </div>
         </div>
     );
 };
 
-
-// --- LoadCard Component (FIXED: Commodity Added) ---
-const LoadCard: React.FC<{ load: Load, onDetailsClick: (load: Load) => void }> = ({ load, onDetailsClick }) => (
-    <div className="bg-white shadow-md rounded-lg p-5 border border-gray-200 hover:shadow-lg transition duration-200">
-        
-        {/* Route Header */}
-        <div className="flex justify-between items-start pb-3 mb-3 border-b border-gray-100">
-            <div>
-                <span className="text-xs font-medium text-gray-500 uppercase">Route:</span>
-                <p className="text-lg font-bold text-gray-900 flex items-center">
-                    {load.pickupLocation.split(',')[0]} 
-                    <FaAngleRight className='text-sm mx-1 text-blue-500' /> 
-                    {load.dropoffLocation.split(',')[0]}
-                </p>
-            </div>
-            <div className='text-right'>
-                <span className="text-xs font-medium text-gray-500 block">Offer:</span>
-                <span className="text-xl font-bold text-green-700 flex items-center">
-                    <FaRupeeSign className='w-3 h-3'/>{load.freightPrice.toLocaleString('en-IN')}
-                </span>
-            </div>
-        </div>
-
-        {/* Operational Timeline and Specs */}
-        <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-sm">
-            
-            {/* NEW: Commodity Field Added */}
-            <div className="flex flex-col">
-                <p className="font-medium text-gray-500 flex items-center gap-1"><FaBox className='text-blue-500 w-3 h-3' /> Commodity:</p>
-                <p className='text-gray-900 font-semibold'>{load.commodity}</p>
-            </div>
-
-            {/* Weight / Capacity */}
-            <div className="flex flex-col">
-                <p className="font-medium text-gray-500 flex items-center gap-1"><FaWeightHanging className='text-red-500 w-3 h-3' /> Load/Capacity:</p>
-                <p className='text-gray-900 font-semibold'>{load.weightTons} T / {load.requiredCapacityTons} T</p>
-            </div>
-            
-            {/* Pickup Date/Time */}
-            <div className="flex flex-col">
-                <p className="font-medium text-gray-500 flex items-center gap-1"><FaCalendarAlt className='text-orange-500 w-3 h-3' /> Pickup By:</p>
-                <p className='text-gray-900 font-semibold'>{load.expectedPickupDate}</p>
-                <span className='text-xs text-gray-600'>{load.expectedPickupTime}</span>
-            </div>
-            
-            {/* Delivery Date */}
-            <div className="flex flex-col">
-                <p className="font-medium text-gray-500 flex items-center gap-1"><FaShippingFast className='text-blue-500 w-3 h-3' /> Deliver By:</p>
-                <p className='text-gray-900 font-semibold'>{load.expectedDeliveryDate}</p>
-            </div>
-        </div>
-
-        {/* Action Button */}
-        <button 
-            onClick={() => onDetailsClick(load)}
-            className="mt-4 w-full py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition shadow-md flex items-center justify-center gap-2 text-sm"
-        >
-            <FaEye /> View Full Details 
-        </button>
-    </div>
-);
-
-
-// --- Main Load Board Component ---
+// --- Main Component ---
 export default function LoadBoardPage() {
-    const [loads, setLoads] = useState<Load[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterType, setFilterType] = useState('All');
-    const [selectedLoad, setSelectedLoad] = useState<Load | null>(null);
+  const [loads, setLoads] = useState<Load[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // New States for City Filters
+  const [selectedLoadingCity, setSelectedLoadingCity] = useState("All");
+  const [selectedUnloadingCity, setSelectedUnloadingCity] = useState("All");
 
-    // --- Data Fetching ---
-    useEffect(() => {
-        setTimeout(() => {
-            setLoads(mockLoads);
-            setLoading(false);
-        }, 800);
-    }, []);
+  const [filterType, setFilterType] = useState("All"); // Vehicle Type
+  const [selectedCommodity, setSelectedCommodity] = useState("All"); // Commodity Filter
+  
+  const [selectedLoad, setSelectedLoad] = useState<Load | null>(null);
+  const { theme } = useTheme();
 
-    // --- Enhanced Search and Filter Logic ---
-    const filteredLoads = loads.filter(load => {
-        const lowerSearchTerm = searchTerm.toLowerCase();
-        
-        // Search Algo checks all relevant fields including capacity
-        const matchesSearch = load.pickupLocation.toLowerCase().includes(lowerSearchTerm) ||
-                              load.dropoffLocation.toLowerCase().includes(lowerSearchTerm) ||
-                              load.commodity.toLowerCase().includes(lowerSearchTerm) || // Commodity Search
-                              load.vehicleTypeRequired.toLowerCase().includes(lowerSearchTerm) ||
-                              String(load.requiredCapacityTons).includes(lowerSearchTerm) || 
-                              String(load.weightTons).includes(lowerSearchTerm); 
-        
-        // Vehicle Type Filter
-        const matchesFilter = filterType === 'All' || load.vehicleTypeRequired === filterType;
-
-        return matchesSearch && matchesFilter;
-    });
-
-    const uniqueVehicleTypes = Array.from(new Set(loads.map(load => load.vehicleTypeRequired)));
-
-    const handleDetailsClick = useCallback((load: Load) => {
-        setSelectedLoad(load);
-    }, []);
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-[60vh] text-xl text-gray-600">
-                <FaSpinner className="animate-spin mr-2" /> Searching for **Load Opportunities**...
-            </div>
-        );
+  // SIDEBAR ADJUSTMENT LOGIC
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+        return localStorage.getItem("sidebarCollapsed") === "true";
     }
+    return false;
+  });
 
-    return (
+  useEffect(() => {
+    const handleStorageChange = () => {
+        setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+  // --- End Sidebar Logic ---
+
+
+  useEffect(() => {
+    const fetchLoads = async () => {
+        // Mock data logic for UI consistency (API call logic is preserved)
+        const mockLoads: Load[] = Array(15).fill(0).map((_, index) => ({
+            id: index + 100,
+            pickupLocation: index % 3 === 0 ? "Gwalior,M.P" : "Delhi,N.C.R",
+            dropoffLocation: index % 3 === 1 ? "Mumbai,MH" : "Indore,M.P",
+            commodity: index % 4 === 0 ? "Industrial Goods" : "Household Items",
+            weightTons: 15,
+            requiredCapacityTons: 15,
+            vehicleTypeRequired: index % 2 === 0 ? "Open Truck" : "Trailer",
+            freightPrice: 50000,
+            expectedPickupDate: "10/10/2025",
+            expectedPickupTime: "N/A",
+            expectedDeliveryDate: "13/10/2025",
+            loadId: `ID:29887${index}`,
+            vehicleType: index % 2 === 0 ? "Truck" : "Trailer", 
+            rate: 50000,
+        }));
+        setLoads(mockLoads);
+        setLoading(false);
         
-        <div className="p-0 bg-white min-h-full text-gray-800 rounded-xl ">
-        <TransporterHeader/>
-            
-            {/* Modal Renderer */}
-            {selectedLoad && <LoadDetailsModal load={selectedLoad} onClose={() => setSelectedLoad(null)} />}
+        // --- Real API Fetch Logic (Commented out for reliable mock UI) ---
+        /*
+        try {
+            const response = await axios.get(
+              "http://localhost:8080/api/bookings/status",
+              { params: { status: "REQUESTED" } }
+            );
+            // Process API data...
+        } catch (error) {
+            console.error("Error fetching bookings:", error);
+        } finally {
+            setLoading(false);
+        }
+        */
+    };
 
-            {/* Main Title - Clean and Professional (Smaller Font) */}
-            <h1 className="text-xl font-semibold mt-6 flex items-center gap-3 text-gray-800 pb-3 border-gray-300">
-                <FaRoad className='text-blue-600' /> Active Load Marketplace 
-            </h1>
-            
-            {/* Search and Filter Controls */}
-            <div className="bg-white p-6 rounded-xl shadow-lg mb-8 flex flex-col md:flex-row gap-4 items-center border border-gray-200">
-                
-                {/* Search Input */}
-                <div className="relative w-full md:w-5/12">
-                    <input
-                        type="text"
-                        placeholder="Search city, commodity, capacity (tons)..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900 transition"
-                    />
-                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
-                </div>
+    fetchLoads();
+  }, []);
 
-                {/* Vehicle Type Filter Dropdown */}
-                <div className="w-full md:w-5/12">
-                    <div className="relative">
-                        <select
-                            value={filterType}
-                            onChange={(e) => setFilterType(e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900 appearance-none pr-10 transition font-medium"
-                        >
-                            <option value="All">Filter by Vehicle Type (All)</option>
-                            {uniqueVehicleTypes.map(type => (
-                                <option key={type} value={type}>{type}</option>
-                            ))}
-                        </select>
-                        <FaFilter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
-                    </div>
-                </div>
-                
-                <span className="text-base font-bold text-blue-600 md:w-2/12 text-center">
-                    {filteredLoads.length} Loads Active
-                </span>
-            </div>
+  const filteredLoads = loads.filter((load) => {
+    
+    // 1. Loading City Filter
+    const matchesLoadingCity = 
+        selectedLoadingCity === "All" || load.pickupLocation.includes(selectedLoadingCity);
 
-            {/* Load Listings Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-                {filteredLoads.length > 0 ? (
-                    filteredLoads.map(load => (
-                        <LoadCard 
-                            key={load.id} 
-                            load={load} 
-                            onDetailsClick={handleDetailsClick} 
-                        />
-                    ))
-                ) : (
-                    <div className="lg:col-span-2 p-10 text-center bg-white rounded-xl border border-dashed border-gray-400 shadow-inner">
-                        <FaTruckLoading className="w-12 h-12 text-blue-500 mx-auto mb-4" />
-                        <p className="text-xl font-semibold text-gray-700">No shipments matched your current search criteria.</p>
-                        <p className="text-gray-500">Please clear your filters or try a broader search.</p>
-                    </div>
-                )}
-            </div>
-        </div>
+    // 2. Unloading City Filter
+    const matchesUnloadingCity = 
+        selectedUnloadingCity === "All" || load.dropoffLocation.includes(selectedUnloadingCity);
+        
+    // 3. Vehicle Type Filter
+    const matchesVehicleType =
+        filterType === "All" || load.vehicleTypeRequired === filterType;
+        
+    // 4. Commodity Filter
+    const matchesCommodity = 
+        selectedCommodity === "All" || load.commodity === selectedCommodity;
+        
+
+    return matchesLoadingCity && matchesUnloadingCity && matchesVehicleType && matchesCommodity;
+  });
+
+  // Unique Filter Options
+  const uniqueLoadingCities = Array.from(
+    new Set(loads.map((load) => load.pickupLocation.split(",")[0]))
+  );
+  const uniqueUnloadingCities = Array.from(
+    new Set(loads.map((load) => load.dropoffLocation.split(",")[0]))
+  );
+  const uniqueVehicleTypes = Array.from(
+    new Set(loads.map((load) => load.vehicleTypeRequired))
+  );
+  const uniqueCommodities = Array.from(
+    new Set(loads.map((load) => load.commodity))
+  );
+
+  const handleDetailsClick = useCallback((load: Load) => {
+    setSelectedLoad(load);
+  }, []);
+
+  // --- Main Render ---
+  const sidebarWidth = sidebarCollapsed ? 80 : 256;
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[60vh] text-xl text-gray-600">
+        <FaSpinner className="animate-spin mr-2" /> Fetching load opportunities...
+      </div>
     );
+  }
+
+  // Helper component for Dropdowns
+  const FilterDropdown = ({ title, options, value, onChange }: { title: string, options: string[], value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void }) => (
+    <select
+      value={value}
+      onChange={onChange}
+      className="flex-1 py-2 bg-[#1A1F26] text-gray-200 rounded-lg font-medium text-sm border border-gray-700 focus:ring-violet-500 focus:border-violet-500 appearance-none px-3"
+    >
+      <option value="All">{title} (All)</option>
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  );
+
+
+  return (
+    // Main Content Container
+    <div
+        style={{
+            marginLeft: sidebarWidth,
+            transition: "margin-left 300ms ease",
+        }}
+        className="min-h-screen bg-[#1A1F26] text-gray-100 transition-colors duration-300"
+    >
+      <TransporterHeader />
+
+      {selectedLoad && (
+        <LoadDetailsModal load={selectedLoad} onClose={() => setSelectedLoad(null)} />
+      )}
+
+      <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        {/* --- Left Column: Search Filters & Load Cards --- */}
+        <div className="md:col-span-2 space-y-6">
+          
+          <h2 className="text-xl font-bold text-white">Search load</h2>
+          
+          {/* Filter Bar (UPDATED with Dropdowns) */}
+          <div className="flex gap-4 p-4 rounded-xl bg-[#3C3D3F]">
+            
+            {/* Loading City Dropdown */}
+            <FilterDropdown
+                title="Select Loading City"
+                options={uniqueLoadingCities}
+                value={selectedLoadingCity}
+                onChange={(e) => setSelectedLoadingCity(e.target.value)}
+            />
+            
+            {/* Unloading City Dropdown */}
+            <FilterDropdown
+                title="Select Unloading City"
+                options={uniqueUnloadingCities}
+                value={selectedUnloadingCity}
+                onChange={(e) => setSelectedUnloadingCity(e.target.value)}
+            />
+            
+            {/* Vehicle Type Dropdown */}
+            <FilterDropdown
+                title="Select Vehicle Type"
+                options={uniqueVehicleTypes}
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+            />
+            
+            {/* Commodity Dropdown */}
+            <FilterDropdown
+                title="Select Commodity"
+                options={uniqueCommodities}
+                value={selectedCommodity}
+                onChange={(e) => setSelectedCommodity(e.target.value)}
+            />
+          </div>
+
+          {/* Load Cards Grid with SCROLLING */}
+          <div className="overflow-y-auto pr-2" style={{ maxHeight: 'calc(100vh - 300px)' }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {filteredLoads.length > 0 ? (
+                filteredLoads.map((load) => (
+                  <LoadCard key={load.id} load={load} onDetailsClick={handleDetailsClick} />
+                ))
+              ) : (
+                <div className="lg:col-span-2 p-10 text-center bg-[#3C3D3F] rounded-xl border border-dashed border-gray-600 shadow-inner">
+                  <FaTruckLoading className="w-12 h-12 text-violet-500 mx-auto mb-4" />
+                  <p className="text-xl font-semibold text-gray-200">
+                    No shipments matched your current search criteria.
+                  </p>
+                  <p className="text-gray-400">
+                    Please clear your filters or try a broader search.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* --- Right Column: Customer Requests & Accepted Loads (Scrollable) --- */}
+        <div className="md:col-span-1 space-y-6">
+            
+            {/* Customer Request Section */}
+            <div className="p-4 rounded-xl bg-[#3C3D3F] shadow-lg">
+                <h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">Customer request</h2>
+                <div className="space-y-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                    {MOCK_SIDEBAR_DATA.map((item, index) => (
+                        <div key={`req-${index}`} className="p-3 rounded-lg bg-[#1A1F26] hover:bg-violet-900 transition text-sm cursor-pointer">
+                            <p className="font-semibold text-white">{item.location}</p>
+                            <p className="text-gray-400">{item.commodity}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Accepted Loads Section */}
+            <div className="p-4 rounded-xl bg-[#3C3D3F] shadow-lg">
+                <h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">Accepted Loads</h2>
+                <div className="space-y-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                    {MOCK_SIDEBAR_DATA.slice(0, 7).map((item, index) => (
+                        <div key={`acc-${index}`} className="p-3 rounded-lg bg-[#1A1F26] hover:bg-violet-900 transition text-sm cursor-pointer">
+                            <p className="font-semibold text-white">{item.location}</p>
+                            <p className="text-gray-400">{item.commodity}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+        </div>
+      </div>
+    </div>
+  );
 }

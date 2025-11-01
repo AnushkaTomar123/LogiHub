@@ -1,22 +1,18 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* --color-background: #22242C;
+--color-headingText:#e1e1e2;
+--color-card: #212126; */
+--color-background: #22242C;
+--color-headingText:#e1e1e2;
+--color-card: #3C3D3F;
+--color-border:#8F8A8A;
+--color-cardBg:#131722;
+--color-optionDark:#353845;
+--color-optionLight:#18191e;
+--color-main:#4f1bde;
 }
 
 /* Hide scrollbar but keep scroll functionality */

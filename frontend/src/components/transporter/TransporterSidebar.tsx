@@ -1,68 +1,79 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 import {
   MdOutlineLocalShipping,
   MdBarChart,
-  MdOutlineArchive,
+  MdNavigation,
   MdPeople,
-  MdRoute,
   MdFlashOn,
   MdCurrencyRupee,
   MdSettings,
   MdLogout,
-  MdNavigation,
   MdTrendingUp,
   MdPeopleAlt,
-  MdChat,
   MdHistory,
   MdRequestPage,
+  MdMenu,
+  MdClose,
 } from "react-icons/md";
-
-
-interface SidebarItem {
-  href?: string;
-  label: string;
-  icon: any;
-  subItems?: { href: string; label: string; icon: any }[];
-}
-
-interface SidebarSection {
-  title: string;
-  items: SidebarItem[];
-}
 
 export default function TransporterSidebar() {
   const pathname = usePathname();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("sidebarCollapsed") === "true";
+    }
+    return false;
+  });
+  const { theme, setTheme } = useTheme();
 
-  const sections: SidebarSection[] = [
+  // 🔹 Auto-collapse on mobile view
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setCollapsed(true);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // 🔹 Sync collapse state with localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("sidebarCollapsed", collapsed ? "true" : "false");
+      window.dispatchEvent(
+        new StorageEvent("storage", {
+          key: "sidebarCollapsed",
+          newValue: collapsed ? "true" : "false",
+        })
+      );
+    }
+  }, [collapsed]);
+
+  const sections = [
     {
-      title: "MAIN MENU",
+      title: "Main Menu",
       items: [
         { href: "/transporter/dashboard", label: "Dashboard", icon: MdBarChart },
-        { href: "/transporter/fleet", label: "Fleet Tracking", icon: MdNavigation },
-        { href: "/transporter/trips", label: "Assigned Trips", icon: MdOutlineArchive },
+        { href: "/transporter/fleet", label: "Fleet Management", icon: MdNavigation },
         { href: "/transporter/drivers", label: "Driver Management", icon: MdPeople },
-        { href: "/transporter/routes", label: "Route Planning", icon: MdRoute },
-        {
-          label: "Customer Management",
-          icon: MdPeopleAlt,
-          subItems: [
-            { href: "/transporter/custmgmnt/cus-req", label: "Customer Requests", icon: MdRequestPage },
-            { href: "/transporter/custmgmnt/cus-chat", label: "Customer Chats", icon: MdChat },
-            { href: "/transporter/custmgmnt/cus-feedback", label: "Feedback / History", icon: MdHistory },
-          ],
-        },
+        { href: "/transporter/routes", label: "Shipment Tracking", icon: MdOutlineLocalShipping },
+        { href: "/transporter/customer", label: "Customer Management", icon: MdPeopleAlt },
       ],
     },
     {
-      title: " FINANCE",
+      title: "Load & Billing",
       items: [
-        { href: "/transporter/freights", label: "Freight Opportunities", icon: MdFlashOn },
+        { href: "/transporter/freights", label: "Freight Management", icon: MdFlashOn },
         {
-          label: "Payments",
+          label: "Payment",
           icon: MdCurrencyRupee,
           subItems: [
             { href: "/transporter/payments/overview", label: "Overview", icon: MdBarChart },
@@ -74,11 +85,8 @@ export default function TransporterSidebar() {
       ],
     },
     {
-      title: "OTHERS",
-      items: [
-        { href: "/transporter/settings", label: "Settings", icon: MdSettings },
-        { href: "/auth/login", label: "Log out", icon: MdLogout },
-      ],
+      title: "System",
+      items: [{ href: "/transporter/settings", label: "Settings", icon: MdSettings }],
     },
   ];
 
@@ -86,49 +94,80 @@ export default function TransporterSidebar() {
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
+  // 🔹 Prevent expanding on mobile
+  const handleCollapseToggle = () => {
+    if (window.innerWidth > 768) {
+      setCollapsed((s) => !s);
+    }
+  };
+
   return (
-    <aside className="fixed left-0 top-0 w-64 h-full bg-white border-r border-gray-200 shadow-lg flex flex-col overflow-y-auto scrollbar-hide">
-      {/* Header Logo */}
-      <div className="p-6 mb-6 flex items-center gap-3">
-        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
-          <MdOutlineLocalShipping size={22} />
+    <aside
+      className={`fixed top-0 left-0 h-screen flex flex-col justify-between transition-all duration-300 z-50 
+      ${collapsed ? "w-20" : "w-64"}
+      bg-[#8979FF] dark:bg-background border-r border-white dark:border-border
+      text-white shadow-xl`}
+    >
+      {/* Header Section */}
+      <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-purple-700">
+            <MdOutlineLocalShipping size={18} />
+          </div>
+          {!collapsed && <span className="font-semibold text-lg tracking-wide">LogiHub</span>}
         </div>
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">LogiHub</h1>
-          <p className="text-sm text-gray-500">Transporter Panel</p>
-        </div>
+
+        <button
+          onClick={handleCollapseToggle} // 🔹 Modified here
+          className="hidden md:inline-flex text-white/80 hover:text-white  transition-all"
+        >
+          {collapsed ? <MdMenu size={22} /> : <MdClose size={22} />}
+        </button>
       </div>
 
-      {/* Navigation */}
-      <nav className="px-2 space-y-6">
+      {/* Navigation Section */}
+      <nav className="flex-1 overflow-y-auto scrollbar-hide px-3 pt-5 space-y-6">
         {sections.map((section, idx) => (
           <div key={idx}>
-            <h4 className="text-xs font-semibold text-gray-400 uppercase mb-2 tracking-wider">{section.title}</h4>
+            {!collapsed && (
+              <h4 className="text-xs uppercase font-semibold mb-3 tracking-wider text-white/70">
+                {section.title}
+              </h4>
+            )}
+
             <div className="space-y-1">
               {section.items.map((item) =>
                 item.subItems ? (
                   <div key={item.label}>
                     <button
                       onClick={() => toggleDropdown(item.label)}
-                      className="flex items-center justify-between w-full px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 whitespace-nowrap transition-all duration-200"
+                      className={`flex items-center justify-between w-full px-3 py-2 rounded-md transition-all duration-200
+                      hover:bg-white/10 ${openDropdown === item.label ? "bg-white/10" : ""}`}
                     >
                       <div className="flex items-center gap-2">
                         <item.icon size={18} />
-                        <span className="text-sm font-medium">{item.label}</span>
+                        {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
                       </div>
+                      {!collapsed && (
+                        <span className="text-xs">{openDropdown === item.label ? "−" : "+"}</span>
+                      )}
                     </button>
+
                     {openDropdown === item.label && (
-                      <div className="ml-6 mt-2 space-y-1 flex flex-col">
+                      <div className="ml-6 mt-2 space-y-1 animate-fadeIn">
                         {item.subItems.map((sub) => (
                           <Link
                             key={sub.href}
                             href={sub.href}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-150 whitespace-nowrap ${
-                              pathname === sub.href ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"
+                            className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-all duration-200
+                            ${
+                              pathname === sub.href
+                                ? "bg-gradient-to-r from-[#682EC7] via-[#5827A8] to-[#49208C] text-white"
+                                : "hover:bg-white/10"
                             }`}
                           >
-                            <sub.icon size={16} className="text-gray-500 flex-shrink-0" />
-                            {sub.label}
+                            <sub.icon size={15} />
+                            {!collapsed && sub.label}
                           </Link>
                         ))}
                       </div>
@@ -138,12 +177,15 @@ export default function TransporterSidebar() {
                   <Link
                     key={item.href}
                     href={item.href!}
-                    className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-150 font-medium ${
-                      pathname === item.href ? "bg-blue-600 text-white shadow-sm" : "text-gray-700 hover:bg-gray-100"
+                    className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200
+                    ${
+                      pathname === item.href
+                        ? "bg-gradient-to-r from-[#682EC7] via-[#5827A8] to-[#49208C] text-white"
+                        : "hover:bg-white/10"
                     }`}
                   >
                     <item.icon size={18} />
-                    <span className="text-sm">{item.label}</span>
+                    {!collapsed && <span className="text-sm">{item.label}</span>}
                   </Link>
                 )
               )}
@@ -151,6 +193,32 @@ export default function TransporterSidebar() {
           </div>
         ))}
       </nav>
+
+      {/* Footer Section */}
+      <div className="px-4 py-4 border-t border-white/10 flex flex-col gap-3">
+        {!collapsed && (
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Dark Mode</span>
+            <button
+              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              className="w-12 h-6 flex items-center rounded-full bg-gray-400 dark:bg-gray-600 transition-all relative"
+            >
+              <span
+                className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-all duration-300
+                ${theme === "dark" ? "translate-x-6" : "translate-x-0"}`}
+              ></span>
+            </button>
+          </div>
+        )}
+
+        <Link
+          href="/auth/login"
+          className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-white/10 transition-all duration-200"
+        >
+          <MdLogout size={18} />
+          {!collapsed && <span className="text-sm">Log Out</span>}
+        </Link>
+      </div>
     </aside>
   );
 }

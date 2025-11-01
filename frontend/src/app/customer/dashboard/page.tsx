@@ -2,6 +2,7 @@
 
 import CustomerHeader from "@/components/customer/Customerheader";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { FaTruck, FaMapMarkerAlt, FaFileInvoice, FaHeadset } from "react-icons/fa";
 
 interface Order {
@@ -25,6 +26,7 @@ export default function CustomerDashboard() {
   ]);
 
   const [user, setUser] = useState<User | null>(null);
+  const [username, setUsername] = useState("Customer");
 
   useEffect(() => {
     const username = localStorage.getItem("username");
@@ -32,6 +34,27 @@ export default function CustomerDashboard() {
     const role = localStorage.getItem("role");
     if (username && email && role) {
       setUser({ username, email, role });
+    }
+  }, []);
+   useEffect(() => {
+    // Get username from localStorage
+    const storedName = localStorage.getItem("username");
+    if (storedName) setUsername(storedName);
+
+    // Fetch transporterId by email
+    const storedEmail = localStorage.getItem("email");
+    if (storedEmail) {
+      axios
+        .get(`http://localhost:8080/api/customer/by-email?email=${storedEmail}`)
+        .then((res) => {
+          const id = res.data.id; 
+          setCustomerId(id);
+          localStorage.setItem("transporterId", id.toString());
+          console.log("✅ Transporter ID fetched:", id);
+        })
+        .catch((err) =>
+          console.error("❌ Error fetching transporter by email:", err)
+        );
     }
   }, []);
 
@@ -98,3 +121,7 @@ export default function CustomerDashboard() {
     </div>
   );
 }
+function setCustomerId(id: any) {
+  throw new Error("Function not implemented.");
+}
+

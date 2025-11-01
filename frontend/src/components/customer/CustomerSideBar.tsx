@@ -38,7 +38,7 @@ export default function CustomerSidebar() {
         { href: "/customer/dashboard", label: "Dashboard", icon: MdBarChart },
         { href: "/customer/bookVehicle", label: "Book Vehicle", icon: FaTruck },
         { href: "/customer/myOrders", label: "My Orders", icon: FaClipboardList },
-        { href: "/customer/Billing", label: "Billing", icon: FaFileInvoice },
+        { href: "/customer/billing", label: "Billing", icon: FaFileInvoice },
       ],
     },
     {

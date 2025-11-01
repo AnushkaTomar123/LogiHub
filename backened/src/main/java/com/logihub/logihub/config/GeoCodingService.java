@@ -1,4 +1,4 @@
-package com.logihub.logihub.service.impl;
+package com.logihub.logihub.config;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
