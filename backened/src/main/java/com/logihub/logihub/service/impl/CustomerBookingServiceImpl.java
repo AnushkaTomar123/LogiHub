@@ -1,95 +1,138 @@
 package com.logihub.logihub.service.impl;
 
 import com.logihub.logihub.dto.CustomerBookingRequestDTO;
-import com.logihub.logihub.dto.CustomerBookingResponseDTO;
+import com.logihub.logihub.dto.CustomerPaymentDto;
+import com.logihub.logihub.dto.DriverAssignmentDto;
 import com.logihub.logihub.entity.CustomerBooking;
+import com.logihub.logihub.entity.Wallet;
+import com.logihub.logihub.entity.WalletTransaction;
 import com.logihub.logihub.enums.BookingStatus;
 import com.logihub.logihub.enums.PaymentStatus;
+import com.logihub.logihub.enums.TransactionType;
+import com.logihub.logihub.enums.WalletOwnerType;
 import com.logihub.logihub.repository.CustomerBookingRepository;
+import com.logihub.logihub.repository.WalletRepository;
+import com.logihub.logihub.repository.WalletTransactionRepository;
 import com.logihub.logihub.service.CustomerBookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerBookingServiceImpl implements CustomerBookingService {
 
     private final CustomerBookingRepository bookingRepository;
+    private final WalletRepository walletRepository;
+    private final WalletTransactionRepository walletTransactionRepository;
 
     @Override
-    public CustomerBookingResponseDTO requestBooking(CustomerBookingRequestDTO dto) {
-        CustomerBooking booking = new CustomerBooking();
-        booking.setCustomerId(dto.getCustomerId());
-        booking.setPickupAddress(dto.getPickupAddress());
-        booking.setDropAddress(dto.getDropAddress());
-        booking.setPickupDate(dto.getPickupDate());
-        booking.setDeliveryDate(dto.getDeliveryDate());
-        booking.setEstimatedDistanceKm(dto.getEstimatedDistanceKm());
-        booking.setEstimatedCost(dto.getEstimatedCost());
+    public CustomerBooking createBooking(CustomerBookingRequestDTO dto) {
+        CustomerBooking booking = CustomerBooking.builder()
+                .customerId(dto.getCustomerId())
+                .pickupAddress(dto.getPickupAddress())
+                .dropAddress(dto.getDropAddress())
+                .ExpectDeliveryDate(dto.getExpectDeliveryDate())
+                .goodsDescription(dto.getGoodsDescription())
+                .vehicleType(dto.getVehicalType())
+                .bookingDate(LocalDateTime.now())
+                .status(BookingStatus.PENDING)
+                .paymentStatus(PaymentStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
 
-        booking.setBookingDate(LocalDateTime.now());  // manually set
-        booking.setStatus(BookingStatus.REQUESTED);
-        booking.setPaymentStatus(PaymentStatus.PENDING);
-        booking.setCreatedAt(LocalDateTime.now());
-        booking.setUpdatedAt(LocalDateTime.now());
-
-        CustomerBooking saved = bookingRepository.save(booking);
-
-        return mapToResponseDTO(saved);
+        return bookingRepository.save(booking);
     }
 
     @Override
-    public CustomerBookingResponseDTO acceptBooking(Long bookingId, Long transporterId, Long vehicleId, Long driverId) {
-        CustomerBooking booking = bookingRepository.findById(bookingId)
+    public CustomerBooking updateHalfPayment(CustomerPaymentDto dto) {
+        CustomerBooking booking = bookingRepository.findById(dto.getBookingId())
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
+        // Fetch wallets
+        Wallet customerWallet = walletRepository.findByOwnerIdAndOwnerType(booking.getCustomerId(), WalletOwnerType.CUSTOMER)
+                .orElseThrow(() -> new RuntimeException("Customer wallet not found"));
+
+        Wallet transporterWallet = walletRepository.findByOwnerIdAndOwnerType(booking.getTransporterId(), WalletOwnerType.TRANSPORTER)
+                .orElseThrow(() -> new RuntimeException("Transporter wallet not found"));
+
+        // Check balance
+        if (customerWallet.getBalance() < dto.getAmountPaid()) {
+            throw new RuntimeException("Insufficient balance in customer wallet");
+        }
+
+        // Deduct from customer
+        customerWallet.setBalance(customerWallet.getBalance() - dto.getAmountPaid());
+        walletRepository.save(customerWallet);
+
+        // Add to transporter
+        transporterWallet.setBalance(transporterWallet.getBalance() + dto.getAmountPaid());
+        walletRepository.save(transporterWallet);
+
+        // Log transactions
+        WalletTransaction customerTxn = WalletTransaction.builder()
+                .walletId(customerWallet.getId())
+                .relatedWalletId(transporterWallet.getId())
+                .transactionType(TransactionType.TRANSFER)
+                .amount(dto.getAmountPaid())
+                .description("Half payment for booking ID: " + dto.getBookingId())
+                .timestamp(LocalDateTime.now())
+                .ownerType(WalletOwnerType.CUSTOMER)
+                .build();
+        walletTransactionRepository.save(customerTxn);
+
+        WalletTransaction transporterTxn = WalletTransaction.builder()
+                .walletId(transporterWallet.getId())
+                .relatedWalletId(customerWallet.getId())
+                .transactionType(TransactionType.ADD)
+                .amount(dto.getAmountPaid())
+                .description("Received half payment for booking ID: " + dto.getBookingId())
+                .timestamp(LocalDateTime.now())
+                .ownerType(WalletOwnerType.TRANSPORTER)
+                .build();
+        walletTransactionRepository.save(transporterTxn);
+
+
+
+
+        booking.setPaymentStatus(PaymentStatus.HALF_PAID);
         booking.setStatus(BookingStatus.ACCEPTED);
-        booking.setTransporterId(transporterId);
-        booking.setVehicleId(vehicleId);
-        booking.setDriverId(driverId);
         booking.setUpdatedAt(LocalDateTime.now());
 
-        CustomerBooking updated = bookingRepository.save(booking);
-
-        return mapToResponseDTO(updated);
+        return bookingRepository.save(booking);
     }
 
     @Override
-    public List<CustomerBookingResponseDTO> getBookingsByCustomer(Long customerId) {
-        return bookingRepository.findByCustomerId(customerId).stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+    public CustomerBooking assignDriver(DriverAssignmentDto dto) {
+        CustomerBooking booking = bookingRepository.findById(dto.getBookingId())
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        booking.setTransporterId(dto.getTransporterId());
+        booking.setDriverId(dto.getDriverId());
+        booking.setVehicleId(dto.getVehicleId());
+        booking.setPickupDate(dto.getPickupDate());
+        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setUpdatedAt(LocalDateTime.now());
+
+        return bookingRepository.save(booking);
     }
 
     @Override
-    public List<CustomerBookingResponseDTO> getBookingsByStatus(BookingStatus status) {
-        return bookingRepository.findByStatus(status)
-                .stream()
-                .map(this::mapToResponseDTO)
-                .toList();
+    public Optional<CustomerBooking> getBookingById(Long id) {
+        return bookingRepository.findById(id);
     }
 
-    // Manual mapping method
-    private CustomerBookingResponseDTO mapToResponseDTO(CustomerBooking booking) {
-        CustomerBookingResponseDTO response = new CustomerBookingResponseDTO();
-        response.setId(booking.getId());
-        response.setCustomerId(booking.getCustomerId());
-        response.setPickupAddress(booking.getPickupAddress());
-        response.setDropAddress(booking.getDropAddress());
-        response.setPickupDate(booking.getPickupDate());
-        response.setDeliveryDate(booking.getDeliveryDate());
-        response.setEstimatedDistanceKm(booking.getEstimatedDistanceKm());
-        response.setEstimatedCost(booking.getEstimatedCost());
-        response.setBookingDate(booking.getBookingDate());
-        response.setStatus(booking.getStatus());
-        response.setPaymentStatus(booking.getPaymentStatus());
-        response.setTransporterId(booking.getTransporterId());
-        response.setVehicleId(booking.getVehicleId());
-        response.setDriverId(booking.getDriverId());
-        return response;
+    @Override
+    public List<CustomerBooking> getBookingsByCustomerId(Long customerId) {
+        return bookingRepository.findByCustomerId(customerId);
+    }
+
+    @Override
+    public List<CustomerBooking> getBookingsByStatus(BookingStatus status) {
+        return bookingRepository.findByStatus(status);
     }
 }

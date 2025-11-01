@@ -1,10 +1,14 @@
 package com.logihub.logihub.controller;
 
 import com.logihub.logihub.dto.CustomerBookingRequestDTO;
-import com.logihub.logihub.dto.CustomerBookingResponseDTO;
+
+import com.logihub.logihub.dto.CustomerPaymentDto;
+import com.logihub.logihub.dto.DriverAssignmentDto;
+import com.logihub.logihub.entity.CustomerBooking;
 import com.logihub.logihub.enums.BookingStatus;
 import com.logihub.logihub.service.CustomerBookingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,30 +20,34 @@ public class CustomerBookingController {
 
     private final CustomerBookingService bookingService;
 
-    // Customer requests a booking
-    @PostMapping("/request")
-    public CustomerBookingResponseDTO requestBooking(@RequestBody CustomerBookingRequestDTO dto) {
-        return bookingService.requestBooking(dto);
+    @PostMapping("/create")
+    public ResponseEntity<CustomerBooking> createBooking(@RequestBody CustomerBookingRequestDTO dto) {
+        return ResponseEntity.ok(bookingService.createBooking(dto));
     }
 
-    // Transporter accepts the booking
-    @PutMapping("/accept/{bookingId}")
-    public CustomerBookingResponseDTO acceptBooking(@PathVariable Long bookingId,
-                                                    @RequestParam Long transporterId,
-                                                    @RequestParam Long vehicleId,
-                                                    @RequestParam Long driverId) {
-        return bookingService.acceptBooking(bookingId, transporterId, vehicleId, driverId);
+    @PostMapping("/payment/half")
+    public ResponseEntity<CustomerBooking> halfPayment(@RequestBody CustomerPaymentDto dto) {
+        return ResponseEntity.ok(bookingService.updateHalfPayment(dto));
     }
 
-    // Get bookings by customer
+    @PostMapping("/assign-driver")
+    public ResponseEntity<CustomerBooking> assignDriver(@RequestBody DriverAssignmentDto dto) {
+        return ResponseEntity.ok(bookingService.assignDriver(dto));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerBooking> getBooking(@PathVariable Long id) {
+        return bookingService.getBookingById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
     @GetMapping("/customer/{customerId}")
-    public List<CustomerBookingResponseDTO> getBookingsByCustomer(@PathVariable Long customerId) {
-        return bookingService.getBookingsByCustomer(customerId);
+    public ResponseEntity<List<CustomerBooking>> getBookingsByCustomer(@PathVariable Long customerId) {
+        return ResponseEntity.ok(bookingService.getBookingsByCustomerId(customerId));
     }
 
-    // Get bookings by status (e.g., REQUESTED, ACCEPTED)
-    @GetMapping("/status")
-    public List<CustomerBookingResponseDTO> getBookingsByStatus(@RequestParam BookingStatus status) {
-        return bookingService.getBookingsByStatus(status);
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<CustomerBooking>> getBookingsByStatus(@PathVariable BookingStatus status) {
+        return ResponseEntity.ok(bookingService.getBookingsByStatus(status));
     }
 }

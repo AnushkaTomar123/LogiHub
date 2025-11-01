@@ -5,8 +5,8 @@ import com.logihub.logihub.dto.VehicleResponseDTO;
 import com.logihub.logihub.entity.Transporter;
 import com.logihub.logihub.entity.Vehicle;
 import com.logihub.logihub.enums.VehicalStatus;
-import com.logihub.logihub.enums.VehicleModel;
-import com.logihub.logihub.enums.VehicleType;
+import com.logihub.logihub.enums.VehicalModel;
+import com.logihub.logihub.enums.VehicalType;
 import com.logihub.logihub.repository.TransporterRepository;
 import com.logihub.logihub.repository.VehicleRepository;
 import com.logihub.logihub.service.VehicleService;
@@ -74,8 +74,8 @@ public class VehicleServiceImpl implements VehicleService {
                 .orElseThrow(() -> new RuntimeException("Vehicle not found with ID: " + id));
 
         existing.setVehicleNumber(vehicleDTO.getVehicleNumber());
-        existing.setVehicleType(VehicleType.valueOf(vehicleDTO.getVehicleType())); // String → Enum
-        existing.setModel(VehicleModel.valueOf(vehicleDTO.getModel()));           // String → Enum
+        existing.setVehicleType(VehicalType.valueOf(vehicleDTO.getVehicleType())); // String → Enum
+        existing.setModel(VehicalModel.valueOf(vehicleDTO.getModel()));           // String → Enum
         existing.setStatus(VehicalStatus.valueOf(vehicleDTO.getStatus()));           // String → Enum
         existing.setCapacity(vehicleDTO.getCapacity());
 
