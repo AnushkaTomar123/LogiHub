@@ -1,6 +1,6 @@
 package com.logihub.logihub.enums;
 
-public enum VehicleType {
+public enum VehicalType {
     TRUCK,          // Lorry, heavy transport
     TRAILER,        // Truck with trailer
     VAN,            // Small cargo van

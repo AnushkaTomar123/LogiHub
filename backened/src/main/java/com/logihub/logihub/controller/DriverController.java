@@ -3,6 +3,7 @@ package com.logihub.logihub.controller;
 import com.logihub.logihub.dto.DriverDTO;
 import com.logihub.logihub.dto.DriverResponseDTO;
 import com.logihub.logihub.service.DriverService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class DriverController {
 
     // ✅ Add Driver
     @PostMapping("/add")
-    public ResponseEntity<DriverResponseDTO> addDriver(@RequestBody DriverDTO driverDTO) {
+    public ResponseEntity<DriverResponseDTO> addDriver(@Valid @RequestBody DriverDTO driverDTO) {
         return ResponseEntity.ok(driverService.addDriver(driverDTO));
     }
 

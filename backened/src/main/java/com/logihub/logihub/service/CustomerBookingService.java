@@ -2,21 +2,25 @@ package com.logihub.logihub.service;
 
 import com.logihub.logihub.dto.CustomerBookingRequestDTO;
 import com.logihub.logihub.dto.CustomerBookingResponseDTO;
+import com.logihub.logihub.dto.CustomerPaymentDto;
+import com.logihub.logihub.dto.DriverAssignmentDto;
+import com.logihub.logihub.entity.CustomerBooking;
 import com.logihub.logihub.enums.BookingStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CustomerBookingService {
 
-    // Customer requests a booking
-    CustomerBookingResponseDTO requestBooking(CustomerBookingRequestDTO dto);
+    CustomerBooking createBooking(CustomerBookingRequestDTO dto);
 
-    // Transporter accepts the booking
-    CustomerBookingResponseDTO acceptBooking(Long bookingId, Long transporterId, Long vehicleId, Long driverId);
+    CustomerBooking updateHalfPayment(CustomerPaymentDto dto);
 
-    // Get all bookings by customer
-    List<CustomerBookingResponseDTO> getBookingsByCustomer(Long customerId);
+    CustomerBooking assignDriver(DriverAssignmentDto dto);
 
-    // Get all bookings by status
-    List<CustomerBookingResponseDTO> getBookingsByStatus(BookingStatus status);
+    Optional<CustomerBooking> getBookingById(Long id);
+
+    List<CustomerBooking> getBookingsByCustomerId(Long customerId);
+
+    List<CustomerBooking> getBookingsByStatus(BookingStatus status);
 }

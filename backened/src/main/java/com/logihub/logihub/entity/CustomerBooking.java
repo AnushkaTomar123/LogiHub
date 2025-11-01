@@ -2,6 +2,7 @@ package com.logihub.logihub.entity;
 
 import com.logihub.logihub.enums.BookingStatus;
 import com.logihub.logihub.enums.PaymentStatus;
+import com.logihub.logihub.enums.VehicalType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +27,7 @@ public class CustomerBooking {
     // Pickup & Drop locations
     private String pickupAddress;
     private String dropAddress;
-
+    private String ExpectDeliveryDate;
     private LocalDateTime bookingDate;   // Request time
     private LocalDateTime pickupDate;    // Scheduled pickup
     private LocalDateTime deliveryDate;  // Expected delivery
@@ -44,7 +45,8 @@ public class CustomerBooking {
 
     private Double estimatedDistanceKm;
     private Double estimatedCost;
-
+    private String goodsDescription;  // kya saman hai
+    private VehicalType vehicleType;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
