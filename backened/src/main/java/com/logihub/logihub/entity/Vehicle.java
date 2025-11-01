@@ -2,8 +2,8 @@ package com.logihub.logihub.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.logihub.logihub.enums.VehicalStatus;
-import com.logihub.logihub.enums.VehicleModel;
-import com.logihub.logihub.enums.VehicleType;
+import com.logihub.logihub.enums.VehicalModel;
+import com.logihub.logihub.enums.VehicalType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,10 +20,10 @@ public class Vehicle {
     private Long id;
 
     @Enumerated(EnumType.STRING) // Enum ko DB me string ke form me store karega
-    private VehicleType vehicleType;
+    private VehicalType vehicleType;
 
     @Enumerated(EnumType.STRING)
-    private VehicleModel model;
+    private VehicalModel model;
 
     private String vehicleNumber;
     private Double capacity;
