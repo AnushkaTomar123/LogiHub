@@ -61,4 +61,14 @@ public class VehicleController {
                 .map(Enum::name)
                 .toList();
     }
+
+    @GetMapping("/transporter/{transporterId}/status/{status}")
+    public ResponseEntity<List<VehicleResponseDTO>> getVehiclesByTransporterAndStatus(
+            @PathVariable Long transporterId,
+            @PathVariable String status) {
+
+        return ResponseEntity.ok(vehicleService.getVehiclesByTransporterAndStatus(transporterId, status));
+    }
+
+
 }

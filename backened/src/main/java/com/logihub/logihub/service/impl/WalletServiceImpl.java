@@ -1,14 +1,19 @@
 package com.logihub.logihub.service.impl;
 
 import com.logihub.logihub.dto.*;
+import com.logihub.logihub.entity.Customer;
+import com.logihub.logihub.entity.Transporter;
 import com.logihub.logihub.entity.Wallet;
 import com.logihub.logihub.entity.WalletTransaction;
 import com.logihub.logihub.enums.TransactionType;
 import com.logihub.logihub.enums.WalletOwnerType;
+import com.logihub.logihub.repository.CustomerRepository;
+import com.logihub.logihub.repository.TransporterRepository;
 import com.logihub.logihub.repository.WalletRepository;
 import com.logihub.logihub.repository.WalletTransactionRepository;
 import com.logihub.logihub.service.WalletService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,34 +27,62 @@ public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
     private final WalletTransactionRepository transactionRepository;
+    private final CustomerRepository customerRepository;
+    private final TransporterRepository transporterRepository;
+    private final ModelMapper modelMapper;
 
+    // ✅ Create Wallet (for Customer or Transporter)
     @Override
     public Wallet createWallet(WalletRequestDTO request) {
-        return walletRepository.findByOwnerIdAndOwnerType(request.getOwnerId(), request.getOwnerType())
-                .orElseGet(() -> walletRepository.save(
-                        Wallet.builder()
-                                .ownerId(request.getOwnerId())
-                                .ownerType(request.getOwnerType())
+        Wallet wallet;
+
+        if (request.getOwnerType() == WalletOwnerType.CUSTOMER) {
+            wallet = walletRepository.findByCustomer_Id(request.getOwnerId())
+                    .orElseGet(() -> {
+                        Customer customer = customerRepository.findById(request.getOwnerId())
+                                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                        return walletRepository.save(Wallet.builder()
+                                .customer(customer)
+                                .ownerType(WalletOwnerType.CUSTOMER)
                                 .balance(0.0)
                                 .lastUpdated(LocalDateTime.now())
-                                .build()
-                ));
+                                .build());
+                    });
+        } else {
+            wallet = walletRepository.findByTransporter_Id(request.getOwnerId())
+                    .orElseGet(() -> {
+                        Transporter transporter = transporterRepository.findById(request.getOwnerId())
+                                .orElseThrow(() -> new RuntimeException("Transporter not found"));
+                        return walletRepository.save(Wallet.builder()
+                                .transporter(transporter)
+                                .ownerType(WalletOwnerType.TRANSPORTER)
+                                .balance(0.0)
+                                .lastUpdated(LocalDateTime.now())
+                                .build());
+                    });
+        }
+
+        return wallet;
     }
 
+    // ✅ Add Money
     @Override
     @Transactional
     public Wallet addMoney(AddMoneyRequestDTO request) {
         if (request.getAmount() <= 0)
             throw new RuntimeException("Amount must be greater than zero");
 
-        Wallet wallet = walletRepository.findByOwnerIdAndOwnerType(request.getOwnerId(), request.getOwnerType())
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+        Wallet wallet = (request.getOwnerType() == WalletOwnerType.CUSTOMER)
+                ? walletRepository.findByCustomer_Id(request.getOwnerId())
+                .orElseThrow(() -> new RuntimeException("Customer wallet not found"))
+                : walletRepository.findByTransporter_Id(request.getOwnerId())
+                .orElseThrow(() -> new RuntimeException("Transporter wallet not found"));
 
         wallet.setBalance(wallet.getBalance() + request.getAmount());
         wallet.setLastUpdated(LocalDateTime.now());
         walletRepository.save(wallet);
 
-        // Save transaction
+        // Record transaction
         WalletTransaction tx = WalletTransaction.builder()
                 .walletId(wallet.getId())
                 .transactionType(TransactionType.ADD)
@@ -63,17 +96,24 @@ public class WalletServiceImpl implements WalletService {
         return wallet;
     }
 
+    // ✅ Transfer Money
     @Override
     @Transactional
     public String transferMoney(TransferMoneyRequestDTO request) {
         if (request.getAmount() <= 0)
             throw new RuntimeException("Amount must be greater than zero");
 
-        Wallet sender = walletRepository.findByOwnerIdAndOwnerType(request.getSenderId(), request.getSenderType())
-                .orElseThrow(() -> new RuntimeException("Sender wallet not found"));
+        Wallet sender = (request.getSenderType() == WalletOwnerType.CUSTOMER)
+                ? walletRepository.findByCustomer_Id(request.getSenderId())
+                .orElseThrow(() -> new RuntimeException("Sender wallet (Customer) not found"))
+                : walletRepository.findByTransporter_Id(request.getSenderId())
+                .orElseThrow(() -> new RuntimeException("Sender wallet (Transporter) not found"));
 
-        Wallet receiver = walletRepository.findByOwnerIdAndOwnerType(request.getReceiverId(), request.getReceiverType())
-                .orElseThrow(() -> new RuntimeException("Receiver wallet not found"));
+        Wallet receiver = (request.getReceiverType() == WalletOwnerType.CUSTOMER)
+                ? walletRepository.findByCustomer_Id(request.getReceiverId())
+                .orElseThrow(() -> new RuntimeException("Receiver wallet (Customer) not found"))
+                : walletRepository.findByTransporter_Id(request.getReceiverId())
+                .orElseThrow(() -> new RuntimeException("Receiver wallet (Transporter) not found"));
 
         if (sender.getBalance() < request.getAmount())
             throw new RuntimeException("Insufficient balance");
@@ -91,7 +131,7 @@ public class WalletServiceImpl implements WalletService {
                 .walletId(sender.getId())
                 .transactionType(TransactionType.TRANSFER)
                 .amount(-request.getAmount())
-                .description("Transfer to wallet " + receiver.getId())
+                .description("Transferred to wallet ID: " + receiver.getId())
                 .timestamp(LocalDateTime.now())
                 .relatedWalletId(receiver.getId())
                 .ownerType(request.getSenderType())
@@ -101,36 +141,34 @@ public class WalletServiceImpl implements WalletService {
                 .walletId(receiver.getId())
                 .transactionType(TransactionType.TRANSFER)
                 .amount(request.getAmount())
-                .description("Received from wallet " + sender.getId())
+                .description("Received from wallet ID: " + sender.getId())
                 .timestamp(LocalDateTime.now())
                 .relatedWalletId(sender.getId())
                 .ownerType(request.getReceiverType())
                 .build());
 
-        return "Transferred ₹" + request.getAmount() + " from wallet " + sender.getId() + " to wallet " + receiver.getId();
+        return "Transferred ₹" + request.getAmount() +
+                " from wallet " + sender.getId() + " to wallet " + receiver.getId();
     }
 
+    // ✅ Get Wallet by ID and Owner Type
     @Override
     public Wallet getWallet(Long ownerId, String ownerType) {
         WalletOwnerType type = WalletOwnerType.valueOf(ownerType.toUpperCase());
-        return walletRepository.findByOwnerIdAndOwnerType(ownerId, type)
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+        return (type == WalletOwnerType.CUSTOMER)
+                ? walletRepository.findByCustomer_Id(ownerId)
+                .orElseThrow(() -> new RuntimeException("Customer wallet not found"))
+                : walletRepository.findByTransporter_Id(ownerId)
+                .orElseThrow(() -> new RuntimeException("Transporter wallet not found"));
     }
 
+    // ✅ Get Transaction History
     @Override
     public List<WalletTransactionResponseDTO> getTransactionHistory(Long ownerId, String ownerType) {
-        WalletOwnerType type = WalletOwnerType.valueOf(ownerType.toUpperCase());
-        Wallet wallet = walletRepository.findByOwnerIdAndOwnerType(ownerId, type)
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
-
-        return transactionRepository.findByWalletId(wallet.getId()).stream()
-                .map(tx -> WalletTransactionResponseDTO.builder()
-                        .id(tx.getId())
-                        .transactionType(tx.getTransactionType())
-                        .amount(tx.getAmount())
-                        .description(tx.getDescription())
-                        .timestamp(tx.getTimestamp())
-                        .build())
+        Wallet wallet = getWallet(ownerId, ownerType);
+        return transactionRepository.findByWalletId(wallet.getId())
+                .stream()
+                .map(tx -> modelMapper.map(tx, WalletTransactionResponseDTO.class))
                 .collect(Collectors.toList());
     }
 }

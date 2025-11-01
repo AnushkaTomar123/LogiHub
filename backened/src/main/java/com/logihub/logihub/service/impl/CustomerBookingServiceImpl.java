@@ -53,38 +53,43 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
         CustomerBooking booking = bookingRepository.findById(dto.getBookingId())
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        // Fetch wallets
-        Wallet customerWallet = walletRepository.findByOwnerIdAndOwnerType(booking.getCustomerId(), WalletOwnerType.CUSTOMER)
+        if (booking.getTransporterId() == null) {
+            throw new RuntimeException("Transporter not assigned yet. Please assign transporter before payment.");
+        }
+
+        // ✅ Fetch wallets based on relationships
+        Wallet customerWallet = walletRepository.findByCustomer_Id(booking.getCustomerId())
                 .orElseThrow(() -> new RuntimeException("Customer wallet not found"));
 
-        Wallet transporterWallet = walletRepository.findByOwnerIdAndOwnerType(booking.getTransporterId(), WalletOwnerType.TRANSPORTER)
+        Wallet transporterWallet = walletRepository.findByTransporter_Id(booking.getTransporterId())
                 .orElseThrow(() -> new RuntimeException("Transporter wallet not found"));
 
-        // Check balance
+        // ✅ Check customer wallet balance
         if (customerWallet.getBalance() < dto.getAmountPaid()) {
             throw new RuntimeException("Insufficient balance in customer wallet");
         }
 
-        // Deduct from customer
+        // ✅ Deduct from customer
         customerWallet.setBalance(customerWallet.getBalance() - dto.getAmountPaid());
         walletRepository.save(customerWallet);
 
-        // Add to transporter
+        // ✅ Add to transporter
         transporterWallet.setBalance(transporterWallet.getBalance() + dto.getAmountPaid());
         walletRepository.save(transporterWallet);
 
-        // Log transactions
+        // ✅ Log customer transaction
         WalletTransaction customerTxn = WalletTransaction.builder()
                 .walletId(customerWallet.getId())
                 .relatedWalletId(transporterWallet.getId())
                 .transactionType(TransactionType.TRANSFER)
-                .amount(dto.getAmountPaid())
+                .amount(-dto.getAmountPaid())
                 .description("Half payment for booking ID: " + dto.getBookingId())
                 .timestamp(LocalDateTime.now())
                 .ownerType(WalletOwnerType.CUSTOMER)
                 .build();
         walletTransactionRepository.save(customerTxn);
 
+        // ✅ Log transporter transaction
         WalletTransaction transporterTxn = WalletTransaction.builder()
                 .walletId(transporterWallet.getId())
                 .relatedWalletId(customerWallet.getId())
@@ -96,16 +101,13 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
                 .build();
         walletTransactionRepository.save(transporterTxn);
 
-
-
-
+        // ✅ Update booking
         booking.setPaymentStatus(PaymentStatus.HALF_PAID);
         booking.setStatus(BookingStatus.ACCEPTED);
         booking.setUpdatedAt(LocalDateTime.now());
 
         return bookingRepository.save(booking);
     }
-
     @Override
     public CustomerBooking assignDriver(DriverAssignmentDto dto) {
         CustomerBooking booking = bookingRepository.findById(dto.getBookingId())

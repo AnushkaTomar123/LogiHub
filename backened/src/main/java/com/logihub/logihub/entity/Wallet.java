@@ -22,7 +22,13 @@ public class Wallet {
     @Enumerated(EnumType.STRING)
     private WalletOwnerType ownerType; // CUSTOMER or TRANSPORTER
 
-    private Long ownerId; // customerId or transporterId
+    @OneToOne
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private Customer customer;
+
+    @OneToOne
+    @JoinColumn(name = "transporter_id", referencedColumnName = "id")
+    private Transporter transporter;
 
     private LocalDateTime lastUpdated;
 }

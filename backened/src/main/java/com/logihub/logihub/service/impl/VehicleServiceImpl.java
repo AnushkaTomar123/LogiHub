@@ -91,4 +91,13 @@ public class VehicleServiceImpl implements VehicleService {
     public void deleteVehicle(Long id) {
         vehicleRepository.deleteById(id);
     }
+
+    @Override
+    public List<VehicleResponseDTO> getVehiclesByTransporterAndStatus(Long transporterId, String status) {
+        return vehicleRepository.findByTransporterIdAndStatus(transporterId, status.toUpperCase())
+                .stream()
+                .map(vehicle -> modelMapper.map(vehicle, VehicleResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
 }
