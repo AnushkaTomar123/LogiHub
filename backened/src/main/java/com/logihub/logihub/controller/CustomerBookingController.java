@@ -7,6 +7,7 @@ import com.logihub.logihub.dto.DriverAssignmentDto;
 import com.logihub.logihub.entity.CustomerBooking;
 import com.logihub.logihub.enums.BookingStatus;
 import com.logihub.logihub.service.CustomerBookingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +22,17 @@ public class CustomerBookingController {
     private final CustomerBookingService bookingService;
 
     @PostMapping("/create")
-    public ResponseEntity<CustomerBooking> createBooking(@RequestBody CustomerBookingRequestDTO dto) {
+    public ResponseEntity<CustomerBooking> createBooking(@Valid @RequestBody CustomerBookingRequestDTO dto) {
         return ResponseEntity.ok(bookingService.createBooking(dto));
     }
 
     @PostMapping("/payment/half")
-    public ResponseEntity<CustomerBooking> halfPayment(@RequestBody CustomerPaymentDto dto) {
+    public ResponseEntity<CustomerBooking> halfPayment(@Valid @RequestBody CustomerPaymentDto dto) {
         return ResponseEntity.ok(bookingService.updateHalfPayment(dto));
     }
 
     @PostMapping("/assign-driver")
-    public ResponseEntity<CustomerBooking> assignDriver(@RequestBody DriverAssignmentDto dto) {
+    public ResponseEntity<CustomerBooking> assignDriver(@Valid @RequestBody DriverAssignmentDto dto) {
         return ResponseEntity.ok(bookingService.assignDriver(dto));
     }
 
@@ -49,5 +50,14 @@ public class CustomerBookingController {
     @GetMapping("/status/{status}")
     public ResponseEntity<List<CustomerBooking>> getBookingsByStatus(@PathVariable BookingStatus status) {
         return ResponseEntity.ok(bookingService.getBookingsByStatus(status));
+    }
+
+    @PostMapping("/{bookingId}/accept/{transporterId}")
+    public ResponseEntity<CustomerBooking> acceptBooking(@Valid
+            @PathVariable Long bookingId,
+            @PathVariable Long transporterId) {
+
+        CustomerBooking updatedBooking = bookingService.acceptBookingByTransporter(bookingId, transporterId);
+        return ResponseEntity.ok(updatedBooking);
     }
 }
