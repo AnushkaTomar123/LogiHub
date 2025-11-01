@@ -11,4 +11,7 @@ public interface VehicleService {
     List<VehicleResponseDTO> getVehiclesByTransporter(Long transporterId);
     VehicleResponseDTO updateVehicle(Long id, VehicleDTO vehicleDTO);
     void deleteVehicle(Long id);
+    List<VehicleResponseDTO> getVehiclesByTransporterAndStatus(Long transporterId, String status);
 }
+
+
