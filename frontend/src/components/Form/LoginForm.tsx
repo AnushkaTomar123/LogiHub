@@ -27,13 +27,16 @@ const LoginForm = () => {
         { email, password },
         { withCredentials: true }
       );
+      
 
-      const { role, username: userName, email: userEmail } = res.data;
 
-      // 🔹 Save user data silently
-      localStorage.setItem("username", userName);
-      localStorage.setItem("email", userEmail);
-      localStorage.setItem("role", role);
+     const { role, username: userName, email: userEmail } = res.data;
+
+// Save to localStorage
+
+localStorage.setItem("username", userName);
+localStorage.setItem("email", userEmail);
+localStorage.setItem("role", role);
 
       // 🔹 Success toast
       toast.success("Login successful!", {
@@ -106,7 +109,7 @@ const LoginForm = () => {
                 name="email"
                 type="email"
                 placeholder="Email address"
-                className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-gray-300 text-gray-500 dark:text-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               />
               <input

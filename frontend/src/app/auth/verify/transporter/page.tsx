@@ -154,11 +154,11 @@ const handleSubmit = async (e: FormEvent) => {
   const vehicleOptions = ['Truck (Full Load)', 'Mini-Truck (LTL)', 'Tempo', 'Cargo Van'];
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-3xl bg-white shadow-2xl rounded-xl p-8 md:p-12">
+    <div className="min-h-screen bg-gray-100 dark:bg-black flex items-center justify-center p-4">
+      <div className="w-full max-w-3xl bg-white dark:bg-background shadow-2xl rounded-xl p-8 md:p-12">
         <div className="text-center mb-10">
           <FaTruck className="text-blue-600 mx-auto text-5xl mb-3" />
-          <h2 className="text-3xl font-extrabold text-gray-800">
+          <h2 className="text-3xl font-extrabold text-gray-800 dark:text-gray-100">
             Transporter Profile Setup & Verification
           </h2>
           <p className="text-gray-500 mt-2">
@@ -167,7 +167,7 @@ const handleSubmit = async (e: FormEvent) => {
         </div>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <h3 className="text-xl font-semibold text-gray-700 border-b pb-2 mb-4 flex items-center">
+          <h3 className="text-xl font-semibold  dark:text-gray-200 border-b pb-2 mb-4 flex items-center">
             <FaBuilding className="mr-2" /> Business Information
           </h3>
 
@@ -179,7 +179,7 @@ const handleSubmit = async (e: FormEvent) => {
               placeholder="Company Name"
               value={formData.companyName}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full   text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
               required
             />
 
@@ -189,7 +189,7 @@ const handleSubmit = async (e: FormEvent) => {
               placeholder="Contact Person Name"
               value={formData.contactPersonName}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full  text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card  border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
               required
             />
 
@@ -200,7 +200,7 @@ const handleSubmit = async (e: FormEvent) => {
               value={formData.contactNumber}
               onChange={handleChange}
               maxLength={10}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full   text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
               required
             />
             <input
@@ -210,7 +210,7 @@ const handleSubmit = async (e: FormEvent) => {
               value={formData.userEmail}
               onChange={handleChange}
               maxLength={50}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full  text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card  border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
               required
             />
             
@@ -221,12 +221,12 @@ const handleSubmit = async (e: FormEvent) => {
               value={formData.address}
               onChange={handleChange}
               rows={2}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500 md:col-span-2"
+              className="w-full   text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500 md:col-span-2"
               required
             />
           </div>
 
-          <h3 className="text-xl font-semibold text-gray-700 border-b pb-2 mt-6 mb-4 flex items-center">
+          <h3 className="text-xl font-semibold  dark:text-gray-200 border-b pb-2 mt-6 mb-4 flex items-center">
             <FaShieldAlt className="mr-2" /> Verification & Assets
           </h3>
 
@@ -238,7 +238,7 @@ const handleSubmit = async (e: FormEvent) => {
               value={formData.panNumber}
               onChange={handleChange}
               maxLength={10}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500 uppercase"
+              className="w-full  text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card  border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500 uppercase"
               required
             />
 
@@ -249,12 +249,12 @@ const handleSubmit = async (e: FormEvent) => {
               value={formData.aadhaarNumber}
               onChange={handleChange}
               maxLength={12}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full  text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card  border border-gray-300 rounded-lg px-4 py-3 focus:ring-blue-500 focus:border-blue-500"
               required
             />
 
             <div className="md:col-span-2">
-              <label htmlFor="totalVehicles" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="totalVehicles" className="block text-sm font-medium  dark:text-gray-200 mb-1">
                 Total Number of Vehicles
               </label>
               <input
@@ -271,7 +271,7 @@ const handleSubmit = async (e: FormEvent) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+              <label className="block text-sm font-medium  dark:text-gray-200 mb-1 flex items-center">
                 <FaCamera className="mr-2 text-blue-600" /> Upload Profile Photo
               </label>
               <input
@@ -279,7 +279,7 @@ const handleSubmit = async (e: FormEvent) => {
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className="w-full  text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card  border border-gray-300 rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               
               />
               {formData.profilePhoto && (
@@ -288,7 +288,7 @@ const handleSubmit = async (e: FormEvent) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+              <label className="block text-sm font-medium  dark:text-gray-200 mb-1 flex items-center">
                 <FaClipboardCheck className="mr-2 text-blue-600" /> Upload Vehicle RC/PUC Document
               </label>
               <input
@@ -296,7 +296,7 @@ const handleSubmit = async (e: FormEvent) => {
                 type="file"
                 accept=".pdf, image/*"
                 onChange={handleFileChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className="w-full   text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card border border-gray-300 rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 
               />
               {formData.rcProofDocument && (
@@ -306,7 +306,7 @@ const handleSubmit = async (e: FormEvent) => {
           </div>
 
           <div className="space-y-3 pt-4">
-            <label className="block text-gray-700 font-semibold mb-2 flex items-center">
+            <label className="block  dark:text-gray-200 font-semibold mb-2 flex items-center">
               <FaTruck className="mr-2 text-blue-600" /> Vehicle Types
             </label>
             <div className="flex flex-wrap gap-4">
@@ -319,9 +319,9 @@ const handleSubmit = async (e: FormEvent) => {
                     type="checkbox"
                     checked={formData.vehicleTypes.includes(type)}
                     onChange={() => handleVehicleTypeChange(type)}
-                    className="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    className="  text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card  form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                   />
-                  <span className="ml-2 text-gray-700">{type}</span>
+                  <span className="ml-2  dark:text-gray-200">{type}</span>
                 </label>
               ))}
             </div>

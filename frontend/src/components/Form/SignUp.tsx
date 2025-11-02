@@ -93,7 +93,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 font-sans">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100  dark:bg-black font-sans">
       {statusMessage && (
         <StatusMessage 
             message={statusMessage.message} 
@@ -101,10 +101,10 @@ const Signup = () => {
             onClose={() => setStatusMessage(null)} 
         />
       )}
-      <div className="flex w-full max-w-4xl bg-white shadow-2xl rounded-xl overflow-hidden transform transition-all hover:shadow-3xl">
+      <div className="flex w-full max-w-4xl bg-white dark:bg-background shadow-2xl rounded-xl overflow-hidden transform transition-all hover:shadow-3xl">
 
         {/* Left Panel */}
-        <div className="hidden md:flex flex-col justify-center items-start bg-gradient-to-br from-blue-700 to-cyan-600 text-white p-12 md:w-1/2">
+        <div className="hidden md:flex flex-col justify-center items-start bg-gradient-to-br from-blue-600 to-cyan-600 dark:from-purple-800 dark:via-indigo-800 dark:to-purple-600 text-white p-12 md:w-1/2">
           <h2 className="text-4xl font-extrabold mb-6 tracking-tight">Join Logihub Today</h2>
           <ul className="space-y-4 text-lg">
             <li className="flex items-center">
@@ -121,35 +121,35 @@ const Signup = () => {
 
         {/* Right Panel */}
         <div className="flex flex-col justify-center items-center p-10 w-full md:w-1/2">
-          <h2 className="text-3xl font-bold mb-2 text-gray-800">Create Your Account</h2>
+          <h2 className="text-3xl font-bold mb-2 text-gray-800 dark:text-gray-100 ">Create Your Account</h2>
           <p className="text-gray-500 mb-8">Tell us who you are</p>
 
           <form className="w-full space-y-4" onSubmit={handleSignup}>
             <input
               name="username"
               type="text"
-              placeholder="Username"
+              placeholder="Enter Username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+              className="w-full  text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
               required
             />
             <input
               name="email"
               type="email"
-              placeholder="Email"
+              placeholder="Enter Email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+              className="w-full text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
               required
             />
             <input
               name="password"
               type="password"
-              placeholder="Password"
+              placeholder="Enter Password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+              className="w-full text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-card border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
               required
             />
             
@@ -158,7 +158,7 @@ const Signup = () => {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white cursor-pointer text-gray-700"
+              className="w-full bg-white dark:bg-card border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500  cursor-pointer text-gray-900 dark:text-gray-200"
               required
             > 
               {/* Added disabled "Select Role" option */}
@@ -172,7 +172,7 @@ const Signup = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full bg-gradient-to-br from-blue-600 to-cyan-600 text-white py-3 mt-6 rounded-lg font-semibold shadow-md transition-all transform hover:scale-[1.01] hover:shadow-lg ${loading ? "opacity-70 cursor-not-allowed" : "hover:from-blue-700 hover:to-cyan-700"}`}
+              className={`w-full bg-gradient-to-br from-blue-600 to-cyan-600 dark:from-purple-800 dark:via-indigo-800 dark:to-purple-600 text-white py-3 mt-6 rounded-lg font-semibold shadow-md transition-all transform hover:scale-[1.01] hover:shadow-lg ${loading ? "opacity-70 cursor-not-allowed" : "hover:from-blue-700 hover:to-cyan-700"}`}
             >
               {loading ? "Signing up..." : "Signup"}
             </button>
