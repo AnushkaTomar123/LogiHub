@@ -3,6 +3,7 @@ package com.logihub.logihub.controller;
 import com.logihub.logihub.dto.CustomerDTO;
 import com.logihub.logihub.entity.Customer;
 import com.logihub.logihub.service.CustomerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +18,14 @@ public class CustomerController {
 
     // Create Customer (multipart form)
     @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<String> createCustomer(@ModelAttribute CustomerDTO dto) {
+    public ResponseEntity<String> createCustomer(@Valid  @ModelAttribute CustomerDTO dto) {
         customerService.createCustomer(dto);
         return ResponseEntity.ok("Customer registered successfully!");
     }
 
     // Update Customer (multipart form)
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
-    public ResponseEntity<Customer> updateCustomer(
+    public ResponseEntity<Customer> updateCustomer(@Valid
             @PathVariable Long id, @ModelAttribute CustomerDTO dto) {
         Customer updated = customerService.updateCustomer(id, dto);
         return ResponseEntity.ok(updated);

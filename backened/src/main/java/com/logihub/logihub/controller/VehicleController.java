@@ -5,6 +5,7 @@ import com.logihub.logihub.dto.VehicleResponseDTO;
 import com.logihub.logihub.enums.VehicalModel;
 import com.logihub.logihub.enums.VehicalType;
 import com.logihub.logihub.service.VehicleService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class VehicleController {
 
     // ✅ Add new vehicle
     @PostMapping("/add")
-    public ResponseEntity<VehicleResponseDTO> addVehicle(@RequestBody VehicleDTO vehicleDTO) {
+    public ResponseEntity<VehicleResponseDTO> addVehicle(@Valid @RequestBody VehicleDTO vehicleDTO) {
         return ResponseEntity.ok(vehicleService.addVehicle(vehicleDTO));
     }
 
@@ -39,7 +40,7 @@ public class VehicleController {
 
     // ✅ Update vehicle
     @PutMapping("/{id}")
-    public ResponseEntity<VehicleResponseDTO> updateVehicle(@PathVariable Long id, @RequestBody VehicleDTO vehicleDTO) {
+    public ResponseEntity<VehicleResponseDTO> updateVehicle(@Valid @PathVariable Long id, @RequestBody VehicleDTO vehicleDTO) {
         return ResponseEntity.ok(vehicleService.updateVehicle(id, vehicleDTO));
     }
 
