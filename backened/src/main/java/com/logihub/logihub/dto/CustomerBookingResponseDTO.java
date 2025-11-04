@@ -4,6 +4,7 @@ import com.logihub.logihub.enums.BookingStatus;
 import com.logihub.logihub.enums.PaymentStatus;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,6 +19,7 @@ public class CustomerBookingResponseDTO {
     private LocalDateTime bookingDate;
     private LocalDateTime pickupDate;
     private LocalDateTime deliveryDate;
+    private Double capacity;
     private BookingStatus status;
     private PaymentStatus paymentStatus;
     private Long transporterId;
@@ -27,4 +29,5 @@ public class CustomerBookingResponseDTO {
     private Double estimatedCost;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDate expectDeliveryDate;
 }

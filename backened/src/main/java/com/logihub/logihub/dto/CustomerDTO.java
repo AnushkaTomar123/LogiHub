@@ -18,13 +18,13 @@ public class CustomerDTO {
     @NotBlank(message = "Email is required")
     @Email(message = "Please enter a valid email address")
     private String userEmail;
-    @NotBlank(message = "Phone number is required")
-    @Pattern(
-            regexp = "^[6-9]\\d{9}$",
-            message = "Enter a valid 10-digit phone number starting with 6–9"
-    )
+//    @NotBlank(message = "Phone number is required")
+//    @Pattern(
+//            regexp = "^[6-9]\\d{9}$",
+//            message = "Enter a valid 10-digit phone number starting with 6–9"
+//    )
     private String contactNo;
     private String address;
-    private String city;
+    private String aadhar;
     private MultipartFile profilePhoto;
 }

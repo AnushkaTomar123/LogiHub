@@ -36,6 +36,7 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
                 .pickupAddress(dto.getPickupAddress())
                 .dropAddress(dto.getDropAddress())
                 .ExpectDeliveryDate(dto.getExpectDeliveryDate())
+                .estimatedCost(dto.getEstimatedCost())
                 .goodsDescription(dto.getGoodsDescription())
                 .vehicleType(dto.getVehicalType())
                 .bookingDate(LocalDateTime.now())

@@ -30,13 +30,13 @@ export default function BookVehiclePage() {
 
     // Get customerId from localStorage
     const customerId = localStorage.getItem("customerId");
+    console.log("customer id is :"+customerId);
     if (!customerId) {
       toast.error("Customer not found! Please login again.");
       setLoading(false);
       return;
     }
     
-console.log("Customer ID from localStorage:", customerId);
 
 
     const payload = {

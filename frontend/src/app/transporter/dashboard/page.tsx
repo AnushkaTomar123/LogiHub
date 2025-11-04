@@ -7,23 +7,15 @@ import { motion } from "framer-motion";
 import {
   MdLocalShipping,
   MdPeople,
-  MdCurrencyRupee,
-  MdOutlineRoute,
   MdCircle,
-  MdViewModule, // Icon for Total Shipments
-  MdTrendingUp, // Icon for Total Revenue
+  MdViewModule, 
+  MdTrendingUp, 
 } from "react-icons/md";
 import TransporterHeader from "@/components/transporter/TransporterHeader";
-import { FaUsers, FaTruckMoving } from "react-icons/fa";
-import dynamic from "next/dynamic";
-
-// --- Mock Data / Utility Functions (for UI) ---
 
 const getDriverStatus = (id: number) => {
   return id % 2 === 0 ? "Online" : "Offline";
 };
-
-// --- Interfaces (Kept same) ---
 
 interface Driver {
   licenseNumber:string;
@@ -39,7 +31,6 @@ interface Vehicle {
   model: string;
 }
 
-// --- Dashboard Component ---
 
 export default function TransporterDashboard() {
   const router = useRouter();
@@ -49,7 +40,7 @@ export default function TransporterDashboard() {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
-  // Mocked list for recent shipments (API not used)
+ 
   const MOCK_SHIPMENTS = [
     { id: 1, label: "Shipping id S112233" },
     { id: 2, label: "Shipping id S123456" },
@@ -58,7 +49,7 @@ export default function TransporterDashboard() {
 
  
 
-  // ✅ Sidebar collapse tracking (Kept same)
+  //  Sidebar collapse tracking
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("sidebarCollapsed") === "true";
@@ -83,7 +74,7 @@ export default function TransporterDashboard() {
     };
   }, []);
 
-  // ✅ Fetch Transporter Details (Kept same)
+  //  Fetch Transporter Details
   useEffect(() => {
     const storedName = localStorage.getItem("username");
     if (storedName) setUsername(storedName);
@@ -105,11 +96,9 @@ export default function TransporterDashboard() {
     }
   }, []);
 
-  // ✅ Fetch Drivers and Vehicles (Kept same)
+  //Fetch Drivers and Vehicles
   useEffect(() => {
     if (!transporterId) return;
-
-    // Fetch Drivers
     axios
       .get(`http://localhost:8080/api/transporters/drivers/${transporterId}`)
       .then((res) =>
@@ -227,7 +216,7 @@ export default function TransporterDashboard() {
               </div>
             </div>
             {/* 3. Driver Status  */}
-            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2 p-3 rounded-xl bg-gray-100 dark:bg-card border border-border shadow-lg md:h-[200px]">
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2 p-1 rounded-xl bg-gray-100 dark:bg-card border border-border shadow-lg md:h-[200px]">
               <div className="md:col-span-2 flex items-center justify-between mb-1">
                 <h3 className="text-md font-semibold text-gray-700  dark:text-gray-200">
                   Driver Status
