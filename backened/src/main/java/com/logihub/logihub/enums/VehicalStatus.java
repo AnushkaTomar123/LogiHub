@@ -5,3 +5,4 @@ public enum VehicalStatus {
     ON_ROUTE ,
     UNAVAILABLE
 }
+

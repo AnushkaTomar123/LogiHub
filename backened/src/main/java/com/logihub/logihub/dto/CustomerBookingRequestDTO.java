@@ -5,6 +5,9 @@ import com.logihub.logihub.enums.VehicalType;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,14 +21,15 @@ public class CustomerBookingRequestDTO {
     @NotBlank(message = "Drop address cannot be blank")
     @Size(min = 5, max = 255, message = "Drop address must be between 5 and 255 characters")
     private String dropAddress;
-    @FutureOrPresent(message = "Delivery date must be today or in the future")
-    private String expectDeliveryDate;
+   // @FutureOrPresent(message = "Delivery date must be today or in the future")
+    private LocalDate expectDeliveryDate;
     private String goodsDescription;
-    @Positive(message = "Estimated cost must be positive")
+   // @Positive(message = "Estimated cost must be positive")
     private Double estimatedCost;
     private VehicalType vehicalType;
     @NotNull(message = "Booking status is required")
     private BookingStatus bookingStatus;
-
+    private LocalDateTime pickupDate;
+    private Double capacity;
 
 }

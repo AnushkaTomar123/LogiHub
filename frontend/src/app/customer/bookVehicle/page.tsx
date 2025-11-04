@@ -8,56 +8,71 @@ import { toast } from "react-hot-toast";
 
 export default function BookVehiclePage() {
   const [formData, setFormData] = useState({
-    customerId: "",
     pickupAddress: "",
     dropAddress: "",
-    pickupDate: "",
-    deliveryDate: "",
-    estimatedDistanceKm: "",
+    expectDeliveryDate: "",
+    goodsDescription: "",
     estimatedCost: "",
+    vehicalType: "TRUCK",
+    bookingStatus: "PENDING",
   });
 
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
+ const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+  try {
+    setLoading(true);
 
-      // Prepare request body
-      const payload = {
-        ...formData,
-        customerId: Number(formData.customerId),
-        estimatedDistanceKm: Number(formData.estimatedDistanceKm),
-        estimatedCost: Number(formData.estimatedCost),
-      };
-
-      const res = await axios.post("http://localhost:8080/api/bookings/request", payload);
-
-      toast.success("Booking request submitted successfully!");
-      console.log("Booking Response:", res.data);
-
-      // Reset form
-      setFormData({
-        customerId: "",
-        pickupAddress: "",
-        dropAddress: "",
-        pickupDate: "",
-        deliveryDate: "",
-        estimatedDistanceKm: "",
-        estimatedCost: "",
-      });
-    } catch (error) {
-      console.error("Error submitting booking:", error);
-      toast.error("Failed to submit booking!");
-    } finally {
+    // Get customerId from localStorage
+    const customerId = localStorage.getItem("customerId");
+    console.log("customer id is :"+customerId);
+    if (!customerId) {
+      toast.error("Customer not found! Please login again.");
       setLoading(false);
+      return;
     }
-  };
+    
+
+
+    const payload = {
+      pickupAddress: formData.pickupAddress,
+      dropAddress: formData.dropAddress,
+      expectDeliveryDate: formData.expectDeliveryDate,
+      goodsDescription: formData.goodsDescription,
+      estimatedCost: Number(formData.estimatedCost),
+      vehicalType: formData.vehicalType,
+      bookingStatus: formData.bookingStatus,
+      customerId: Number(customerId), // Add customer ID here
+    };
+
+    const res = await axios.post("http://localhost:8080/api/bookings/create", payload);
+
+    toast.success("Booking created successfully!");
+    console.log("Booking Response:", res.data);
+
+    // Reset form
+    setFormData({
+      pickupAddress: "",
+      dropAddress: "",
+      expectDeliveryDate: "",
+      goodsDescription: "",
+      estimatedCost: "",
+      vehicalType: "TRUCK",
+      bookingStatus: "PENDING",
+    });
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    toast.error("Failed to create booking!");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <motion.div
@@ -76,7 +91,6 @@ export default function BookVehiclePage() {
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-
           {/* Pickup Address */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Pickup Address</label>
@@ -86,75 +100,97 @@ export default function BookVehiclePage() {
               value={formData.pickupAddress}
               onChange={handleChange}
               required
+              placeholder="Enter pickup location"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Drop Address */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Drop Address</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Delivery Address</label>
             <input
               type="text"
               name="dropAddress"
               value={formData.dropAddress}
               onChange={handleChange}
               required
+              placeholder="Enter delivery location"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
-          {/* Pickup Date */}
+          {/* Expected Delivery Date (calendar input) */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Pickup Date</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Expected Delivery Date</label>
             <input
-              type="datetime-local"
-              name="pickupDate"
-              value={formData.pickupDate}
+              type="date"
+              name="expectDeliveryDate"
+              value={formData.expectDeliveryDate}
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
-          {/* Delivery Date */}
+          {/* Goods Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Delivery Date</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Goods Description</label>
             <input
-              type="datetime-local"
-              name="deliveryDate"
-              value={formData.deliveryDate}
+              type="text"
+              name="goodsDescription"
+              value={formData.goodsDescription}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-
-          {/* Estimated Distance */}
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Estimated Distance (km)</label>
-            <input
-              type="number"
-              step="0.1"
-              name="estimatedDistanceKm"
-              value={formData.estimatedDistanceKm}
-              onChange={handleChange}
-              required
+              placeholder="e.g., Furniture, Electronics"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Estimated Cost */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Estimated Fare (₹)</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Estimated Cost (₹)</label>
             <input
               type="number"
-              step="0.1"
               name="estimatedCost"
               value={formData.estimatedCost}
               onChange={handleChange}
               required
+              placeholder="Enter estimated fare"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
+          </div>
+
+          {/* Vehicle Type from Enum */}
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Vehicle Type</label>
+            <select
+              name="vehicalType"
+              value={formData.vehicalType}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+              <option value="TRUCK">Truck</option>
+              <option value="TRAILER">Trailer</option>
+              <option value="VAN">Van</option>
+              <option value="MINI_TRUCK">Mini Truck</option>
+              <option value="PICKUP">Pickup</option>
+              <option value="TEMPO">Tempo</option>
+            </select>
+          </div>
+
+          {/* Booking Status from Enum */}
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Booking Status</label>
+            <select
+              name="bookingStatus"
+              value={formData.bookingStatus}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+              <option value="PENDING">Pending</option>
+              <option value="CONFIRMED">Confirmed</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
           </div>
 
           {/* Submit Button */}
