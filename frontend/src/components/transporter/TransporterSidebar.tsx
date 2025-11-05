@@ -72,16 +72,9 @@ export default function TransporterSidebar() {
       title: "Load & Billing",
       items: [
         { href: "/transporter/freights", label: "Freight Management", icon: MdFlashOn },
-        {
-          label: "Payment",
-          icon: MdCurrencyRupee,
-          subItems: [
-            { href: "/transporter/payments/overview", label: "Overview", icon: MdBarChart },
-            { href: "/transporter/payments/earnings", label: "Earning Report", icon: MdTrendingUp },
-            { href: "/transporter/payments/history", label: "Payment History", icon: MdHistory },
-            { href: "/transporter/payments/pending", label: "Pending Payments", icon: MdRequestPage },
-          ],
-        },
+         { href: "/transporter/payments", label: "Payment", icon: MdCurrencyRupee },
+    
+        
       ],
     },
     {
