@@ -32,6 +32,8 @@ public class CustomerBooking {
     private LocalDateTime bookingDate;   // Request time
     private LocalDateTime pickupDate;    // Scheduled pickup
     private LocalDateTime deliveryDate;  // Expected delivery
+    private Double halfAmount;
+    private Double remainingAmount;
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;        // Initially REQUESTED
@@ -50,4 +52,9 @@ public class CustomerBooking {
     private VehicalType vehicleType;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private Double proposedCost;     // last proposed price
+    private Double finalCost;        // locked price
+    private Long lastProposedBy;     // id of who proposed last
+    private Boolean isCustomerProposed; // true if last proposer was customer
 }
