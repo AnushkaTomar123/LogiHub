@@ -30,4 +30,6 @@ public class CustomerBookingResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDate expectDeliveryDate;
+    private Double halfAmount;
+    private Double remainingAmount;
 }

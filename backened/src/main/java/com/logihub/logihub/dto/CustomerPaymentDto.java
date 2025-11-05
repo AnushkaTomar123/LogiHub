@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class CustomerPaymentDto {
 
     private Long bookingId;
-    private Double amountPaid;
+  //  private Double amountPaid;
     private String paymentMode;
     private LocalDateTime paymentTime;
 }

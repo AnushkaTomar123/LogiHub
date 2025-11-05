@@ -1,9 +1,6 @@
 package com.logihub.logihub.service;
 
-import com.logihub.logihub.dto.CustomerBookingRequestDTO;
-import com.logihub.logihub.dto.CustomerBookingResponseDTO;
-import com.logihub.logihub.dto.CustomerPaymentDto;
-import com.logihub.logihub.dto.DriverAssignmentDto;
+import com.logihub.logihub.dto.*;
 import com.logihub.logihub.entity.CustomerBooking;
 import com.logihub.logihub.enums.BookingStatus;
 
@@ -13,9 +10,9 @@ import java.util.Optional;
 public interface CustomerBookingService {
 
     CustomerBooking createBooking(CustomerBookingRequestDTO dto);
-    CustomerBooking acceptBookingByTransporter(Long bookingId, Long transporterId);
-
-
+   // CustomerBooking acceptBookingByTransporter(Long bookingId, Long transporterId);
+    CustomerBooking confirmBooking(Long bookingId, Long transporterId);
+    CustomerBooking acceptProposedPrice(AcceptPriceDto dto);
     CustomerBooking updateHalfPayment(CustomerPaymentDto dto);
 
     CustomerBooking assignDriver(DriverAssignmentDto dto);
@@ -25,4 +22,8 @@ public interface CustomerBookingService {
     List<CustomerBooking> getBookingsByCustomerId(Long customerId);
 
     List<CustomerBooking> getBookingsByStatus(BookingStatus status);
+     CustomerBooking proposeNewPrice(PriceProposalDto dto);
+
+    List<CustomerBooking> searchBookings(String pickupAddress, String dropAddress);
+ List<CustomerBooking> getBookingsForTransporter(Long transporterId);
 }

@@ -27,8 +27,8 @@ public class CustomerBookingRequestDTO {
    // @Positive(message = "Estimated cost must be positive")
     private Double estimatedCost;
     private VehicalType vehicalType;
-    @NotNull(message = "Booking status is required")
-    private BookingStatus bookingStatus;
+//    @NotNull(message = "Booking status is required")
+//    private BookingStatus bookingStatus;
     private LocalDateTime pickupDate;
     private Double capacity;
 
