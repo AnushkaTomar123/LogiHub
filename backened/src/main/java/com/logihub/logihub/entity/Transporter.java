@@ -23,22 +23,22 @@ public class Transporter {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String companyName;
 
     @Column(nullable = false)
     private String contactPersonName;
 
-    @Column(nullable = false, length = 15)
+    @Column(nullable = false, unique = true)
     private String contactNumber;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String address;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 10 ,unique = true)
     private String panNumber;
 
-    @Column(nullable = false, length = 12)
+    @Column(nullable = false, length = 12, unique = true)
     private String aadhaarNumber;
 
     @Column(nullable = false)

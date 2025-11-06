@@ -5,8 +5,8 @@ import com.logihub.logihub.entity.PasswordResetToken;
 import com.logihub.logihub.entity.User;
 import com.logihub.logihub.repository.PasswordResetTokenRepository;
 import com.logihub.logihub.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ForgotPasswordService {
 
@@ -24,25 +25,32 @@ public class ForgotPasswordService {
 
     private final long EXPIRATION_MINUTES = 30;
 
-    // Step 1: Create token and send reset email with form link
+    /**
+     * Step 1: Generate a token and send reset link if the user exists.
+     */
     public void createTokenAndSendEmailIfUserExists(String email) {
         userRepository.findByEmail(email).ifPresent(user -> {
-            // Delete previous tokens (allow multiple requests safely)
+            // Remove old tokens for safety
             tokenRepository.deleteByUserId(user.getId());
 
             String token = UUID.randomUUID().toString();
-            PasswordResetToken prt = PasswordResetToken.builder()
+            PasswordResetToken resetToken = PasswordResetToken.builder()
                     .token(token)
                     .user(user)
                     .expiryDate(LocalDateTime.now().plusMinutes(EXPIRATION_MINUTES))
                     .build();
-            tokenRepository.save(prt);
 
+            tokenRepository.save(resetToken);
+            log.info("🪄 Password reset token generated for user: {}", user.getEmail());
+
+            // Send HTML email with reset link
             emailService.sendPasswordResetEmail(user.getEmail(), token);
         });
     }
 
-    // Step 2: Reset password from form
+    /**
+     * Step 2: Verify token and reset password.
+     */
     public boolean resetPassword(String token, String newPassword) {
         return tokenRepository.findByToken(token)
                 .filter(t -> t.getExpiryDate().isAfter(LocalDateTime.now()))
@@ -51,13 +59,9 @@ public class ForgotPasswordService {
                     user.setPassword(passwordEncoder.encode(newPassword));
                     userRepository.save(user);
                     tokenRepository.deleteByUserId(user.getId());
+                    log.info("✅ Password reset successful for user: {}", user.getEmail());
                     return true;
                 })
                 .orElse(false);
     }
-
-//    @Transactional
-//    public void deleteOldTokens(String email) {
-//        tokenRepository.deleteByEmail(email);
-//    }
 }

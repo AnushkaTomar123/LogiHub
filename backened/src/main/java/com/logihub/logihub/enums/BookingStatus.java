@@ -1,10 +1,12 @@
 package com.logihub.logihub.enums;
 
 public enum BookingStatus {
-    REQUESTED,
+    PENDING,
+    NEGOTIATION_IN_PROGRESS,
+    PRICE_LOCKED,
+    AWAITING_PAYMENT,
     ACCEPTED,
-    IN_TRANSIT,
+    CONFIRMED,
     DELIVERED,
-    CANCELLED,
-    PENDING, CONFIRMED
+    COMPLETED, CANCELLED
 }
