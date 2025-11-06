@@ -19,109 +19,117 @@ export default function BookVehiclePage() {
 
   const [loading, setLoading] = useState(false);
 
+  // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
- const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-  try {
+  // Handle submit
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     setLoading(true);
 
-    // Get customerId from localStorage
-    const customerId = localStorage.getItem("customerId");
-    console.log("customer id is :"+customerId);
-    if (!customerId) {
-      toast.error("Customer not found! Please login again.");
+    try {
+      const customerId = localStorage.getItem("customerId");
+      if (!customerId) {
+        toast.error("Customer not found! Please login again.");
+        setLoading(false);
+        return;
+      }
+
+      // Prepare payload (convert fields to correct types)
+      const payload = {
+        customerId: Number(customerId),
+        pickupAddress: formData.pickupAddress.trim(),
+        dropAddress: formData.dropAddress.trim(),
+        expectDeliveryDate: formData.expectDeliveryDate, // LocalDate (YYYY-MM-DD)
+        goodsDescription: formData.goodsDescription.trim(),
+        estimatedCost: Number(formData.estimatedCost),
+        vehicalType: formData.vehicalType,
+        bookingStatus: formData.bookingStatus,
+      };
+
+      const res = await axios.post("http://localhost:8080/api/bookings/create", payload);
+      console.log("Booking created:", res.data);
+      toast.success("✅ Booking created successfully!");
+
+      // Reset form
+      setFormData({
+        pickupAddress: "",
+        dropAddress: "",
+        expectDeliveryDate: "",
+        goodsDescription: "",
+        estimatedCost: "",
+        vehicalType: "TRUCK",
+        bookingStatus: "PENDING",
+      });
+    } catch (error: any) {
+      console.error("Error creating booking:", error);
+      toast.error(error.response?.data?.message || "❌ Failed to create booking!");
+    } finally {
       setLoading(false);
-      return;
     }
-    
-
-
-    const payload = {
-      pickupAddress: formData.pickupAddress,
-      dropAddress: formData.dropAddress,
-      expectDeliveryDate: formData.expectDeliveryDate,
-      goodsDescription: formData.goodsDescription,
-      estimatedCost: Number(formData.estimatedCost),
-      vehicalType: formData.vehicalType,
-      bookingStatus: formData.bookingStatus,
-      customerId: Number(customerId), // Add customer ID here
-    };
-
-    const res = await axios.post("http://localhost:8080/api/bookings/create", payload);
-
-    toast.success("Booking created successfully!");
-    console.log("Booking Response:", res.data);
-
-    // Reset form
-    setFormData({
-      pickupAddress: "",
-      dropAddress: "",
-      expectDeliveryDate: "",
-      goodsDescription: "",
-      estimatedCost: "",
-      vehicalType: "TRUCK",
-      bookingStatus: "PENDING",
-    });
-  } catch (error) {
-    console.error("Error creating booking:", error);
-    toast.error("Failed to create booking!");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 40 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4 }}
-      className="p-8 bg-gray-50 min-h-screen"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gray-50 py-10 px-4"
     >
-      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-8">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-            <MdLocalShipping size={22} />
+      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-8">
+          <div className="bg-blue-600 p-3 rounded-lg text-white">
+            <MdLocalShipping size={24} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800">Book a Vehicle</h2>
+          <h1 className="text-2xl font-bold text-gray-800">Book a Vehicle</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
           {/* Pickup Address */}
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Pickup Address</label>
+          <div className="col-span-2 md:col-span-1">
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Pickup Address
+            </label>
             <input
               type="text"
               name="pickupAddress"
               value={formData.pickupAddress}
               onChange={handleChange}
               required
-              placeholder="Enter pickup location"
+              minLength={5}
+              maxLength={255}
+              placeholder="Enter pickup address"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Drop Address */}
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Delivery Address</label>
+          <div className="col-span-2 md:col-span-1">
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Drop Address
+            </label>
             <input
               type="text"
               name="dropAddress"
               value={formData.dropAddress}
               onChange={handleChange}
               required
-              placeholder="Enter delivery location"
+              minLength={5}
+              maxLength={255}
+              placeholder="Enter drop location"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
-          {/* Expected Delivery Date (calendar input) */}
+          {/* Expected Delivery Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Expected Delivery Date</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Expected Delivery Date
+            </label>
             <input
               type="date"
               name="expectDeliveryDate"
@@ -134,35 +142,42 @@ export default function BookVehiclePage() {
 
           {/* Goods Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Goods Description</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Goods Description
+            </label>
             <input
               type="text"
               name="goodsDescription"
               value={formData.goodsDescription}
               onChange={handleChange}
               required
-              placeholder="e.g., Furniture, Electronics"
+              placeholder="e.g., Electronics, Furniture"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Estimated Cost */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Estimated Cost (₹)</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Estimated Cost (₹)
+            </label>
             <input
               type="number"
               name="estimatedCost"
               value={formData.estimatedCost}
               onChange={handleChange}
               required
-              placeholder="Enter estimated fare"
+              min={1}
+              placeholder="Enter estimated cost"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
-          {/* Vehicle Type from Enum */}
+          {/* Vehicle Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Vehicle Type</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Vehicle Type
+            </label>
             <select
               name="vehicalType"
               value={formData.vehicalType}
@@ -178,9 +193,11 @@ export default function BookVehiclePage() {
             </select>
           </div>
 
-          {/* Booking Status from Enum */}
+          {/* Booking Status */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Booking Status</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Booking Status
+            </label>
             <select
               name="bookingStatus"
               value={formData.bookingStatus}
@@ -194,11 +211,13 @@ export default function BookVehiclePage() {
           </div>
 
           {/* Submit Button */}
-          <div className="md:col-span-2 flex justify-end mt-4">
+          <div className="col-span-2 flex justify-end mt-4">
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-150"
+              className={`${
+                loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+              } text-white px-6 py-2 rounded-lg font-semibold transition-all`}
             >
               {loading ? "Submitting..." : "Submit Booking"}
             </button>

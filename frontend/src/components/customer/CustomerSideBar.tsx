@@ -45,16 +45,8 @@ export default function CustomerSidebar() {
       title: "Shipment",
       items: [
         { href: "/customer/Shipment", label: "Shipment Track", icon: FaMapMarkerAlt },
-        {
-          label: "Payments",
-          icon: MdCurrencyRupee,
-          subItems: [
-            { href: "/customer/payments/overview", label: "Overview", icon: MdBarChart },
-            { href: "/customer/payments/earnings", label: "Earning Report", icon: MdTrendingUp },
-            { href: "/customer/payments/history", label: "Payment History", icon: MdHistory },
-            { href: "/customer/payments/pending", label: "Pending Payments", icon: MdRequestPage },
-          ],
-        },
+         { href: "/customer/payments", label: "Payments", icon:  MdCurrencyRupee },
+      
       ],
     },
     {

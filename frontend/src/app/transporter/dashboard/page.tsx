@@ -116,7 +116,7 @@ export default function TransporterDashboard() {
   }, [transporterId]);
   
 
-  // --- Stats Calculation for Stat Cards ---
+ 
   const totalVehicles = vehicles.length;
   const totalDrivers = drivers.length;
   const totalShipments = vehicles.length;
@@ -185,11 +185,11 @@ export default function TransporterDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              className="p-4 rounded-xl border border-gray-400  dark:border-border  bg-gray-100 dark:bg-card shadow-lg md:col-span-1"
+              className="p-4 rounded-xl border border-gray-200  dark:border-border  bg-gray-100 dark:bg-card shadow-lg md:col-span-1"
             >
               <div className="flex flex-col h-full justify-between">
-                <p className="text-sm text-gray-700 dark:text-gray-400">{item.label}</p>
-                <h3 className="text-xl md:text-2xl font-bold text-gray-400  dark:text-gray-600">
+                <p className="text-md text-gray-500 dark:text-gray-50">{item.label}</p>
+                <h3 className="text-sm md:text-xl font-bold text-gray-600  dark:text-gray-300">
                   {item.value}
                 </h3>
               </div>
@@ -197,7 +197,7 @@ export default function TransporterDashboard() {
           ))}
           <div className="grid grid-cols- md:grid-cols-3 md:col-span-3 gap-6">
             {/* 2. Recent Shipments*/}
-            <div className="col-span-1 p-4 rounded-xl bg-white  dark:bg-card border border-gray-400 dark:border-border shadow-lg md:h-[200px]">
+            <div className="col-span-1 p-4 rounded-xl bg-gray-100  dark:bg-card border border-gray-200 dark:border-border shadow-lg md:h-[200px]">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-md font-semibold text-gray-700  dark:text-gray-200">
                   Recent Shipments
@@ -208,7 +208,7 @@ export default function TransporterDashboard() {
                 {MOCK_SHIPMENTS.map((item) => (
                   <div
                     key={item.id}
-                    className="p-2 rounded-lg bg-white dark:bg-background border border-gray-800 text-sm text-gray-300"
+                    className="p-2 rounded-lg bg-white dark:bg-background border border-gray-300 text-sm text-gray-300"
                   >
                     {item.label}
                   </div>
@@ -216,7 +216,7 @@ export default function TransporterDashboard() {
               </div>
             </div>
             {/* 3. Driver Status  */}
-            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2 p-1 rounded-xl bg-gray-100 dark:bg-card border border-border shadow-lg md:h-[200px]">
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-2 p-2 rounded-xl bg-gray-100 dark:bg-card border  border-gray-300 dark:border-border shadow-lg md:h-[200px]">
               <div className="md:col-span-2 flex items-center justify-between mb-1">
                 <h3 className="text-md font-semibold text-gray-700  dark:text-gray-200">
                   Driver Status
@@ -232,16 +232,16 @@ export default function TransporterDashboard() {
               {drivers.slice(0,4).map((driver, index) => (
                 <div
                   key={index}
-                  className="col-span-1 flex items-center gap-2 p-2 rounded-lg border border-gray-400 dark:border-border bg-white dark:bg-card transition-all duration-200"
+                  className="col-span-1 flex items-center gap-2 p-2 rounded-lg border border-gray-200 dark:border-border bg-white dark:bg-card transition-all duration-200"
                 >
                   <div className="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center font-semibold text-sm">
                     {driver.driverName.charAt(0)}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-xs text-gray-100 dark:text-gray-600">
+                    <p className="font-medium text-xs text-gray-600 dark:text-gray-100">
                       {driver.driverName}
                     </p>
-                    <p className="text-[10px] text-gray-400"><span>License No.:{driver.licenseNumber}</span></p>
+                    <p className="text-[10px] text-gray-400 dark:text-gray-300"><span>License No.:{driver.licenseNumber}</span></p>
                   </div>
                   <MdCircle
                     className={`ml-auto ${
@@ -255,7 +255,7 @@ export default function TransporterDashboard() {
               ))}
             </div>
             {/* 5. Vehicle Status  */}
-            <div className="col-span-3 p-4 rounded-xl bg-gray-100 dark:bg-card border border-gray-400 dark:border-border shadow-lg min-h-[150px]">
+            <div className="col-span-3 p-4 rounded-xl bg-gray-100 dark:bg-card border border-gray-200 dark:border-border shadow-lg min-h-[150px]">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-md font-semibold text-gray-700  dark:text-gray-200">
                   Vehicle Status
@@ -272,13 +272,13 @@ export default function TransporterDashboard() {
                 {vehicles.slice(0,4).map((v) => (
                   <div
                     key={v.id}
-                    className="col-span-1 flex items-center gap-4 p-3 rounded-lg bg-gray-100 dark:bg-card border border-gray-800"
+                    className="col-span-1 flex items-center gap-4 p-3 rounded-lg bg-gray-100 dark:bg-card border border-gray-800 dark:border-border"
                   >
                     <div className="w-10 h-10 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                       <MdLocalShipping size={22} className="text-gray-700  dark:text-gray-200" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-sm text-gray-100 dark:text-gray-600">
+                      <p className="font-medium text-sm text-gray-600 dark:text-gray-50">
                         Vehicle number: {v.vehicleNumber}
                       </p>
                       <p className="text-xs text-gray-400">
@@ -293,10 +293,10 @@ export default function TransporterDashboard() {
 
           {/* 4. Chart & Legend  */}
           <div className="col-span-1 space-y-6">
-            <aside className="bg-gray-100 dark:bg-card rounded-xl p-4 border border-gray-400 dark:border-border shadow-lg flex flex-col items-center">
+            <aside className="bg-gray-100 dark:bg-card rounded-xl p-4 border border-gray-200 dark:border-border shadow-lg flex flex-col items-center">
               <div className="w-full h-44 flex items-center justify-center">
-                <div className="w-40 h-40 bg-gray-700 rounded-full flex items-center justify-center">
-                  <span className="text-gray-400 text-sm">
+                <div className="w-40 h-40 bg-white dark:bg-card rounded-full flex items-center justify-center">
+                  <span className="text-gray-400 dark:text-gray-200 text-sm">
                     Chart Placeholder
                   </span>
                 </div>

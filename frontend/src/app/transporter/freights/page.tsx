@@ -16,8 +16,8 @@ import axios from "axios";
 import TransporterHeader from "@/components/transporter/TransporterHeader";
 
 type Booking = {
-  pickupDate: string;
   capacity: number;
+  pickupDate: string;
   id: number;
   pickupAddress: string;
   dropAddress: string;
@@ -27,24 +27,6 @@ type Booking = {
   vehicalType: string;
   bookingStatus: string;
 };
-
-// ✅ Right-panel card component
-const RightPanelCard: React.FC<{
-  title: string;
-  subtitle?: string;
-  highlighted?: boolean;
-}> = ({ title, subtitle, highlighted = false }) => (
-  <div
-    className={`p-3 rounded-md mb-3 border ${
-      highlighted
-        ? "bg-gradient-to-r from-violet-600 to-violet-500 text-white shadow-lg"
-        : "bg-[#101217] border-gray-700 text-gray-300"
-    }`}
-  >
-    <p className="font-semibold truncate">{title}</p>
-    {subtitle && <p className="text-xs text-gray-400 mt-1 truncate">{subtitle}</p>}
-  </div>
-);
 
 // ✅ Booking card
 const BookingCard: React.FC<{
@@ -171,18 +153,31 @@ const BookingCard: React.FC<{
     </div>
   );
 };
-
-// ✅ Main Page
+// ✅ Main Component
 export default function FreightManagementPage() {
   const [status, setStatus] = useState("PENDING");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingCity, setLoadingCity] = useState("");
+  const [unloadingCity, setUnloadingCity] = useState("");
+  const [vehicleType, setVehicleType] = useState("");
+  const [commodity, setCommodity] = useState("");
+
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const sidebarWidth = sidebarCollapsed ? 80 : 256;
+
+  const filteredBookings = bookings
+  .filter((b) =>
+    (!loadingCity || b.pickupAddress.toLowerCase().includes(loadingCity.toLowerCase())) &&
+    (!unloadingCity || b.dropAddress.toLowerCase().includes(unloadingCity.toLowerCase())) &&
+    (!vehicleType || b.vehicalType.toLowerCase().includes(vehicleType.toLowerCase())) &&
+    (!commodity || b.goodsDescription.toLowerCase().includes(commodity.toLowerCase()))
+  ); // show max 10 loads
+
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -214,9 +209,11 @@ export default function FreightManagementPage() {
         setLoading(false);
       }
     };
+
     fetchBookings();
   }, [mounted, status]);
 
+  // ✅ Accept Load API
   const handleAccept = async (bookingId: number) => {
     const transporterId = localStorage.getItem("transporterId");
     if (!transporterId) {
@@ -228,15 +225,16 @@ export default function FreightManagementPage() {
         `http://localhost:8080/api/bookings/${bookingId}/accept/${transporterId}`
       );
       alert("Load accepted successfully!");
-      setStatus("ACCEPTED");
+
+      const res = await axios.get<Booking[]>(
+        `http://localhost:8080/api/bookings/status/${status}`
+      );
+      setBookings(res.data || []);
     } catch (err) {
       console.error("Error accepting booking:", err);
       alert("Failed to accept load. Try again.");
     }
   };
-
-  const delivered = bookings.filter((b) => b.bookingStatus === "DELIVERED");
-  const acceptedLoads = bookings.filter((b) => b.bookingStatus === "ACCEPTED");
 
   if (!mounted) return null;
 
@@ -247,26 +245,58 @@ export default function FreightManagementPage() {
     >
       <TransporterHeader />
       <div className="p-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          Search Load
-        </h2>
-        <div className="grid grid-cols-3 xl:grid-cols-[2fr_1fr] gap-8">
-          {/* Left Section */}
-          <div>
-            {/* 🔍 Filters */}
-            <div className="flex flex-wrap gap-3 mb-6">
-              {["Select Loading City", "Select Unloading City", "Select Vehicle Type", "Select Commodity"].map(
-                (placeholder, i) => (
-                  <input
-                    key={i}
-                    placeholder={placeholder}
-                    className="px-3 py-2 rounded bg-gray-200 dark:bg-card border border-gray-700 text-gray-800 dark:text-gray-300 placeholder-gray-400 focus:outline-none w-64"
-                  />
-                )
-              )}
-            </div>
+        {/* 🔘 STATUS FILTER BUTTONS */}
+        <div className="flex gap-3 mb-6">
+          {["PENDING", "ACCEPTED", "IN_TRANSIT", "DELIVERED"].map((s) => (
+            <button
+              key={s}
+              onClick={() => setStatus(s)}
+              className={`px-4 py-2 rounded-lg font-semibold transition ${
+                status === s
+                  ? "bg-violet-600 text-white"
+                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+              }`}
+            >
+              {s.replace("_", " ")}
+            </button>
+          ))}
+        </div>
 
-            {/* 📦 Booking Cards */}
+        {/* 🔍 Search + City Select */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-white mb-3">Search Load</h2>
+          <div className="flex gap-3 items-center">
+            <input
+              placeholder="Select Loading City"
+              value={loadingCity}
+              onChange={(e) => setLoadingCity(e.target.value)}
+              className="px-3 py-2 rounded bg-gray-200 dark:bg-card border border-gray-700 text-gray-300 placeholder-gray-400 focus:outline-none w-64"
+            />
+            <input
+              placeholder="Select Unloading City"
+              value={unloadingCity}
+              onChange={(e) => setUnloadingCity(e.target.value)}
+              className="px-3 py-2 rounded bg-gray-200 dark:bg-card border border-gray-700 text-gray-300 placeholder-gray-400 focus:outline-none w-64"
+            />
+            <input
+              placeholder="Select vehicle type"
+              value={vehicleType}
+              onChange={(e) => setVehicleType(e.target.value)}
+              className="px-3 py-2 rounded bg-gray-200 dark:bg-card border border-gray-700 text-gray-300 placeholder-gray-400 focus:outline-none w-64"
+            />
+            <input
+              placeholder="Select Commodity "
+              value={commodity}
+              onChange={(e) => setCommodity(e.target.value)}
+              className="px-3 py-2 rounded bg-gray-200 dark:bg-card border border-gray-700 text-gray-300 placeholder-gray-400 focus:outline-none w-64"
+            />
+          </div>
+        </div>
+
+        {/* 🧩 Main Layout */}
+        <div className="flex gap-6">
+          {/* Main Grid */}
+          <div className="flex-1">
             {loading ? (
               <div className="flex items-center justify-center h-60 text-gray-400">
                 <FaSpinner className="animate-spin mr-2" /> Loading loads...
@@ -278,8 +308,8 @@ export default function FreightManagementPage() {
                 No loads available
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {bookings.slice(0, 4).map((b) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+                {filteredBookings.map((b) => (
                   <BookingCard
                     key={b.id}
                     booking={b}
@@ -290,49 +320,86 @@ export default function FreightManagementPage() {
               </div>
             )}
           </div>
+        </div>
 
-          {/* Right Section */}
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-bold text-white mb-3">
-                Delivered Loads
-              </h3>
-              <div className="bg-[#14171a] p-3 rounded-xl border border-gray-700 max-h-[300px] overflow-y-auto">
-                {delivered.length === 0 ? (
-                  <p className="text-gray-400 text-sm">No delivered loads</p>
-                ) : (
-                  delivered.map((a) => (
-                    <RightPanelCard
-                      key={a.id}
-                      title={`${a.pickupAddress} → ${a.dropAddress}`}
-                      subtitle={`Commodity: ${a.goodsDescription} — LoadId:${a.id}`}
-                      highlighted
-                    />
-                  ))
-                )}
+        {/* 🪟 Booking Details Modal */}
+        {selectedBooking && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-start z-50 p-6 pt-20">
+            <div className="bg-gray-200 dark:bg-card rounded-xl shadow-2xl w-full max-w-3xl text-gray-100">
+              <div className="p-5 border-b border-gray-700 flex justify-between items-center bg-[#3C3D3F] rounded-t-xl">
+                <h2 className="text-2xl font-bold text-violet-400">
+                  Booking Details (ID: {selectedBooking.id})
+                </h2>
+                <button
+                  onClick={() => setSelectedBooking(null)}
+                  className="text-gray-400 hover:text-red-500 p-2"
+                >
+                  <FaTimes size={20} />
+                </button>
               </div>
-            </div>
 
-            <div>
-              <h3 className="text-lg font-bold text-white mb-3">
-                Accepted Loads
-              </h3>
-              <div className="bg-[#14171a] p-3 rounded-xl border border-gray-700 max-h-[360px] overflow-y-auto">
-                {acceptedLoads.length === 0 ? (
-                  <p className="text-gray-400 text-sm">No accepted loads</p>
-                ) : (
-                  acceptedLoads.map((a) => (
-                    <RightPanelCard
-                      key={a.id}
-                      title={`${a.pickupAddress} → ${a.dropAddress}`}
-                      subtitle={`Commodity: ${a.goodsDescription} — LoadId:${a.id}`}
-                    />
-                  ))
-                )}
+              <div className="p-6 space-y-5">
+                <div className="flex justify-between items-center p-4 bg-[#3C3D3F] rounded-lg">
+                  <div>
+                    <p className="text-base font-semibold text-gray-400">
+                      Route:
+                    </p>
+                    <p className="text-xl font-extrabold text-white">
+                      {selectedBooking.pickupAddress}{" "}
+                      <FaAngleRight className="inline mx-1 text-violet-400" />{" "}
+                      {selectedBooking.dropAddress}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-gray-400">Cost:</p>
+                    <p className="text-2xl font-bold text-green-400 flex items-center justify-end">
+                      <FaRupeeSign className="w-4 h-4" />
+                      {selectedBooking.estimatedCost?.toLocaleString("en-IN")}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="p-3 border border-gray-700 rounded-lg bg-[#3C3D3F]">
+                    <p className="font-semibold text-gray-400 flex items-center gap-1">
+                      <FaBox className="text-violet-400" /> Goods Description:
+                    </p>
+                    <p className="font-bold text-white">
+                      {selectedBooking.goodsDescription}
+                    </p>
+                  </div>
+                  <div className="p-3 border border-gray-700 rounded-lg bg-[#3C3D3F]">
+                    <p className="font-semibold text-gray-400 flex items-center gap-1">
+                      <FaTruckLoading className="text-violet-400" /> Vehicle
+                      Type:
+                    </p>
+                    <p className="font-bold text-white">
+                      {selectedBooking.vehicalType}
+                    </p>
+                  </div>
+                  <div className="p-3 border border-gray-700 rounded-lg bg-[#3C3D3F] col-span-2">
+                    <p className="font-semibold text-gray-400 flex items-center gap-1">
+                      <FaShippingFast className="text-violet-400" /> Expected
+                      Delivery:
+                    </p>
+                    <p className="font-bold text-white">
+                      {selectedBooking.expectDeliveryDate}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 bg-[#3C3D3F] rounded-b-xl flex justify-end gap-3">
+                <button
+                  onClick={() => setSelectedBooking(null)}
+                  className="px-6 py-3 border border-gray-600 rounded-lg font-semibold text-gray-300 hover:bg-gray-600 transition"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

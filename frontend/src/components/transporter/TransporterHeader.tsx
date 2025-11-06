@@ -27,7 +27,7 @@ export default function TransporterHeader() {
   }, []);
 
   return (
-    <header className="w-full bg-white dark:bg-background border-b border-gray-800 dark:border-border shadow flex justify-between items-center px-4 py-3 sticky top-0 z-50">
+    <header className="w-full bg-white dark:bg-background border-b border-gray-50 dark:border-border shadow flex justify-between items-center px-4 py-3 sticky top-0 z-50">
       
       {/* 🔹 Desktop Search Bar */}
       <div className="flex-1 max-w-md hidden md:block">
