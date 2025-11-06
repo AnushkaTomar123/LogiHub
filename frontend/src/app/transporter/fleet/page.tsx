@@ -2,11 +2,11 @@
 
 import { useEffect, useState, FormEvent } from "react";
 import axios from "axios";
-import { MdAdd, MdEdit, MdDelete, MdClose } from "react-icons/md";
+import { MdAdd, MdClose } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TransporterHeader from "@/components/transporter/TransporterHeader";
-import { useTheme } from "next-themes";
+
 
 interface Vehicle {
   id: number;
@@ -49,11 +49,8 @@ const Modal = ({
   </div>
 );
 
-export default function FleetTracking({
-  isSidebarCollapsed = false,
-}: {
-  isSidebarCollapsed?: boolean;
-}) {
+export default function FleetTracking(
+ ) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [vehicleTypes, setVehicleTypes] = useState<string[]>([]);
   const [vehicleModels, setVehicleModels] = useState<string[]>([]);
@@ -62,7 +59,30 @@ export default function FleetTracking({
   const [username, setUsername] = useState("Transporter");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
-  const { theme } = useTheme();
+   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("sidebarCollapsed") === "true";
+    }
+    return false;
+  });
+   useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key === "sidebarCollapsed") {
+        setSidebarCollapsed(e.newValue === "true");
+      }
+    };
+    window.addEventListener("storage", handler);
+    const sameTabHandler = (ev: Event) => {
+      setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
+    };
+    window.addEventListener("storage", sameTabHandler);
+    return () => {
+      window.removeEventListener("storage", handler);
+      window.removeEventListener("storage", sameTabHandler);
+    };
+  }, []);
+
+ const sidebarWidth = sidebarCollapsed ? 80 : 256;
 
   const [form, setForm] = useState({
     vehicleNumber: "",
@@ -173,9 +193,8 @@ export default function FleetTracking({
 
   return (
     <div
-      className={`min-h-screen transition-all duration-300 ${
-        theme === "dark" ? "bg-[#121212]" : "bg-gray-50"
-      } text-white ${isSidebarCollapsed ? "ml-20" : "ml-64"}`}
+    style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }}
+      className="min-h-screen p-0 bg-gray-50  dark:bg-background transition-colors duration-300"
     >
       <TransporterHeader />
 
@@ -222,61 +241,66 @@ export default function FleetTracking({
           
         </div>
 
-        {/* Vehicles Table */}
-        <div className="bg-gray-100 dark:bg-card rounded-xl p- border border-gray-700 shadow-lg overflow-x-auto">
-          {loading ? (
-            <p>Loading vehicles...</p>
-          ) : vehicles.length === 0 ? (
-            <p>No vehicles added yet.</p>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-gray-400 uppercase text-xs border-b border-gray-700">
-                  <th>Vehicle Number</th>
-                  <th>Type</th>
-                  <th>Model</th>
-                  <th>Capacity</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {vehicles.map((v) => (
-                  <tr
-                    key={v.id}
-                    className="border-b border-gray-800 bg-gray-100 dark:bg-background dark:hover:bg-card transition"
-                  >
-                    <td className="py-3">{v.vehicleNumber}</td>
-                    <td>{v.vehicleType}</td>
-                    <td>{v.model}</td>
-                    <td>{v.capacity} Tons</td>
-                    <td>
-                      <span
-                        className={`px-3 py-1 text-xs rounded-full ${statusColors[v.status]}`}
-                      >
-                        {v.status.replace("_", " ")}
-                      </span>
-                    </td>
-                    <td className="flex gap-2 py-2">
-                      <button
-                        onClick={() => handleEdit(v)}
-                        className="bg-violet-700 px-3 py-1 rounded hover:bg-violet-800"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(v.id)}
-                        className="bg-red-700 px-3 py-1 rounded hover:bg-red-800"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+   {/* Vehicles Table */}
+<div className="bg-gray-100 dark:bg-card rounded-xl p-5 border border-gray-700 shadow-lg overflow-x-auto">
+  {loading ? (
+    <p className="text-center text-gray-500">Loading vehicles...</p>
+  ) : vehicles.length === 0 ? (
+    <p className="text-center text-gray-500">No vehicles added yet.</p>
+  ) : (
+    <table className="min-w-full border-collapse">
+      <thead>
+        <tr className="bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 uppercase text-xs">
+          <th className="px-4 py-3 text-left">Vehicle Number</th>
+          <th className="px-4 py-3 text-left">Type</th>
+          <th className="px-4 py-3 text-left">Model</th>
+          <th className="px-4 py-3 text-left">Capacity</th>
+          <th className="px-4 py-3 text-left">Status</th>
+          <th className="px-4 py-3 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {vehicles.map((v, i) => (
+          <tr
+            key={v.id}
+            className={`${
+              i % 2 === 0
+                ? "bg-white dark:bg-background"
+                : "bg-gray-50 dark:bg-gray-900"
+            } hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors`}
+          >
+            <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{v.vehicleNumber}</td>
+            <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{v.vehicleType}</td>
+            <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{v.model}</td>
+            <td className="px-4 py-3 text-gray-800 dark:text-gray-200">{v.capacity} Tons</td>
+            <td className="px-4 py-3">
+              <span
+                className={`px-3 py-1 text-xs rounded-full ${statusColors[v.status]} capitalize`}
+              >
+                {v.status.replace("_", " ")}
+              </span>
+            </td>
+            <td className="px-4 py-3 flex justify-center gap-2">
+              <button
+                onClick={() => handleEdit(v)}
+                className="bg-violet-700 text-white px-3 py-1 rounded hover:bg-violet-800 transition"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(v.id)}
+                className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-800 transition"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</div>
+
 
         {isModalOpen && (
           <Modal

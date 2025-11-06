@@ -173,72 +173,100 @@ export default function DriverManagement() {
           </button>
         </div>
 
-        <div className="bg-white dark:bg-card shadow-md rounded-xl p-5 border border-gray-200 dark:border-gray-700">
-          {driverList.length > 0 ? (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-300 dark:border-gray-700">
-                  <th className="text-left py-2">Name</th>
-                  <th>Status</th>
-                  <th>Phone</th>
-                  <th>License</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {driverList.map((d) => (
-                  <tr
-                    key={d.id}
-                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
-                  >
-                    <td className="py-3">{d.driverName}</td>
-                    <td className={`${getStatusColor(d.status)}`}>
-                      <select
-                        value={d.status}
-                        onChange={(e) => handleStatusChange(d, e.target.value)}
-                        className="bg-transparent border-none outline-none"
-                      >
-                        <option value="AVAILABLE">Available</option>
-                        <option value="ON_DUTY">On Duty</option>
-                        <option value="OFF_DUTY">Off Duty</option>
-                      </select>
-                    </td>
-                    <td>{d.phoneNumber}</td>
-                    <td>{d.licenseNumber}</td>
-                    <td className="flex gap-2 justify-center">
-                      <button
-                        onClick={() => {
-                          setSelectedDriver(d);
-                          setShowProfile(true);
-                        }}
-                        className="text-blue-500 hover:text-blue-700"
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => {
-                          setEditDriver(d);
-                          setShowEditModal(true);
-                        }}
-                        className="text-yellow-500 hover:text-yellow-700"
-                      >
-                        <MdEdit size={20} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteDriver(d.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <MdDelete size={20} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p className="text-center text-gray-500 py-6">No Drivers Found</p>
-          )}
-        </div>
+       <div className="bg-white dark:bg-card shadow-lg rounded-xl p-5 border border-gray-200 dark:border-gray-700">
+  {driverList.length > 0 ? (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr className="border-b border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-background">
+            <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 w-1/5">
+              Name
+            </th>
+            <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 w-1/5">
+              Status
+            </th>
+            <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 w-1/5">
+              Phone
+            </th>
+            <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 w-1/5">
+              License
+            </th>
+            <th className="text-center py-3 px-4 font-semibold text-gray-700 dark:text-gray-300 w-1/5">
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {driverList.map((d) => (
+            <tr
+              key={d.id}
+              className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            >
+              <td className="py-3 px-4 text-gray-800 dark:text-gray-200">
+                {d.driverName}
+              </td>
+
+              <td className="py-3 px-4">
+                <select
+                  value={d.status}
+                  onChange={(e) => handleStatusChange(d, e.target.value)}
+                  className={`bg-transparent border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-violet-500 ${getStatusColor(
+                    d.status
+                  )}`}
+                >
+                  <option value="AVAILABLE">Available</option>
+                  <option value="ON_DUTY">On Duty</option>
+                  <option value="OFF_DUTY">Off Duty</option>
+                </select>
+              </td>
+
+              <td className="py-3 px-4 text-gray-700 dark:text-gray-300">
+                {d.phoneNumber}
+              </td>
+
+              <td className="py-3 px-4 text-gray-700 dark:text-gray-300">
+                {d.licenseNumber}
+              </td>
+
+              <td className="py-3 px-4 flex justify-center items-center gap-4">
+                <button
+                  onClick={() => {
+                    setSelectedDriver(d);
+                    setShowProfile(true);
+                  }}
+                  className="text-blue-500 hover:text-blue-700 font-medium"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => {
+                    setEditDriver(d);
+                    setShowEditModal(true);
+                  }}
+                  className="text-yellow-500 hover:text-yellow-600"
+                >
+                  <MdEdit size={20} />
+                </button>
+                <button
+                  onClick={() => handleDeleteDriver(d.id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <MdDelete size={20} />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <p className="text-center text-gray-500 dark:text-gray-400 py-6">
+      No Drivers Found
+    </p>
+  )}
+</div>
+
       </div>
 
       {/* ➕ Add Driver Modal */}

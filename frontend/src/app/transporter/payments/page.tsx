@@ -1,36 +1,32 @@
 "use client";
 
-import TransporterHeader from "@/components/transporter/TransporterHeader";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import TransporterHeader from "@/components/transporter/TransporterHeader";
 import {
   FaCreditCard,
   FaCheckCircle,
   FaClock,
   FaTimesCircle,
-  FaPlus,
   FaRupeeSign,
   FaFilter,
+  FaWallet,
+  FaExchangeAlt,
 } from "react-icons/fa";
-import { MdClose } from "react-icons/md";
-import axios from "axios";
 
 export default function Payments() {
-  const [showModal, setShowModal] = useState(false);
-  const [filter, setFilter] = useState("All");
-  const [loading, setLoading] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
   const [wallet, setWallet] = useState<any>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
-
-  // for add-money and transfer
+  const [filter, setFilter] = useState("All");
+  const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState("");
   const [receiverId, setReceiverId] = useState("");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const BASE_URL = "http://localhost:8080/api/wallets";
-const OWNER_TYPE = "TRANSPORTER";
-const OWNER_ID = localStorage.getItem("transporterId");
- // TRANSPORTER / DRIVER as per your backend logic
+  const OWNER_TYPE = "TRANSPORTER";
+  const OWNER_ID = localStorage.getItem("transporterId");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -43,15 +39,17 @@ const OWNER_ID = localStorage.getItem("transporterId");
     }
   }, []);
 
-  // 🧾 Fetch wallet info and transactions
+  const sidebarWidth = sidebarCollapsed ? 80 : 256;
+
   const fetchWallet = async () => {
     try {
       const walletRes = await axios.get(`${BASE_URL}/${OWNER_TYPE}/${OWNER_ID}`);
       const txnRes = await axios.get(`${BASE_URL}/transactions/${OWNER_TYPE}/${OWNER_ID}`);
       setWallet(walletRes.data);
       setTransactions(txnRes.data);
-    } catch (error) {
-      console.error("Error fetching wallet:", error);
+    } catch (err) {
+      console.error("Error fetching wallet:", err);
+      toast.error("Failed to fetch wallet data");
     }
   };
 
@@ -59,156 +57,138 @@ const OWNER_ID = localStorage.getItem("transporterId");
     fetchWallet();
   }, []);
 
-  // 💳 Create wallet
   const handleCreateWallet = async () => {
+    if (wallet) return toast.error("Wallet already exists");
     setLoading(true);
     try {
-      const response = await axios.post(`${BASE_URL}/create`, {
+      const res = await axios.post(`${BASE_URL}/create`, {
         ownerId: OWNER_ID,
         ownerType: OWNER_TYPE,
       });
-      alert("Wallet created successfully!");
-      console.log(response.data);
-      setWallet(response.data);
-    } catch (error) {
-      console.error("Error creating wallet:", error);
-      alert("Failed to create wallet");
+      setWallet(res.data);
+      toast.success("Wallet created successfully!");
+    } catch (err) {
+      toast.error("Failed to create wallet");
     } finally {
       setLoading(false);
     }
   };
 
-  // 💰 Add money
   const handleAddMoney = async () => {
-    if (!amount) return alert("Please enter amount");
+    if (!amount) return toast.error("Enter amount");
     setLoading(true);
     try {
-      const response = await axios.post(`${BASE_URL}/add-money`, {
+      await axios.post(`${BASE_URL}/add-money`, {
         ownerId: OWNER_ID,
         ownerType: OWNER_TYPE,
         amount: parseFloat(amount),
       });
-      alert("Money added successfully!");
-      console.log(response.data);
-      fetchWallet();
+      toast.success(`₹${amount} added successfully!`);
       setAmount("");
-    } catch (error) {
-      console.error("Error adding money:", error);
-      alert("Failed to add money");
+      fetchWallet();
+    } catch {
+      toast.error("Failed to add money");
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔁 Transfer money
   const handleTransferMoney = async () => {
-    if (!receiverId || !amount)
-      return alert("Please fill receiver ID and amount");
-
+    if (!receiverId || !amount) return toast.error("Enter receiver ID and amount");
     setLoading(true);
     try {
-      const response = await axios.post(`${BASE_URL}/transfer`, {
+      await axios.post(`${BASE_URL}/transfer`, {
         senderId: OWNER_ID,
         senderType: OWNER_TYPE,
         receiverId: parseInt(receiverId),
-        receiverType: "CUSTOMER", // you can change this
+        receiverType: "CUSTOMER",
         amount: parseFloat(amount),
       });
-      alert("Money transferred successfully!");
-      console.log(response.data);
-      fetchWallet();
+      toast.success("Money transferred successfully!");
       setReceiverId("");
       setAmount("");
-    } catch (error) {
-      console.error("Error transferring money:", error);
-      alert("Failed to transfer money");
+      fetchWallet();
+    } catch {
+      toast.error("Transfer failed");
     } finally {
       setLoading(false);
     }
   };
 
-  const total = transactions.reduce((sum, p) => sum + p.amount, 0);
-  const completed = transactions
-    .filter((p) => p.status === "Completed")
-    .reduce((sum, p) => sum + p.amount, 0);
-  const pending = transactions
-    .filter((p) => p.status === "Pending")
-    .reduce((sum, p) => sum + p.amount, 0);
-  const failed = transactions
-    .filter((p) => p.status === "Failed")
-    .reduce((sum, p) => sum + p.amount, 0);
-
   const filteredPayments =
-    filter === "All"
-      ? transactions
-      : transactions.filter((p) => p.status === filter);
+    filter === "All" ? transactions : transactions.filter((t) => t.status === filter);
 
-  const sidebarWidth = sidebarCollapsed ? 80 : 256;
+  const total = transactions.reduce((sum, p) => sum + p.amount, 0);
+  const completed = transactions.filter((p) => p.status === "Completed").reduce((s, p) => s + p.amount, 0);
+  const pending = transactions.filter((p) => p.status === "Pending").reduce((s, p) => s + p.amount, 0);
+  const failed = transactions.filter((p) => p.status === "Failed").reduce((s, p) => s + p.amount, 0);
 
   return (
     <div
-      style={{
-        marginLeft: sidebarWidth,
-        transition: "margin-left 300ms ease",
-      }}
-      className="bg-[#f9fafb] min-h-screen px-8 py-10 font-sans"
+      style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }}
+      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#0a0a0a] dark:to-black text-gray-900 dark:text-gray-200 p-0"
     >
       <TransporterHeader />
 
-      {/* HEADER */}
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Payments & Wallet Management
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8 p-6 border-b border-gray-200 dark:border-gray-700">
+        <h1 className="text-3xl font-extrabold tracking-wide text-blue-700 dark:text-blue-400">
+          Payments & Wallet
         </h1>
-
         <div className="flex gap-3">
           <button
             onClick={handleCreateWallet}
-            disabled={loading}
-            className="dark:text-green-200 text-green-300 dark:bg-green-800 px-4 py-2 rounded-lg shadow-md"
+            disabled={loading || wallet}
+            className={`px-5 py-2 rounded-xl shadow-md font-semibold ${
+              wallet
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700 text-white"
+            }`}
           >
-            {loading ? "Processing..." : "Add Wallet"}
+            {wallet ? "Wallet Created" : loading ? "Processing..." : "Create Wallet"}
           </button>
-
           <button
-            onClick={() => setShowModal(true)}
-            className="bg-green-600 text-white px-5 py-2 rounded-xl flex items-center gap-2 hover:bg-green-700 transition"
+            onClick={fetchWallet}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl shadow-md font-semibold"
           >
-            <FaPlus /> Add Payment
+            Refresh
           </button>
         </div>
       </div>
 
-      {/* WALLET INFO */}
+      {/* Wallet Info */}
       {wallet && (
-        <div className="bg-white rounded-2xl shadow-md p-5 mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">
-            Wallet Details
-          </h2>
-          <p className="text-gray-700">
-            <strong>Owner Type:</strong> {wallet.ownerType}
-          </p>
-          <p className="text-gray-700">
-            <strong>Owner ID:</strong> {wallet.ownerId}
-          </p>
-          <p className="text-gray-700">
-            <strong>Balance:</strong> ₹{wallet.balance?.toLocaleString()}
-          </p>
+        <div className="bg-white dark:bg-[#111] rounded-2xl shadow-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-xl font-semibold flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                <FaWallet /> Wallet Details
+              </h2>
+              <p className="mt-2">Owner Type: <b>{wallet.ownerType}</b></p>
+              <p>Owner ID: <b>{wallet.ownerId}</b></p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-gray-500">Available Balance</p>
+              <h2 className="text-4xl font-bold text-green-600">
+                ₹{wallet.balance?.toLocaleString()}
+              </h2>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* ACTION BUTTONS */}
-      <div className="flex gap-4 mb-8">
+      {/* Money Actions */}
+      <div className="flex flex-wrap gap-4 mb-10 items-center">
         <input
           type="number"
           placeholder="Enter Amount (₹)"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="border text-gray-900 border-gray-300 rounded-lg px-3 py-2 w-48"
+          className="border border-gray-300 dark:border-gray-700 dark:bg-[#111] px-4 py-2 rounded-lg w-56"
         />
         <button
           onClick={handleAddMoney}
-          className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"
         >
           Add Money
         </button>
@@ -218,70 +198,46 @@ const OWNER_ID = localStorage.getItem("transporterId");
           placeholder="Receiver ID"
           value={receiverId}
           onChange={(e) => setReceiverId(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 w-40"
+          className="border border-gray-300 dark:border-gray-700 dark:bg-[#111] px-4 py-2 rounded-lg w-52"
         />
         <button
           onClick={handleTransferMoney}
-          className="bg-purple-600 text-white px-5 py-2 rounded-lg hover:bg-purple-700"
+          className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg flex items-center gap-2"
         >
-          Transfer
+          <FaExchangeAlt /> Transfer
         </button>
       </div>
 
-      {/* SUMMARY CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div className="bg-white p-5 rounded-2xl shadow-md border-t-4 border-blue-500">
-          <div className="flex items-center justify-between">
-            <FaCreditCard className="text-blue-500 text-2xl" />
-            <span className="text-gray-500 text-sm">Total Transactions</span>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {[
+          { label: "Total Transactions", amount: total, color: "blue", icon: <FaCreditCard /> },
+          { label: "Completed", amount: completed, color: "green", icon: <FaCheckCircle /> },
+          { label: "Pending", amount: pending, color: "yellow", icon: <FaClock /> },
+          { label: "Failed", amount: failed, color: "red", icon: <FaTimesCircle /> },
+        ].map((item, i) => (
+          <div
+            key={i}
+            className={`bg-white dark:bg-[#111] p-5 rounded-2xl shadow-md border-t-4 border-${item.color}-500 hover:scale-[1.03] transition-transform`}
+          >
+            <div className="flex justify-between items-center">
+              <span className={`text-${item.color}-500 text-2xl`}>{item.icon}</span>
+              <span className="text-gray-500 text-sm">{item.label}</span>
+            </div>
+            <h2 className="text-2xl font-bold mt-2">₹{item.amount.toLocaleString()}</h2>
           </div>
-          <h2 className="text-2xl font-bold mt-2 text-gray-800">
-            ₹{total.toLocaleString()}
-          </h2>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl shadow-md border-t-4 border-green-500">
-          <div className="flex items-center justify-between">
-            <FaCheckCircle className="text-green-500 text-2xl" />
-            <span className="text-gray-500 text-sm">Completed</span>
-          </div>
-          <h2 className="text-2xl font-bold mt-2 text-gray-800">
-            ₹{completed.toLocaleString()}
-          </h2>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl shadow-md border-t-4 border-yellow-500">
-          <div className="flex items-center justify-between">
-            <FaClock className="text-yellow-500 text-2xl" />
-            <span className="text-gray-500 text-sm">Pending</span>
-          </div>
-          <h2 className="text-2xl font-bold mt-2 text-gray-800">
-            ₹{pending.toLocaleString()}
-          </h2>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl shadow-md border-t-4 border-red-500">
-          <div className="flex items-center justify-between">
-            <FaTimesCircle className="text-red-500 text-2xl" />
-            <span className="text-gray-500 text-sm">Failed</span>
-          </div>
-          <h2 className="text-2xl font-bold mt-2 text-gray-800">
-            ₹{failed.toLocaleString()}
-          </h2>
-        </div>
+        ))}
       </div>
 
-      {/* FILTERS + TRANSACTIONS */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">
-          Recent Transactions
-        </h2>
-        <div className="flex items-center gap-3">
+      {/* Transactions */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Recent Transactions</h2>
+        <div className="flex items-center gap-2">
           <FaFilter className="text-gray-500" />
           <select
-            className="border border-gray-300 rounded-lg px-3 py-1 text-gray-700"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
+            className="border border-gray-300 dark:border-gray-700 dark:bg-[#111] rounded-lg px-3 py-1"
           >
             <option>All</option>
             <option>Completed</option>
@@ -291,12 +247,12 @@ const OWNER_ID = localStorage.getItem("transporterId");
         </div>
       </div>
 
-      {/* TRANSACTIONS TABLE */}
-      <div className="overflow-x-auto bg-white shadow-md rounded-2xl">
+      {/* Transactions Table */}
+      <div className="overflow-x-auto bg-white dark:bg-[#111] shadow-lg rounded-2xl border border-gray-200 dark:border-gray-700 mb-10">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-gray-100 text-gray-600 uppercase text-sm">
+          <thead className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 uppercase text-sm">
             <tr>
-              <th className="py-3 px-6">Transaction ID</th>
+              <th className="py-3 px-6">Txn ID</th>
               <th className="py-3 px-6">Amount</th>
               <th className="py-3 px-6">Date</th>
               <th className="py-3 px-6">Type</th>
@@ -304,29 +260,38 @@ const OWNER_ID = localStorage.getItem("transporterId");
             </tr>
           </thead>
           <tbody>
-            {filteredPayments.map((p: any) => (
-              <tr key={p.id} className="border-b hover:bg-gray-50">
-                <td className="py-3 px-6 font-medium text-gray-800">
-                  {p.id}
-                </td>
-                <td className="py-3 px-6 text-gray-700 flex items-center gap-1">
-                  <FaRupeeSign size={14} /> {p.amount.toLocaleString()}
-                </td>
-                <td className="py-3 px-6 text-gray-600">{p.date}</td>
-                <td className="py-3 px-6 text-gray-700">{p.type}</td>
-                <td
-                  className={`py-3 px-6 font-semibold ${
-                    p.status === "Completed"
-                      ? "text-green-600"
-                      : p.status === "Pending"
-                      ? "text-yellow-600"
-                      : "text-red-600"
-                  }`}
+            {filteredPayments.length > 0 ? (
+              filteredPayments.map((p: any) => (
+                <tr
+                  key={p.id}
+                  className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition"
                 >
-                  {p.status}
+                  <td className="py-3 px-6 font-medium">{p.id}</td>
+                  <td className="py-3 px-6 flex items-center gap-1">
+                    <FaRupeeSign size={14} /> {p.amount.toLocaleString()}
+                  </td>
+                  <td className="py-3 px-6">{p.date}</td>
+                  <td className="py-3 px-6">{p.type}</td>
+                  <td
+                    className={`py-3 px-6 font-semibold ${
+                      p.status === "Completed"
+                        ? "text-green-500"
+                        : p.status === "Pending"
+                        ? "text-yellow-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {p.status}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="py-6 text-center text-gray-500">
+                  No transactions found
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
