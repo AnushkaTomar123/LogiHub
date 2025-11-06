@@ -18,7 +18,9 @@ public class Driver {
     private Long id;
 
     private String driverName;
+    @Column(nullable = false, unique = true)
     private String licenseNumber;
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
 //    private String aadhaarCardUrl;
     @Enumerated(EnumType.STRING)

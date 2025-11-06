@@ -28,7 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final Cloudinary cloudinary;
 
     @Override
-    public void createCustomer(CustomerDTO dto) {
+    public Customer createCustomer(CustomerDTO dto) {
         User user = userRepository.findByEmail(dto.getUserEmail())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + dto.getUserEmail()));
 
@@ -46,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new RuntimeException("Error uploading profile photo", e);
         }
 
-        customerRepository.save(customer);
+        return  customerRepository.save(customer);
     }
 
     @Override
