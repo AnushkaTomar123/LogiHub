@@ -10,5 +10,6 @@ public interface WalletService {
     Wallet addMoney(AddMoneyRequestDTO request);
     String transferMoney(TransferMoneyRequestDTO request);
     Wallet getWallet(Long ownerId, String ownerType);
-    List<WalletTransactionResponseDTO> getTransactionHistory(Long ownerId, String ownerType);
+  //  List<WalletTransactionResponseDTO> getTransactionHistory(Long ownerId, String ownerType);
+    List<WalletTransactionResponseDTO> getTransactionHistory(Long userId);
 }

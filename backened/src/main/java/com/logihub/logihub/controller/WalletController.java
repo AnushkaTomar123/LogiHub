@@ -37,9 +37,8 @@ public class WalletController {
         return ResponseEntity.ok(walletService.getWallet(ownerId, ownerType));
     }
 
-    @GetMapping("/transactions/{ownerType}/{ownerId}")
-    public ResponseEntity<List<WalletTransactionResponseDTO>> getTransactionHistory(@PathVariable String ownerType,
-                                                                                    @PathVariable Long ownerId) {
-        return ResponseEntity.ok(walletService.getTransactionHistory(ownerId, ownerType));
+    @GetMapping("/transactions/{userId}")
+    public ResponseEntity<List<WalletTransactionResponseDTO>> getTransactionHistory(@PathVariable Long userId) {
+        return ResponseEntity.ok(walletService.getTransactionHistory(userId));
     }
 }

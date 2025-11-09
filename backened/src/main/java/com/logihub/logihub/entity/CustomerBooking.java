@@ -29,9 +29,9 @@ public class CustomerBooking {
     private String pickupAddress;
     private String dropAddress;
     private LocalDate ExpectDeliveryDate;
-    private LocalDateTime bookingDate;   // Request time
-    private LocalDateTime pickupDate;    // Scheduled pickup
-    private LocalDateTime deliveryDate;  // Expected delivery
+    private LocalDate bookingDate;   // Request time
+    private LocalDate pickupDate;    // Scheduled pickup
+    private LocalDate deliveryDate;  // Expected delivery
     private Double halfAmount;
     private Double remainingAmount;
 

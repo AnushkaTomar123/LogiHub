@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { useRouter } from "next/navigation";
+import TransporterHeader from "@/components/TransporterSection/TransporterHeader";
 
 // --- Interfaces & Types (Retained) ---
 interface Transporter {
@@ -57,7 +58,7 @@ const EditableField: React.FC<any> = ({ label, value, type = 'text', onSave, dis
                         type={type}
                         value={currentValue}
                         onChange={(e) => setCurrentValue(e.target.value)}
-                        className="p-2 border border-blue-400 rounded-md focus:ring-blue-500 focus:border-blue-500 w-52 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                        className="p-2 border border-violet-400 rounded-md focus:ring-violet-500 focus:border-violet-500 w-52 text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                         disabled={disabled}
                     />
                 ) : (
@@ -71,7 +72,7 @@ const EditableField: React.FC<any> = ({ label, value, type = 'text', onSave, dis
                             <button onClick={() => { setCurrentValue(value); setIsEditing(false); }} className="text-red-500 hover:text-red-700 p-1 transition duration-200" title="Cancel"><FaTimes /></button>
                         </>
                     ) : (
-                        <button onClick={() => setIsEditing(true)} className="text-blue-600 hover:text-blue-800 p-1 transition duration-200" title="Edit"><FaEdit /></button>
+                        <button onClick={() => setIsEditing(true)} className="text-violet-600 hover:text-violet-800 p-1 transition duration-200" title="Edit"><FaEdit /></button>
                     )
                 )}
             </div>
@@ -83,8 +84,8 @@ const TabButton: React.FC<any> = ({ icon: Icon, label, isActive, onClick }) => (
     <button
       className={`w-full text-left flex items-center gap-3 p-3 rounded-lg transition duration-200 ${
         isActive
-          ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+          ? 'bg-violet-600 text-white  shadow-sm'
+          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-background'
       } font-medium`}
       onClick={onClick}
     >
@@ -112,13 +113,13 @@ const DocumentUploadCard: React.FC<any> = ({ docLabel, currentUrl, verificationS
     return (
         <div className="border border-gray-300 dark:border-gray-600 p-4 rounded-xl mt-4 bg-white dark:bg-gray-800 shadow-sm">
             <div className="flex justify-between items-center mb-3">
-                <h4 className="font-bold text-lg text-gray-900 dark:text-gray-50">{docLabel}</h4>
-                <span className="px-3 py-1 text-sm rounded-full font-medium flex items-center gap-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300">
+                <h4 className="font-xl text-lg text-gray-900 dark:text-gray-50">{docLabel}</h4>
+                <span className="px-3 py-1 text-sm rounded-full font-medium flex items-center gap-1 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300">
                     <StatusIcon className="w-4 h-4" /> {verificationStatus}
                 </span>
             </div>
             {currentUrl && (
-                 <a href={currentUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:underline font-medium mb-3">
+                 <a href={currentUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-violet-600 hover:text-violet-700 hover:underline font-medium mb-3">
                     <HiOutlineDocumentText className="w-5 h-5" /> View Uploaded Document
                 </a>
             )}
@@ -152,6 +153,22 @@ export default function TransporterProfilePage() {
   const showToast = useCallback((text: string, type: 'success' | 'error') => {
     setMessage({ text, type });
     setTimeout(() => setMessage(null), 3500);
+  }, []);
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("sidebarCollapsed") === "true";
+    }
+    return false;
+  });
+const sidebarWidth = sidebarCollapsed ? 80 : 256;
+  // ✅ Sidebar Collapse Sync
+  useEffect(() => {
+    const updateSidebar = () => {
+      setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
+    };
+    window.addEventListener("storage", updateSidebar);
+    return () => window.removeEventListener("storage", updateSidebar);
   }, []);
 
   // --- Fetch Data ---
@@ -215,7 +232,7 @@ export default function TransporterProfilePage() {
 
   const renderPersonalInformation = () => (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50 mb-4">Contact Person Details</h3>
+      <h3 className="text-xl font-xl text-gray-900 dark:text-gray-50 mb-4">Contact Person Details</h3>
       <EditableField
         label="Full Name"
         value={transporter!.contactPersonName || ""} // Use ! since we checked for null below
@@ -239,7 +256,7 @@ export default function TransporterProfilePage() {
   // RENDER FUNCTION FOR OTHER TABS (omitted for brevity, assume similar structure)
   const renderCompanyDetails = () => (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50 mb-4">Company Details</h3>
+      <h3 className="text-xl font-xl text-gray-900 dark:text-gray-50 mb-4">Company Details</h3>
       <EditableField
         label="Company Name"
         value={transporter!.companyName || ""}
@@ -250,14 +267,14 @@ export default function TransporterProfilePage() {
         value={transporter!.address || ""}
         onSave={(newValue: string) => updateTransporterField('address', newValue)}
       />
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50 mt-8 mb-4 border-t pt-4 dark:border-gray-700">Regulatory Details (Read-Only)</h3>
+      <h3 className="text-xl font-xl text-gray-900 dark:text-gray-50 mt-8 mb-4 border-t pt-4 dark:border-gray-700">Regulatory Details (Read-Only)</h3>
       <EditableField label="PAN Number" value={transporter!.panNumber || "N/A"} disabled={true} onSave={() => {}} />
       <EditableField label="Aadhaar Number" value={transporter!.aadhaarNumber ? `**** **** ${transporter!.aadhaarNumber.slice(-4)}` : "N/A"} disabled={true} onSave={() => {}} />
     </div>
   );
   const renderDocumentManagement = () => (
     <div className="space-y-6">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50">Upload & Verify Documents</h3>
+      <h3 className="text-xl font-xl text-gray-900 dark:text-gray-50">Upload & Verify Documents</h3>
       <p className="text-sm text-gray-500 dark:text-gray-400">Please upload and maintain updated documents to avoid service interruptions.</p>
       <DocumentUploadCard
           docLabel="RC Proof Document"
@@ -275,14 +292,14 @@ export default function TransporterProfilePage() {
   );
   const renderFleetManagement = () => (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50 mb-4">Current Fleet Information</h3>
+      <h3 className="text-xl font-xl text-gray-900 dark:text-gray-50 mb-4">Current Fleet Information</h3>
        <EditableField label="Total Vehicles" value={String(transporter!.totalVehicles || 0)} type="number" onSave={(newValue: string) => updateTransporterField('totalVehicles', newValue)} />
        <EditableField label="Supported Vehicle Types" value={transporter!.vehicleTypes || "N/A"} onSave={(newValue: string) => updateTransporterField('vehicleTypes', newValue)} />
        <div className="pt-4 mt-6 border-t border-gray-200 dark:border-gray-700">
            <button 
                 // Navigation Logic
                 onClick={() => router.push('/transporter/fleet')} 
-                className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2 text-lg"
+                className="w-full py-3 bg-violet-600 text-white font-xl rounded-lg hover:bg-violet-700 transition flex items-center justify-center gap-2 text-lg"
             >
                 <FaTruckMoving /> Manage Vehicle Details
             </button>
@@ -291,14 +308,14 @@ export default function TransporterProfilePage() {
   );
   const renderSecuritySettings = () => (
     <div className="space-y-6">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50 flex items-center gap-2"><FaCreditCard /> Bank Account Details</h3>
+      <h3 className="text-xl font-xl text-gray-900 dark:text-gray-50 flex items-center gap-2"><FaCreditCard /> Bank Account Details</h3>
       <EditableField label="Bank A/C Number" value={transporter!.bankAccountNumber || "N/A"} onSave={(newValue: string) => updateTransporterField('bankAccountNumber', newValue)} />
       <EditableField label="IFSC Code" value={transporter!.ifscCode || "N/A"} onSave={(newValue: string) => updateTransporterField('ifscCode', newValue)} />
-      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50 flex items-center gap-2 mt-8 border-t pt-4 dark:border-gray-700"><FaLock /> Change Password</h3>
+      <h3 className="text-xl font-xl text-gray-900 dark:text-gray-50 flex items-center gap-2 mt-8 border-t pt-4 dark:border-gray-700"><FaLock /> Change Password</h3>
       <form className="space-y-4 max-w-md">
         <input type="password" placeholder="Current Password" className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600"/>
         <input type="password" placeholder="New Password" className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" />
-        <button type="submit" className="w-full py-3 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-700 transition">Update Password</button>
+        <button type="submit" className="w-full py-3 bg-violet-600 text-white font-xl rounded-lg hover:bg-violet-700 transition">Update Password</button>
       </form>
     </div>
   );
@@ -321,7 +338,8 @@ export default function TransporterProfilePage() {
 
 
   return (
-    <div className="p-4 sm:p-8 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-200">
+    <div  style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }} className="p-0 bg-gray-50 dark:bg-background min-h-screen text-gray-800 dark:text-gray-200">
+      <TransporterHeader/>
       
       {/* Toast Notification */}
       {message && (
@@ -331,16 +349,16 @@ export default function TransporterProfilePage() {
       )}
 
       {/* Profile Header Card */}
-      <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-xl p-6 mb-8 flex flex-col items-center sm:flex-row gap-6">
+      <div className="bg-white dark:bg-card shadow-2xl rounded-xl p-6 mb-8 flex flex-col items-center sm:flex-row gap-6  mx-4 my-4">
         
         {/* Profile Photo Upload Area */}
-        <div className="relative group w-36 h-36 flex-shrink-0">
+        <div className="relative group w-36 h-36 p-4 flex-shrink-0">
           <img
             src={avatarUrl}
             width={30}
             height={20}
             alt="Profile Photo"
-            className="w-full h-full object-cover rounded-full border-4 border-blue-500 dark:border-blue-400 transition-shadow"
+            className="w-full h-full object-cover rounded-full border-4  transition-shadow"
           />
           <label htmlFor="profile-upload" className="absolute inset-0 rounded-full bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
             {isUploadingPhoto ? (<FaSpinner className="animate-spin text-white text-xl" />) : (<FaCamera className="text-white text-xl" />)}
@@ -350,13 +368,13 @@ export default function TransporterProfilePage() {
 
         {/* Company & Contact Info */}
         <div className="text-center sm:text-left flex-grow">
-          <h1 className="text-3xl font-extrabold text-blue-600 dark:text-blue-400">{transporter.companyName}</h1>
-          <p className="text-xl font-semibold text-gray-900 dark:text-gray-50 mt-1">{transporter.contactPersonName} <span className="text-sm font-normal text-gray-500 dark:text-gray-400">(Contact Person)</span></p>
+          <h1 className="text-3xl font-xl text-violet-600 dark:text-violet-700 ">{transporter.companyName}</h1>
+          <p className="text-xl font-semibold text-gray-900 dark:text-gray-200 mt-1">{transporter.contactPersonName} <span className="text-sm font-normal text-gray-500 dark:text-gray-400">(Contact Person)</span></p>
           <div className="flex items-center justify-center sm:justify-start mt-2 gap-4">
             <span className="text-md bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100 px-3 py-1 rounded-full inline-flex items-center gap-1 font-semibold">
               <FaCheckCircle /> KYC Verified
             </span>
-            <span className="text-md text-yellow-600 dark:text-yellow-400 inline-flex items-center gap-1 font-semibold">
+            <span className="text-md text-violet-600 dark:text-violet-400 inline-flex items-center gap-1 font-semibold">
                 <FaStar /> 4.5 Rating
             </span>
           </div>
@@ -367,8 +385,8 @@ export default function TransporterProfilePage() {
       <div className="flex flex-col md:flex-row gap-6">
         
         {/* Left: Tab Navigation */}
-        <div className="w-full md:w-72 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg h-fit">
-          <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-50 border-b pb-2 dark:border-gray-700">Settings</h2>
+        <div className="w-full md:w-72 bg-white dark:bg-card p-4 rounded-xl shadow-lg h-fit ml-4">
+          <h2 className="text-xl font-xl mb-4 text-gray-900 dark:text-gray-50 border-b pb-2 dark:border-gray-700">Settings</h2>
           
           <TabButton icon={FaUser} label="Personal Information" isActive={activeTab === 'personal'} onClick={() => setActiveTab('personal')} />
           <TabButton icon={FaBuilding} label="Company Details" isActive={activeTab === 'company'} onClick={() => setActiveTab('company')} />
@@ -378,8 +396,8 @@ export default function TransporterProfilePage() {
         </div>
 
         {/* Right: Content Area */}
-        <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-extrabold mb-6 border-b pb-2 dark:border-gray-700 text-blue-600 dark:text-blue-400">
+        <div className="flex-1 bg-white dark:bg-card p-6 rounded-xl shadow-lg">
+          <h2 className="text-2xl font-medium mb-6 border-b pb-2 dark:border-gray-700 text-violet-600 dark:text-violet-400">
             {activeTab === 'personal' && 'Personal Information'}
             {activeTab === 'company' && 'Company Details'}
             {activeTab === 'documents' && 'Document Management'}

@@ -31,7 +31,7 @@ public class TransporterDTO {
     private String address;
 
     @NotBlank(message = "PAN number is required")
-    @Pattern(regexp = "[A-Z]{5}[0-9]{4}[A-Z]{1}", message = "Invalid PAN format (e.g., ABCDE1234F)")
+   // @Pattern(regexp = "[A-Z]{5}[0-9]{4}[A-Z]{1}", message = "Invalid PAN format (e.g., ABCDE1234F)")
     private String panNumber;
 
     @NotBlank(message = "Aadhaar number is required")

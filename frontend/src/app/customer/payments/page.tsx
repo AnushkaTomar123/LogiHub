@@ -17,17 +17,15 @@ export default function CustomerWallet() {
 
   const customerId = localStorage.getItem("customerId");
 
-  // 🔹 Fetch wallet on load
   useEffect(() => {
     if (customerId) fetchWallet();
   }, [customerId]);
 
-  // 🔸 Get wallet details
   const fetchWallet = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/${OWNER_TYPE}/${customerId}`);
       setWallet(res.data);
-      fetchTransactions();
+      fetchTransactions(res.data.id); // ✅ walletId se fetch
     } catch (err: any) {
       if (err.response?.status === 404) {
         await createWallet();
@@ -37,7 +35,6 @@ export default function CustomerWallet() {
     }
   };
 
-  // 🔸 Create wallet if not exists
   const createWallet = async () => {
     try {
       await axios.post(`${BASE_URL}/create`, {
@@ -51,17 +48,16 @@ export default function CustomerWallet() {
     }
   };
 
-  // 🔸 Fetch transaction history
-  const fetchTransactions = async () => {
+  // ✅ Fetch transaction by walletId
+  const fetchTransactions = async (walletId: number) => {
     try {
-      const res = await axios.get(`${BASE_URL}/transactions/${OWNER_TYPE}/${customerId}`);
+      const res = await axios.get(`${BASE_URL}/transactions/${walletId}`);
       setTransactions(res.data);
     } catch {
       toast.error("Failed to fetch transactions.");
     }
   };
 
-  // 🔸 Add money
   const handleAddMoney = async () => {
     if (!amount || Number(amount) <= 0) {
       toast.error("Enter a valid amount!");
@@ -78,7 +74,7 @@ export default function CustomerWallet() {
       toast.success("Money added!");
       setWallet(res.data);
       setAmount("");
-      fetchTransactions();
+      fetchTransactions(res.data.id);
     } catch {
       toast.error("Failed to add money!");
     } finally {
@@ -93,13 +89,11 @@ export default function CustomerWallet() {
       animate={{ opacity: 1, y: 0 }}
     >
       <div className="bg-white shadow-xl rounded-2xl w-full max-w-2xl p-8">
-        {/* Header */}
         <div className="flex items-center gap-3 mb-6 border-b pb-3">
           <FaWallet size={28} className="text-blue-600" />
           <h1 className="text-2xl font-bold text-gray-800">Customer Wallet</h1>
         </div>
 
-        {/* Wallet Info */}
         {wallet ? (
           <div className="text-center bg-blue-50 py-5 rounded-xl mb-6">
             <h2 className="text-gray-600 font-medium">Current Balance</h2>
@@ -116,7 +110,6 @@ export default function CustomerWallet() {
           </div>
         )}
 
-        {/* Add Money Section */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
             <FaPlusCircle className="text-green-600" />
@@ -143,7 +136,6 @@ export default function CustomerWallet() {
           </div>
         </div>
 
-        {/* Transaction History */}
         <div>
           <div className="flex items-center gap-2 mb-3">
             <FaClock className="text-blue-600" />

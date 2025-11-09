@@ -106,14 +106,14 @@ const LoginForm = () => {
       <div className="flex items-center justify-center min-h-screen bg-white dark:bg-background">
         <div className="flex w-full max-w-4xl bg-white  dark:bg-background shadow-2xl rounded-2xl overflow-hidden border border-gray-100 dark:border-border">
           {/* Left Side */}
-          <div className="hidden md:flex flex-col justify-center items-start p-10 md:w-1/2 bg-gradient-to-br from-blue-50 to-orange-500 dark:from-purple-800 dark:via-indigo-800 dark:to-purple-600 text-gray-700 dark:text-white ">
+          <div className="hidden md:flex flex-col justify-center items-start p-10 md:w-1/2 bg-gradient-to-br from-violet-50 to-violet-500 dark:from-purple-800 dark:via-indigo-800 dark:to-purple-600 text-gray-700 dark:text-white ">
             <h1 className="text-2xl font-extrabold mb-6">
               Welcome to LogiHub 🚚
             </h1>
-            <p className="text-lg mb-6 text-blue-50">
+            <p className="text-lg mb-6 text-violet-50">
               Your one-stop logistics and transport management platform.
             </p>
-            <ul className="space-y-3 text-md text-blue-50">
+            <ul className="space-y-3 text-md text-violet-50">
               <li>• Track real-time shipments effortlessly</li>
               <li>• Manage consignments digitally</li>
               <li>• Get instant updates on delivery status</li>
@@ -139,7 +139,7 @@ const LoginForm = () => {
                   className={`w-full dark:bg-card border rounded-md px-4 py-3 focus:outline-none focus:ring-2 ${
                     errors.email
                       ? "border-red-500 focus:ring-red-400"
-                      : "border-gray-300 focus:ring-blue-500"
+                      : "border-gray-300 focus:ring-violet-500"
                   }`}
                 />
                 {errors.email && (
@@ -156,7 +156,7 @@ const LoginForm = () => {
                   className={`w-full dark:bg-card border rounded-md px-4 py-3 focus:outline-none focus:ring-2 ${
                     errors.password
                       ? "border-red-500 focus:ring-red-400"
-                      : "border-gray-300 focus:ring-blue-500"
+                      : "border-gray-300 focus:ring-violet-500"
                   }`}
                 />
                 {errors.password && (
@@ -166,7 +166,7 @@ const LoginForm = () => {
 
               <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-300">
                 <label className="flex items-center space-x-2">
-                  <input type="checkbox" className="accent-blue-500" />
+                  <input type="checkbox" className="accent-violet-500" />
                   <span>Remember me</span>
                 </label>
                 <Link
@@ -181,7 +181,7 @@ const LoginForm = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full bg-gradient-to-br from-blue-600 to-cyan-600  dark:from-purple-800 dark:via-indigo-800 dark:to-purple-600 text-white py-2.5 rounded-md font-medium hover:bg-blue-700 transition duration-200 ${
+                className={`w-full bg-gradient-to-br from-violet-600 to-cyan-600  dark:from-purple-800 dark:via-indigo-800 dark:to-purple-600 text-white py-2.5 rounded-md font-medium hover:bg-violet-700 transition duration-200 ${
                   loading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
@@ -193,7 +193,7 @@ const LoginForm = () => {
               <button
                 type="button"
                 disabled={loading}
-                className={`w-full  bg-gradient-to-br from-blue-600 to-cyan-600  dark:from-purple-800 dark:via-indigo-800 dark:to-purple-600 border border-gray-300 py-2.5 rounded-md text-gray-700 dark:text-gray-50 font-medium hover:bg-gray-50 transition duration-200 ${
+                className={`w-full  bg-gradient-to-br from-violet-600 to-cyan-600  dark:from-purple-800 dark:via-indigo-800 dark:to-purple-600 border border-gray-300 py-2.5 rounded-md text-gray-700 dark:text-gray-50 font-medium hover:bg-gray-50 transition duration-200 ${
                   loading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
@@ -204,7 +204,7 @@ const LoginForm = () => {
                 Don’t have an account?{" "}
                 <a
                   href="/auth/signup"
-                  className="text-blue-600 hover:underline font-medium"
+                  className="text-violet-600 hover:underline font-medium"
                 >
                   Sign up
                 </a>

@@ -1,6 +1,6 @@
 "use client";
 
-import TransporterHeader from "@/components/transporter/TransporterHeader";
+import TransporterHeader from "../../../components/TransporterSection/TransporterHeader";
 import React, { useState, useEffect, FormEvent } from "react";
 import { FaMapMarkerAlt, FaTruckMoving, FaUserAlt, FaRoute, FaCheckCircle, FaSpinner, FaMapPin, FaAngleRight } from "react-icons/fa";
 import { MdAccessTimeFilled, MdClose, MdPeople, MdLocalShipping, MdPerson } from "react-icons/md";
@@ -102,9 +102,9 @@ const AssignTripModal: React.FC<{
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-100 bg-opacity-70 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-gray-100 dark:bg-background bg-opacity-70 flex items-center justify-center z-50 p-4">
           
-            <div className="bg-white w-[90%] max-w-xl rounded-2xl shadow-2xl p-6 relative">
+            <div className="bg-white dark:bg-background w-[90%] max-w-xl rounded-2xl shadow-2xl p-6 relative">
                 
                 <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Assign New Trip</h2>
                 
@@ -112,12 +112,12 @@ const AssignTripModal: React.FC<{
                     
                     {/* Select Load (Pending Acceptance) */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-1"><FaRoute size={14} className="text-blue-500" /> Select Load to Assign</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-1"><FaRoute size={14} className="text-violet-500" /> Select Load to Assign</label>
                         <select
                             value={selectedLoad}
                             onChange={(e) => setSelectedLoad(e.target.value)}
                             required
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-medium"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500 font-medium"
                         >
                             <option value="">Select a Load...</option>
                             {mockLoadOptions.map(load => (
@@ -130,12 +130,12 @@ const AssignTripModal: React.FC<{
 
                     {/* Select Vehicle */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-1"><MdLocalShipping size={16} className="text-blue-500" /> Select Available Vehicle</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-1"><MdLocalShipping size={16} className="text-violet-500" /> Select Available Vehicle</label>
                         <select
                             value={selectedVehicle}
                             onChange={(e) => setSelectedVehicle(e.target.value)}
                             required
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-medium"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500 font-medium"
                             disabled={vehicles.length === 0 || isAssigning}
                         >
                             <option value="">Select Vehicle (Available: {vehicles.length})</option>
@@ -149,12 +149,12 @@ const AssignTripModal: React.FC<{
 
                     {/* Select Driver */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-1"><MdPerson size={16} className="text-blue-500" /> Select Driver</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-1"><MdPerson size={16} className="text-violet-500" /> Select Driver</label>
                         <select
                             value={selectedDriver}
                             onChange={(e) => setSelectedDriver(e.target.value)}
                             required
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-medium"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-violet-500 focus:border-violet-500 font-medium"
                             disabled={drivers.length === 0 || isAssigning}
                         >
                             <option value="">Select Driver (Available: {drivers.length})</option>
@@ -235,7 +235,7 @@ export default function AssignedTrips() {
     };
 
     return (
-        <div className="bg-white min-h-screen">
+        <div className="bg-white dark:bg-background min-h-screen">
             <TransporterHeader/>
             <div className="p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-6 pb-3">
@@ -244,7 +244,7 @@ export default function AssignedTrips() {
                     </h1>
                     <button
                         onClick={() => setShowAssignModal(true)}
-                        className="bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition flex items-center gap-2 font-semibold"
+                        className="bg-violet-600 text-white px-5 py-2 rounded-xl hover:bg-violet-700 transition flex items-center gap-2 font-semibold"
                         disabled={isLoadingData}
                     >
                         <MdPeople size={20} /> Assign Trip
@@ -260,10 +260,10 @@ export default function AssignedTrips() {
                         {trips.map((trip) => (
                             <div
                                 key={trip.id}
-                                className="bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-all border-t-4 border-blue-600"
+                                className="bg-white rounded-xl shadow-lg p-5 hover:shadow-xl transition-all border-t-4 border-violet-600"
                             >
                                 <div className="flex items-center gap-3 mb-4">
-                                    <FaTruckMoving className="text-2xl text-blue-600" />
+                                    <FaTruckMoving className="text-2xl text-violet-600" />
                                     <h2 className="text-xl font-bold text-gray-800">
                                         {trip.truck}
                                     </h2>
@@ -275,7 +275,7 @@ export default function AssignedTrips() {
                                         <span className="font-semibold text-gray-900">{trip.driver}</span>
                                     </p>
                                     <p className="flex items-center gap-2">
-                                        <FaRoute className="text-blue-600" /> Route:{" "}
+                                        <FaRoute className="text-violet-600" /> Route:{" "}
                                         <span className="font-semibold text-gray-900">{trip.route}</span>
                                     </p>
                                     
@@ -299,7 +299,7 @@ export default function AssignedTrips() {
 
                                 <button
                                     onClick={() => handleTrackTrip(trip)}
-                                    className="w-full mt-6 bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all font-bold shadow-md"
+                                    className="w-full mt-6 bg-violet-600 text-white py-3 rounded-xl hover:bg-violet-700 transition-all font-bold shadow-md"
                                 >
                                     Track Trip
                                 </button>
@@ -311,7 +311,7 @@ export default function AssignedTrips() {
 
             {/* Map Tracking Modal */}
             {showModal && selectedTrip && (
-                <div className="fixed inset-0 bg-gray-100 bg-opacity-50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-gray-100 dark:bg-card bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white w-[90%] max-w-lg rounded-2xl shadow-xl p-6 relative">
                         <h2 className="text-2xl font-bold text-gray-800 mb-3">
                             Tracking: {selectedTrip.truck}

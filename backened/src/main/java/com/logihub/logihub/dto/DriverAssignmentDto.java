@@ -1,6 +1,8 @@
 package com.logihub.logihub.dto;
 
 import lombok.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,5 +16,5 @@ public class DriverAssignmentDto {
     private Long transporterId;
     private Long driverId;
     private Long vehicleId;
-    private LocalDateTime pickupDate;
+    private LocalDate pickupDate;
 }
