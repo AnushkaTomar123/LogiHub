@@ -11,7 +11,7 @@ import {
   MdPeople, 
   MdRateReview,
 } from "react-icons/md";
-import TransporterHeader from "@/components/transporter/TransporterHeader";
+import TransporterHeader from "../../../components/TransporterSection/TransporterHeader";
 import { useTheme } from "next-themes";
 
 // --- Mock Data and Helper Interfaces ---

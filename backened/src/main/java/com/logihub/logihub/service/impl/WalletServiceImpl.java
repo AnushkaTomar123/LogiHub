@@ -163,12 +163,21 @@ public class WalletServiceImpl implements WalletService {
     }
 
     // ✅ Get Transaction History
+//    @Override
+//    public List<WalletTransactionResponseDTO> getTransactionHistory(Long ownerId, String ownerType) {
+//        Wallet wallet = getWallet(ownerId, ownerType);
+//        return transactionRepository.findByWalletId(wallet.getId())
+//                .stream()
+//                .map(tx -> modelMapper.map(tx, WalletTransactionResponseDTO.class))
+//                .collect(Collectors.toList());
+//    }
+
     @Override
-    public List<WalletTransactionResponseDTO> getTransactionHistory(Long ownerId, String ownerType) {
-        Wallet wallet = getWallet(ownerId, ownerType);
-        return transactionRepository.findByWalletId(wallet.getId())
+    public List<WalletTransactionResponseDTO> getTransactionHistory(Long walletId) {
+        return transactionRepository.findByWalletId(walletId)
                 .stream()
                 .map(tx -> modelMapper.map(tx, WalletTransactionResponseDTO.class))
                 .collect(Collectors.toList());
     }
+
 }

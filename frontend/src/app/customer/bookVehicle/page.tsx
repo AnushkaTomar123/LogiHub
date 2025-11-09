@@ -13,18 +13,18 @@ export default function BookVehiclePage() {
     expectDeliveryDate: "",
     goodsDescription: "",
     estimatedCost: "",
+    pickupDate:"",
+    capacity:"",
     vehicalType: "TRUCK",
-    bookingStatus: "PENDING",
+   
   });
 
   const [loading, setLoading] = useState(false);
 
-  // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle submit
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -37,7 +37,7 @@ export default function BookVehiclePage() {
         return;
       }
 
-      // Prepare payload (convert fields to correct types)
+      
       const payload = {
         customerId: Number(customerId),
         pickupAddress: formData.pickupAddress.trim(),
@@ -46,7 +46,8 @@ export default function BookVehiclePage() {
         goodsDescription: formData.goodsDescription.trim(),
         estimatedCost: Number(formData.estimatedCost),
         vehicalType: formData.vehicalType,
-        bookingStatus: formData.bookingStatus,
+        pickupDate: formData.pickupDate,
+        capacity :Number(formData.capacity) ,
       };
 
       const res = await axios.post("http://localhost:8080/api/bookings/create", payload);
@@ -61,7 +62,8 @@ export default function BookVehiclePage() {
         goodsDescription: "",
         estimatedCost: "",
         vehicalType: "TRUCK",
-        bookingStatus: "PENDING",
+       pickupDate:"",
+       capacity:"",
       });
     } catch (error: any) {
       console.error("Error creating booking:", error);
@@ -91,7 +93,7 @@ export default function BookVehiclePage() {
         <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
           {/* Pickup Address */}
           <div className="col-span-2 md:col-span-1">
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
               Pickup Address
             </label>
             <input
@@ -103,13 +105,13 @@ export default function BookVehiclePage() {
               minLength={5}
               maxLength={255}
               placeholder="Enter pickup address"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border border-gray-300 text-gray-800 dark:text-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Drop Address */}
           <div className="col-span-2 md:col-span-1">
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
               Drop Address
             </label>
             <input
@@ -121,13 +123,13 @@ export default function BookVehiclePage() {
               minLength={5}
               maxLength={255}
               placeholder="Enter drop location"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border border-gray-300 text-gray-800 dark:text-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Expected Delivery Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
               Expected Delivery Date
             </label>
             <input
@@ -136,13 +138,39 @@ export default function BookVehiclePage() {
               value={formData.expectDeliveryDate}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border border-gray-300 text-gray-800 dark:text-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+           <div>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
+              Pickup Date
+            </label>
+            <input
+              type="date"
+              name="pickupDate"
+              value={formData.pickupDate}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 text-gray-800 dark:text-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+            <div>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
+             Capacity
+            </label>
+            <input
+              type="number"
+              name="capacity"
+              value={formData.capacity}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 text-gray-800 dark:text-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Goods Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
               Goods Description
             </label>
             <input
@@ -152,13 +180,13 @@ export default function BookVehiclePage() {
               onChange={handleChange}
               required
               placeholder="e.g., Electronics, Furniture"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border border-gray-300 text-gray-800 dark:text-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Estimated Cost */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
               Estimated Cost (₹)
             </label>
             <input
@@ -169,20 +197,20 @@ export default function BookVehiclePage() {
               required
               min={1}
               placeholder="Enter estimated cost"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border border-gray-300 text-gray-800 dark:text-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Vehicle Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-300 mb-1">
               Vehicle Type
             </label>
             <select
               name="vehicalType"
               value={formData.vehicalType}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border border-gray-300 text-gray-800 dark:text-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             >
               <option value="TRUCK">Truck</option>
               <option value="TRAILER">Trailer</option>
@@ -193,23 +221,7 @@ export default function BookVehiclePage() {
             </select>
           </div>
 
-          {/* Booking Status */}
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Booking Status
-            </label>
-            <select
-              name="bookingStatus"
-              value={formData.bookingStatus}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
-            >
-              <option value="PENDING">Pending</option>
-              <option value="CONFIRMED">Confirmed</option>
-              <option value="CANCELLED">Cancelled</option>
-            </select>
-          </div>
-
+         
           {/* Submit Button */}
           <div className="col-span-2 flex justify-end mt-4">
             <button

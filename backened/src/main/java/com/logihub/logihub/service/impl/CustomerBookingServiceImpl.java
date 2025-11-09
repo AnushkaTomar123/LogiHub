@@ -15,6 +15,7 @@ import com.logihub.logihub.service.CustomerBookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
                 .estimatedCost(dto.getEstimatedCost())
                 .goodsDescription(dto.getGoodsDescription())
                 .vehicleType(dto.getVehicalType())
-                .bookingDate(LocalDateTime.now())
+                .bookingDate(LocalDate.now())
                 .status(BookingStatus.PENDING)
                 .paymentStatus(PaymentStatus.PENDING)
                 .createdAt(LocalDateTime.now())
@@ -90,12 +91,15 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
     public CustomerBooking confirmBooking(Long bookingId, Long transporterId) {
         CustomerBooking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
-
-        if (booking.getStatus() != BookingStatus.PRICE_LOCKED) {
+        if (booking.getStatus() != BookingStatus.PRICE_LOCKED &&
+                !(booking.getStatus() == BookingStatus.PENDING && booking.getEstimatedCost() != null)) {
             throw new RuntimeException("Booking is not ready for confirmation");
         }
 
         booking.setTransporterId(transporterId);
+        if (booking.getStatus() == BookingStatus.PENDING) {
+            booking.setFinalCost(booking.getEstimatedCost());
+        }
         booking.setStatus(BookingStatus.AWAITING_PAYMENT);
         booking.setUpdatedAt(LocalDateTime.now());
 

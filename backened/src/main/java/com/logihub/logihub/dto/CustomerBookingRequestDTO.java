@@ -29,7 +29,7 @@ public class CustomerBookingRequestDTO {
     private VehicalType vehicalType;
 //    @NotNull(message = "Booking status is required")
 //    private BookingStatus bookingStatus;
-    private LocalDateTime pickupDate;
+    private LocalDate pickupDate;
     private Double capacity;
 
 }

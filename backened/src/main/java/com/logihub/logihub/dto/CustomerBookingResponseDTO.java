@@ -16,9 +16,9 @@ public class CustomerBookingResponseDTO {
     private Long customerId;
     private String pickupAddress;
     private String dropAddress;
-    private LocalDateTime bookingDate;
-    private LocalDateTime pickupDate;
-    private LocalDateTime deliveryDate;
+    private LocalDate bookingDate;
+    private LocalDate pickupDate;
+    private LocalDate deliveryDate;
     private Double capacity;
     private BookingStatus status;
     private PaymentStatus paymentStatus;
