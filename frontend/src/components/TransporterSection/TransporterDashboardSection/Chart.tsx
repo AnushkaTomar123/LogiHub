@@ -70,7 +70,7 @@ const Chart: React.FC = () => {
 
       {/* Button */}
       <button
-        onClick={() => router.push("/transporter/shipment")}
+        onClick={() => router.push("/transporter/routes")}
         className="w-full mt-2 py-1 rounded-lg bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm transition"
       >
         Tracking Shipment
