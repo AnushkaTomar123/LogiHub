@@ -2,6 +2,8 @@ package com.logihub.logihub.controller;
 
 import com.logihub.logihub.dto.DriverDTO;
 import com.logihub.logihub.dto.DriverResponseDTO;
+import com.logihub.logihub.entity.Trip;
+import com.logihub.logihub.enums.DriverStatus;
 import com.logihub.logihub.service.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,5 +53,11 @@ public class DriverController {
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         driverService.deleteDriver(id);
         return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<DriverResponseDTO>> statusDrivers(@PathVariable DriverStatus driverStatus){
+        List<DriverResponseDTO> drivers = driverService.getDriverByStatus(driverStatus);
+        return ResponseEntity.ok(drivers);
     }
 }

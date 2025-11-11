@@ -98,4 +98,16 @@ public class CustomerBookingController {
         List<CustomerBooking> bookings = bookingService.getBookingsForTransporter(transporterId);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
+
+    @GetMapping("/all/desc")
+    public ResponseEntity<List<CustomerBooking>> getAllBookingsDesc() {
+        List<CustomerBooking> bookings = bookingService.getAllBookingsInDescOrder();
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
+    }
+
+    @PostMapping("/remaining/{bookingId}")
+    public ResponseEntity<CustomerBooking> payRemaining(@PathVariable Long bookingId) {
+        CustomerBooking booking = bookingService.payRemainingAmount(bookingId);
+        return ResponseEntity.ok(booking);
+    }
 }

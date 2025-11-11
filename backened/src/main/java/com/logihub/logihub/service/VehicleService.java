@@ -1,7 +1,9 @@
 package com.logihub.logihub.service;
 
+import com.logihub.logihub.dto.DriverResponseDTO;
 import com.logihub.logihub.dto.VehicleDTO;
 import com.logihub.logihub.dto.VehicleResponseDTO;
+import com.logihub.logihub.enums.VehicleStatus;
 
 import java.util.List;
 
@@ -12,6 +14,8 @@ public interface VehicleService {
     VehicleResponseDTO updateVehicle(Long id, VehicleDTO vehicleDTO);
     void deleteVehicle(Long id);
     List<VehicleResponseDTO> getVehiclesByTransporterAndStatus(Long transporterId, String status);
+
+    List<DriverResponseDTO> getVehiclesByStatus(VehicleStatus vehicleStatus);
 }
 
 

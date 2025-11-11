@@ -87,4 +87,14 @@ public class DriverServiceImpl implements DriverService {
     public void deleteDriver(Long id) {
         driverRepository.deleteById(id);
     }
+
+    @Override
+    public List<DriverResponseDTO> getDriverByStatus(DriverStatus driverStatus) {
+        List<Driver> drivers = driverRepository.findByStatus(driverStatus);
+
+        // ✅ ModelMapper converts Driver → DriverResponseDTO automatically
+        return drivers.stream()
+                .map(driver -> modelMapper.map(driver, DriverResponseDTO.class))
+                .toList();
+    }
 }

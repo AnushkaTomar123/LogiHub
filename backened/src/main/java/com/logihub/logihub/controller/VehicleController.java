@@ -1,9 +1,12 @@
 package com.logihub.logihub.controller;
 
+import com.logihub.logihub.dto.DriverResponseDTO;
 import com.logihub.logihub.dto.VehicleDTO;
 import com.logihub.logihub.dto.VehicleResponseDTO;
 
+import com.logihub.logihub.enums.DriverStatus;
 import com.logihub.logihub.enums.VehicleModel;
+import com.logihub.logihub.enums.VehicleStatus;
 import com.logihub.logihub.enums.VehicleType;
 import com.logihub.logihub.service.VehicleService;
 import jakarta.validation.Valid;
@@ -72,5 +75,10 @@ public class VehicleController {
         return ResponseEntity.ok(vehicleService.getVehiclesByTransporterAndStatus(transporterId, status));
     }
 
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<VehicleResponseDTO>> statusDrivers(@PathVariable VehicleStatus vehicleStatus){
+        List<DriverResponseDTO> vehicles = vehicleService.getVehiclesByStatus(vehicleStatus);
+        return ResponseEntity.ok(vehicles);
+    }
 
 }
