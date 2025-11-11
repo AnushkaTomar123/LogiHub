@@ -1,14 +1,11 @@
 package com.logihub.logihub.service.impl;
 
 import com.logihub.logihub.dto.*;
-import com.logihub.logihub.entity.CustomerBooking;
-import com.logihub.logihub.entity.Wallet;
-import com.logihub.logihub.entity.WalletTransaction;
-import com.logihub.logihub.enums.BookingStatus;
-import com.logihub.logihub.enums.PaymentStatus;
-import com.logihub.logihub.enums.TransactionType;
-import com.logihub.logihub.enums.WalletOwnerType;
+import com.logihub.logihub.entity.*;
+import com.logihub.logihub.enums.*;
 import com.logihub.logihub.repository.CustomerBookingRepository;
+import com.logihub.logihub.repository.VehicleRepository;
+import com.logihub.logihub.repository.DriverRepository;
 import com.logihub.logihub.repository.WalletRepository;
 import com.logihub.logihub.repository.WalletTransactionRepository;
 import com.logihub.logihub.service.CustomerBookingService;
@@ -23,6 +20,13 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CustomerBookingServiceImpl implements CustomerBookingService {
+
+
+    private final  DriverRepository driverRepository;
+
+
+    private  final VehicleRepository vehicleRepository;
+
 
     private final CustomerBookingRepository bookingRepository;
     private final WalletRepository walletRepository;
@@ -185,11 +189,27 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
 
         return bookingRepository.save(booking);
     }
+
+
     @Override
     public CustomerBooking assignDriver(DriverAssignmentDto dto) {
         CustomerBooking booking = bookingRepository.findById(dto.getBookingId())
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
+        // ✅ Fetch Driver and Vehicle from DB
+        Driver driver = driverRepository.findById(dto.getDriverId())
+                .orElseThrow(() -> new RuntimeException("Driver not found"));
+        Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
+                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+
+        // ✅ Update their status
+        driver.setStatus(DriverStatus.ON_DUTY);
+        vehicle.setStatus(VehicleStatus.ON_ROUTE);
+
+        driverRepository.save(driver);
+        vehicleRepository.save(vehicle);
+
+        // ✅ Update booking details
         booking.setTransporterId(dto.getTransporterId());
         booking.setDriverId(dto.getDriverId());
         booking.setVehicleId(dto.getVehicleId());
@@ -197,7 +217,86 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
         booking.setStatus(BookingStatus.CONFIRMED);
         booking.setUpdatedAt(LocalDateTime.now());
 
-        return bookingRepository.save(booking);
+        CustomerBooking savedBooking = bookingRepository.save(booking);
+
+        // 🚚 After confirmation, automatically mark as delivered after 10 seconds
+        new Thread(() -> {
+            try {
+                Thread.sleep(10000); // 10 seconds delay
+                savedBooking.setStatus(BookingStatus.DELIVERED);
+                bookingRepository.save(savedBooking);
+
+                System.out.println("✅ Booking delivered automatically after 10 sec: " + savedBooking.getId());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        return savedBooking;
+    }
+
+    @Override
+    public CustomerBooking payRemainingAmount(Long bookingId) {
+        CustomerBooking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        if (booking.getPaymentStatus() != PaymentStatus.HALF_PAID) {
+            throw new RuntimeException("Remaining payment applicable only after half payment!");
+        }
+
+        Double remainingAmount = booking.getRemainingAmount();
+        if (remainingAmount == null || remainingAmount <= 0) {
+            throw new RuntimeException("Remaining amount not set for this booking!");
+        }
+
+        // ✅ Fetch wallets
+        Wallet customerWallet = walletRepository.findByCustomer_Id(booking.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Customer wallet not found"));
+        Wallet transporterWallet = walletRepository.findByTransporter_Id(booking.getTransporterId())
+                .orElseThrow(() -> new RuntimeException("Transporter wallet not found"));
+
+        // ✅ Check balance
+        if (customerWallet.getBalance() < remainingAmount) {
+            System.out.println("⚠️ Customer has insufficient balance for remaining payment");
+            return booking;
+        }
+
+        // ✅ Transfer money
+        customerWallet.setBalance(customerWallet.getBalance() - remainingAmount);
+        transporterWallet.setBalance(transporterWallet.getBalance() + remainingAmount);
+        walletRepository.save(customerWallet);
+        walletRepository.save(transporterWallet);
+
+        // ✅ Transactions log
+        WalletTransaction customerTxn = WalletTransaction.builder()
+                .walletId(customerWallet.getId())
+                .relatedWalletId(transporterWallet.getId())
+                .transactionType(TransactionType.TRANSFER_OUT)
+                .amount(-remainingAmount)
+                .description("Remaining payment for booking ID: " + bookingId)
+                .timestamp(LocalDateTime.now())
+                .ownerType(WalletOwnerType.CUSTOMER)
+                .build();
+        walletTransactionRepository.save(customerTxn);
+
+        WalletTransaction transporterTxn = WalletTransaction.builder()
+                .walletId(transporterWallet.getId())
+                .relatedWalletId(customerWallet.getId())
+                .transactionType(TransactionType.TRANSFER_IN)
+                .amount(remainingAmount)
+                .description("Received remaining payment for booking ID: " + bookingId)
+                .timestamp(LocalDateTime.now())
+                .ownerType(WalletOwnerType.TRANSPORTER)
+                .build();
+        walletTransactionRepository.save(transporterTxn);
+
+        // ✅ Update booking
+        booking.setPaymentStatus(PaymentStatus.FULL_PAID);
+        booking.setUpdatedAt(LocalDateTime.now());
+        bookingRepository.save(booking);
+
+        System.out.println("💰 Remaining payment completed successfully for booking ID: " + bookingId);
+        return booking;
     }
 
     @Override
@@ -228,10 +327,15 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
         }
     }
 
+    @Override
     public List<CustomerBooking> getBookingsForTransporter(Long transporterId) {
         List<BookingStatus> statuses = List.of(BookingStatus.CONFIRMED, BookingStatus.DELIVERED);
         return bookingRepository.findByTransporterIdAndStatuses(transporterId, statuses);
     }
 
+    @Override
+    public List<CustomerBooking> getAllBookingsInDescOrder() {
+        return bookingRepository.findAllByOrderByIdDesc();
+    }
 
 }

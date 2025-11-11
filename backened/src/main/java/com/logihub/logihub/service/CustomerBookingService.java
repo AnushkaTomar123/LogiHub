@@ -25,5 +25,7 @@ public interface CustomerBookingService {
      CustomerBooking proposeNewPrice(PriceProposalDto dto);
 
     List<CustomerBooking> searchBookings(String pickupAddress, String dropAddress);
- List<CustomerBooking> getBookingsForTransporter(Long transporterId);
+  List<CustomerBooking> getBookingsForTransporter(Long transporterId);
+ List<CustomerBooking> getAllBookingsInDescOrder();
+    CustomerBooking payRemainingAmount(Long bookingId);
 }

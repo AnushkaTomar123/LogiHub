@@ -2,10 +2,13 @@ package com.logihub.logihub.repository;
 
 import com.logihub.logihub.entity.Driver;
 import com.logihub.logihub.entity.Vehicle;
+import com.logihub.logihub.enums.DriverStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface DriverRepository extends JpaRepository<Driver,Long> {
     List<Driver> findByTransporterId(Long transporterId);
+
+    List<Driver> findByStatus(DriverStatus driverStatus);
 }
