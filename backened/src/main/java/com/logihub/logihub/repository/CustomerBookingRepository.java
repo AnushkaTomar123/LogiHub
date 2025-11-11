@@ -20,4 +20,5 @@ public interface CustomerBookingRepository extends JpaRepository<CustomerBooking
     List<CustomerBooking> findByTransporterIdAndStatuses(@Param("transporterId") Long transporterId,
                                                          @Param("statuses") List<BookingStatus> statuses);
 
+    List<CustomerBooking> findAllByOrderByIdDesc();
 }

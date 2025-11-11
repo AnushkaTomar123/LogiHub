@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface TransporterRepository extends JpaRepository<Transporter, Long> {
     Optional<Transporter> findByUserEmail(String email);
+    Optional<Transporter> findByUserId(Long userId);
 }

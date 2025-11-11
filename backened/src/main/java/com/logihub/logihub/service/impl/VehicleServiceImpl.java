@@ -1,10 +1,13 @@
 package com.logihub.logihub.service.impl;
 
+import com.logihub.logihub.dto.DriverResponseDTO;
 import com.logihub.logihub.dto.VehicleDTO;
 import com.logihub.logihub.dto.VehicleResponseDTO;
+import com.logihub.logihub.entity.Driver;
 import com.logihub.logihub.entity.Transporter;
 import com.logihub.logihub.entity.Vehicle;
 
+import com.logihub.logihub.enums.DriverStatus;
 import com.logihub.logihub.enums.VehicleModel;
 import com.logihub.logihub.enums.VehicleStatus;
 import com.logihub.logihub.enums.VehicleType;
@@ -99,6 +102,16 @@ public class VehicleServiceImpl implements VehicleService {
                 .stream()
                 .map(vehicle -> modelMapper.map(vehicle, VehicleResponseDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VehicleResponseDTO> getDriverByStatus(VehicleStatus vehicleStatus) {
+        List<Driver> vehicles = vehicleRepository.findByStatus(vehicleStatus);
+
+        // ✅ ModelMapper converts Driver → DriverResponseDTO automatically
+        return vehicles.stream()
+                .map(vehicle -> modelMapper.map(vehicle, VehicleResponseDTO.class))
+                .toList();
     }
 
 }
