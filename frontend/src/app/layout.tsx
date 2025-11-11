@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-
+import { ThemeProvider } from "next-themes";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Logihub",
-  description: "a transport website",
+  description: "A transport website",
 };
 
 export default function RootLayout({
@@ -26,13 +25,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      > <ThemeProvider attribute="class" defaultTheme="dark">
+      >
+        {/* 🌗 ThemeProvider should wrap all children */}
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {children}
         </ThemeProvider>
-        
       </body>
     </html>
   );

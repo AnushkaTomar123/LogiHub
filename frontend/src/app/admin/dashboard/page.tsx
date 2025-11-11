@@ -17,6 +17,7 @@ import {
   Legend,
 } from "recharts";
 import AdminHeader from "@/components/AdminSection/AdminHeader";
+import Link from "next/link";
 
 interface DashboardStats {
   customers: number;
@@ -72,23 +73,27 @@ export default function AdminDashboard() {
         const bookings = bookingsRes.data || [];
 
         // ✅ Helper functions
-       const getCustomerName = async (id: number) => {
-  try {
-    const res = await axios.get(`http://localhost:8080/api/customers/${id}`);
-    return res.data.user?.username || `Customer #${id}`;
-  } catch {
-    return `Customer #${id}`;
-  }
-};
+        const getCustomerName = async (id: number) => {
+          try {
+            const res = await axios.get(
+              `http://localhost:8080/api/customers/${id}`
+            );
+            return res.data.user?.username || `Customer #${id}`;
+          } catch {
+            return `Customer #${id}`;
+          }
+        };
 
-const getTransporterName = async (id: number) => {
-  try {
-    const res = await axios.get(`http://localhost:8080/api/transporters/${id}`);
-    return res.data.user?.username || `Transporter #${id}`;
-  } catch {
-    return `Transporter #${id}`;
-  }
-};
+        const getTransporterName = async (id: number) => {
+          try {
+            const res = await axios.get(
+              `http://localhost:8080/api/transporters/${id}`
+            );
+            return res.data.user?.username || `Transporter #${id}`;
+          } catch {
+            return `Transporter #${id}`;
+          }
+        };
 
         setStats({
           customers: customerCount,
@@ -102,7 +107,8 @@ const getTransporterName = async (id: number) => {
           bookings.map(async (b: any) => ({
             id: b.id,
             customer: b.customerName || (await getCustomerName(b.customerId)),
-            transporter: b.transporterName || (await getTransporterName(b.transporterId)),
+            transporter:
+              b.transporterName || (await getTransporterName(b.transporterId)),
             from: b.pickupAddress || "N/A",
             to: b.dropAddress || "N/A",
             status: b.status || "Unknown",
@@ -148,23 +154,56 @@ const getTransporterName = async (id: number) => {
 
       {/* 🔹 Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-4">
-        <StatsCard title="Users" value={stats.users} icon={<MdAttachMoney size={26} />} color="bg-yellow-500" />
-        <StatsCard title="Customers" value={stats.customers} icon={<MdPeople size={26} />} color="bg-purple-500" />
-        <StatsCard title="Transporters" value={stats.transporters} icon={<MdLocalShipping size={26} />} color="bg-green-500" />
-        <StatsCard title="Shipments" value={stats.shipments} icon={<MdOutlineInventory size={26} />} color="bg-blue-500" />
+        <StatsCard
+          title="Users"
+          value={stats.users}
+          icon={<MdAttachMoney size={26} />}
+          color="bg-yellow-500"
+        />
+        <StatsCard
+          title="Customers"
+          value={stats.customers}
+          icon={<MdPeople size={26} />}
+          color="bg-purple-500"
+        />
+        <StatsCard
+          title="Transporters"
+          value={stats.transporters}
+          icon={<MdLocalShipping size={26} />}
+          color="bg-green-500"
+        />
+        <StatsCard
+          title="Shipments"
+          value={stats.shipments}
+          icon={<MdOutlineInventory size={26} />}
+          color="bg-blue-500"
+        />
       </div>
 
       {/* 🔹 Shipment Chart & Top Transporters */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-4">
         {/* Pie Chart */}
         <div className="bg-white dark:bg-background border border-white dark:border-card p-6 rounded-2xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Shipment Status Overview</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Shipment Status Overview
+          </h2>
           <div className="h-64">
             <ResponsiveContainer>
               <PieChart>
-                <Pie data={shipmentStatus} cx="50%" cy="50%" labelLine={false} outerRadius={100} dataKey="value">
+                <Pie
+                  data={shipmentStatus}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={100}
+                  dataKey="value"
+                  nameKey="username"
+                >
                   {shipmentStatus.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -187,7 +226,10 @@ const getTransporterName = async (id: number) => {
             </thead>
             <tbody>
               {topTransporters.map((t, i) => (
-                <tr key={i} className="border-b hover:bg-gray-50">
+                <tr
+                  key={i}
+                  className="border-b hover:bg-gray-50 dark:hover:bg-purple-400"
+                >
                   <td className="p-2">{t.username}</td>
                   <td className="p-2">{t.rating} ⭐</td>
                   <td className="p-2">{t.totalShipments}</td>
@@ -199,11 +241,25 @@ const getTransporterName = async (id: number) => {
       </div>
 
       {/* 🔹 Recent Shipments Table */}
-      <div className="bg-gray-50 dark:bg-background p-4">
-        <h2 className="text-xl font-semibold mb-4">Recent Shipments</h2>
-        <div className="overflow-x-auto bg-white dark:bg-background border border-white dark:border-card">
+      <div className="bg-gray-50 dark:bg-background  mb-0 ">
+        <div className="flex justify-between p-2">
+            <h2 className="text-xl font-semibold m-0 px-2 ">Recent Shipments</h2>
+         {/* 🔘 Show More Button */}
+          {shipments.length > 10 && (
+            
+              <Link
+                href="/admin/shipments"
+                className="px-4 py-2 bg-purple-600 dark:bg-violet-700 text-white rounded-lg hover:bg-purple-700 dark:hover:bg-violet-400 transition"
+              >
+                Show More
+              </Link>
+           
+          )}
+        </div>
+       
+        <div className="overflow-x-auto bg-white dark:bg-background border border-white dark:border-card rounded-xl shadow-sm px-5">
           <table className="w-full text-sm border-collapse">
-            <thead className="border-b bg-gray-100 dark:bg-card text-left">
+            <thead className="border-b border-gray-100 dark:border-zinc-600 bg-gray-100 dark:bg-card text-left">
               <tr>
                 <th className="p-2">ID</th>
                 <th className="p-2">Customer</th>
@@ -215,8 +271,11 @@ const getTransporterName = async (id: number) => {
               </tr>
             </thead>
             <tbody>
-              {shipments.map((s) => (
-                <tr key={s.id} className="border-b hover:bg-gray-50 dark:hover:bg-purple-400">
+              {shipments.slice(0, 10).map((s) => (
+                <tr
+                  key={s.id}
+                  className="border-b bg-gray-50 border-gray-100 dark:border-card dark:bg-background dark:hover:bg-gradient-to-r dark:hover:from-[#682EC7] dark:hover:via-[#5827A8] dark:hover:to-[#49208C] "
+                >
                   <td className="p-2">{s.id}</td>
                   <td className="p-2">{s.customer}</td>
                   <td className="p-2">{s.transporter}</td>
@@ -229,17 +288,25 @@ const getTransporterName = async (id: number) => {
                         : s.status === "IN_TRANSIT"
                         ? "text-blue-600"
                         : s.status === "PENDING"
+                        ? "text-red-600"
+                        : s.status === "CONFIRMED"
+                        ? "text-orange-600"
+                        : s.status === "ACCEPTED"
                         ? "text-yellow-600"
-                        : "text-gray-600"
+                        : "text-gray-400"
                     }`}
                   >
                     {s.status}
                   </td>
-                  <td className="p-2 text-right">₹{s.price.toLocaleString()}</td>
+                  <td className="p-2 text-right">
+                    ₹{s.price.toLocaleString()}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+         
         </div>
       </div>
     </div>
