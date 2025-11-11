@@ -38,6 +38,8 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
                 .estimatedCost(dto.getEstimatedCost())
                 .goodsDescription(dto.getGoodsDescription())
                 .vehicleType(dto.getVehicalType())
+                .pickupDate(dto.getPickupDate())
+                .capacity(dto.getCapacity())
                 .bookingDate(LocalDate.now())
                 .status(BookingStatus.PENDING)
                 .paymentStatus(PaymentStatus.PENDING)
