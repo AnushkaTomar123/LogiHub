@@ -12,7 +12,7 @@ type Booking = {
   pickupAddress: string;
   dropAddress: string;
   goodsDescription: string;
-  vehicalType: string;
+  vehicleType: string;
   pickupDate: string;
   expectDeliveryDate: string;
   capacity: number;
@@ -32,7 +32,7 @@ export default function FreightManagementPage() {
 
   const [loadingCity, setLoadingCity] = useState("");
   const [unloadingCity, setUnloadingCity] = useState("");
-  const [vehicleType, setVehicleType] = useState("");
+  const [vehicleType, setvehicleType] = useState("");
   const [commodity, setCommodity] = useState("");
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
@@ -59,6 +59,7 @@ export default function FreightManagementPage() {
       const res = await axios.get(
         `http://localhost:8080/api/bookings/status/${status}`
       );
+      console.log("vehicle data is :",res.data);
       setBookings(res.data || []);
     } catch (err) {
       console.error("Error fetching bookings:", err);
@@ -95,10 +96,19 @@ export default function FreightManagementPage() {
       (!unloadingCity ||
         b.dropAddress.toLowerCase().includes(unloadingCity.toLowerCase())) &&
       (!vehicleType ||
-        b.vehicalType.toLowerCase().includes(vehicleType.toLowerCase())) &&
+        b.vehicleType.toLowerCase().includes(vehicleType.toLowerCase())) &&
       (!commodity ||
         b.goodsDescription.toLowerCase().includes(commodity.toLowerCase()))
   );
+
+   // 🟣 Status display mapping for better UI names
+  const statusLabels: Record<string, string> = {
+    PENDING: "All Loads",
+    AWAITING_PAYMENT: "Awaiting Payment",
+    ACCEPTED: "Accepted",
+    CONFIRMED: "OnRoute",
+    DELIVERED: "Delivered",
+  };
 
   return (
     <div
@@ -116,25 +126,22 @@ export default function FreightManagementPage() {
         </div>
 
         {/* 🔘 Status Tabs */}
-        <div className="flex gap-3 mb-6 flex-wrap">
-          {["PENDING", "AWAITING_PAYMENT", "ACCEPTED", "CONFIRMED", "DELIVERED"].map((s) => (
+         <div className="flex gap-6 mb-6 flex-wrap">
+          {Object.entries(statusLabels).map(([key, label]) => (
             <button
-              key={s}
-              onClick={() => setStatus(s)}
+              key={key}
+              onClick={() => setStatus(key)}
               className={`px-4 py-2 rounded-lg font-semibold transition ${
-                status === s
-                  ? "bg-violet-600 text-white"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                status === key
+                  ? "bg-violet-600 dark:bg-purple-800 text-white shadow-md scale-105"
+                  : "bg-gray-300 dark:bg-card text-gray-300 hover:bg-gray-700"
               }`}
             >
-              {s.replace("_", " ")}
+              {label}
             </button>
           ))}
-        </div>
-
-        {/* 🔍 Filters */}
-        <div className="mb-6 flex flex-wrap gap-3">
-          <input
+            <div className=" flex flex-wrap gap-6 ">
+              <input
             placeholder="Loading City"
             value={loadingCity}
             onChange={(e) => setLoadingCity(e.target.value)}
@@ -146,19 +153,11 @@ export default function FreightManagementPage() {
             onChange={(e) => setUnloadingCity(e.target.value)}
             className="px-3 py-2 rounded bg-gray-200 dark:bg-card border border-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none w-60"
           />
-          <input
-            placeholder="Vehicle Type"
-            value={vehicleType}
-            onChange={(e) => setVehicleType(e.target.value)}
-            className="px-3 py-2 rounded bg-gray-200 dark:bg-card border border-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none w-60"
-          />
-          <input
-            placeholder="Commodity"
-            value={commodity}
-            onChange={(e) => setCommodity(e.target.value)}
-            className="px-3 py-2 rounded bg-gray-200 dark:bg-card border border-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none w-60"
-          />
+            </div>
+            
         </div>
+
+        
 
         {/* 🧩 Loads Display */}
         {loading ? (

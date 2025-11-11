@@ -20,10 +20,10 @@ const HeroSection=()=>{
         <>
          <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
-          <div className="absolute top-40 right-10 w-72 h-72 bg-cyan-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-black dark:via-background dark:to-card">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 dark:bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+          <div className="absolute top-40 right-10 w-72 h-72 bg-cyan-200 dark:via-violet-700 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-200 dark:bg-purple-800 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
@@ -35,15 +35,15 @@ const HeroSection=()=>{
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight animate-fade-in-up animation-delay-200">
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-gray-50 mb-8 leading-tight animate-fade-in-up animation-delay-200">
               Transform Your
-              <span className="block bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 dark:from-purple-500 dark:via-violet-500 dark:to-violet-900 bg-clip-text text-transparent">
                 Logistics Forever
               </span>
             </h1>
 
             {/* Subheadline */}
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in-up animation-delay-400">
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in-up animation-delay-400">
               The world&apos;s most intelligent logistics platform that connects transporters and customers 
               with <span className="font-semibold text-blue-600">AI-powered precision</span>. 
               Experience the future of logistics today.
@@ -51,11 +51,11 @@ const HeroSection=()=>{
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-fade-in-up animation-delay-600">
-              <button className="group bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-10 py-5 rounded-2xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 font-bold text-lg flex items-center justify-center">
+              <button className="group bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-purple-500 dark:to-violet-900 text-white px-10 py-5 rounded-2xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 font-bold text-lg flex items-center justify-center">
                 Start Your Journey
                 <FaArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="group border-2 border-gray-300 text-gray-700 px-10 py-5 rounded-2xl hover:border-blue-600 hover:text-blue-600 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 font-bold text-lg flex items-center justify-center">
+              <button className="group border-2 border-gray-300 text-gray-700 dark:text-gray-300 px-10 py-5 rounded-2xl hover:border-blue-600 hover:text-blue-600 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 font-bold text-lg flex items-center justify-center">
                 <FaPlay className="mr-3 h-6 w-6 group-hover:scale-110 transition-transform" />
                 Watch Demo
               </button>
@@ -68,7 +68,7 @@ const HeroSection=()=>{
                   <div className={`text-4xl md:text-5xl font-bold ${stat.color} mb-2 group-hover:scale-110 transition-transform duration-300`}>
                     {stat.value}
                   </div>
-                  <div className="text-gray-600 font-medium">{stat.label}</div>
+                  <div className="text-gray-600 dark:text-gray-300 font-medium">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -82,13 +82,13 @@ const HeroSection=()=>{
       </section>
 
       {/* Problem Statement */}
-      <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-24 bg-gradient-to-b from-gray-50 to-white dark:from-card dark:to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50 mb-6">
               The ₹250 Billion Problem
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
               India&apos;s logistics industry is broken. Fragmented, inefficient, and stuck in the past. 
               <span className="font-semibold text-red-600"> It&apos;s time for a revolution.</span>
             </p>
@@ -125,8 +125,8 @@ const HeroSection=()=>{
                       {problem.icon}
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{problem.title}</h3>
-                  <p className="text-gray-600 leading-relaxed mb-6">{problem.description}</p>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-4">{problem.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">{problem.description}</p>
                   <div className={`inline-flex items-center px-4 py-2 bg-${problem.color}-50 rounded-full text-${problem.color}-700 font-bold text-sm`}>
                     {problem.stat}
                   </div>

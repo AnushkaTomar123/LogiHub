@@ -6,16 +6,16 @@ const Success=()=>{
     return(
         <>
          {/* Success Stories */}
-      <section id="success" className="py-24 bg-white">
+      <section id="success" className="py-24 bg-white dark:bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 dark:text-gray-50 mb-6">
               Success Stories That
               <span className="block bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
                 Inspire Transformation
               </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
               Real businesses, real results, real transformation
             </p>
           </div>
@@ -48,13 +48,13 @@ const Success=()=>{
               }
             ].map((story, index) => (
               <div key={index} className="group">
-                <div className="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 border border-gray-100">
+                <div className="bg-white dark:bg-card p-8 rounded-3xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 border border-gray-100">
                   <div className="flex items-center mb-6">
                     <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
                       {story.avatar}
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900">{story.name}</h4>
+                      <h4 className="font-bold text-gray-900 dark:text-gray-100">{story.name}</h4>
                       <p className="text-gray-500 text-sm">{story.location}</p>
                     </div>
                   </div>
@@ -65,12 +65,12 @@ const Success=()=>{
                     ))}
                   </div>
                   
-                  <p className="text-gray-600 leading-relaxed mb-6 italic">&quot;{story.quote}&quot;</p>
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6 italic">&quot;{story.quote}&quot;</p>
                   
-                  <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-xl">
+                  <div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-card dark:to-background p-4 rounded-xl">
                     <div className="text-center">
                       <div className="text-2xl font-bold text-emerald-600 mb-1">{story.result}</div>
-                      <div className="text-gray-600 text-sm font-medium">Achieved in 6 months</div>
+                      <div className="text-gray-600 dark:text-gray-400 text-sm font-medium">Achieved in 6 months</div>
                     </div>
                   </div>
                 </div>

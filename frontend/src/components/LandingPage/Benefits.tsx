@@ -8,10 +8,10 @@ import {
 const Benefits=()=>{
     return(
         <>
-          <section id="benefits" className="py-24 bg-gradient-to-b from-gray-50 to-white">
+          <section id="benefits" className="py-24 bg-gradient-to-b from-gray-50 to-white dark:from-black dark:to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-200 mb-6">
               Built for Everyone in
               <span className="block bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                 The Logistics Ecosystem
@@ -25,12 +25,12 @@ const Benefits=()=>{
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* For Transporters */}
             <div className="group">
-              <div className="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 border border-gray-100">
+              <div className="bg-white dark:bg-card p-10 rounded-3xl shadow-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 border border-gray-100">
                 <div className="text-center mb-8">
-                  <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-purple-500 dark:to-violet-900  w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                     <FaTruck className="h-10 w-10 text-white" />
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900 mb-3">For Transporters</h3>
+                  <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-3">For Transporters</h3>
                   <p className="text-gray-600 text-lg">Transform your business with AI-powered insights</p>
                 </div>
                 
@@ -44,7 +44,7 @@ const Benefits=()=>{
                     'Verified customer ratings and review system'
                   ].map((benefit, index) => (
                     <div key={index} className="flex items-center space-x-4">
-                      <div className="bg-gradient-to-r from-emerald-400 to-teal-400 p-1 rounded-full">
+                      <div className="bg-gradient-to-r from-emerald-400 to-teal-400 dark:from-purple-500 dark:to-violet-900 p-1 rounded-full">
                         <FaCheckCircle className="h-5 w-5 text-white" />
                       </div>
                       <span className="text-gray-700 font-medium">{benefit}</span>
@@ -68,7 +68,7 @@ const Benefits=()=>{
                   <div className="bg-gradient-to-r from-emerald-500 to-teal-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                     <FaUsers className="h-10 w-10 text-white" />
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900 mb-3">For Customers</h3>
+                  <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-3">For Customers</h3>
                   <p className="text-gray-600 text-lg">Experience seamless, transparent logistics</p>
                 </div>
                 
@@ -82,7 +82,7 @@ const Benefits=()=>{
                     '24/7 customer support with instant resolution'
                   ].map((benefit, index) => (
                     <div key={index} className="flex items-center space-x-4">
-                      <div className="bg-gradient-to-r from-emerald-400 to-teal-400 p-1 rounded-full">
+                      <div className="bg-gradient-to-r from-emerald-400 to-teal-400 dark:from-purple-500 dark:to-violet-900 p-1 rounded-full">
                         <FaCheckCircle className="h-5 w-5 text-white" />
                       </div>
                       <span className="text-gray-700 font-medium">{benefit}</span>

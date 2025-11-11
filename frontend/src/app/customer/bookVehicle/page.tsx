@@ -15,7 +15,7 @@ export default function BookVehiclePage() {
     estimatedCost: "",
     pickupDate:"",
     capacity:"",
-    vehicalType: "TRUCK",
+    vehicleType: "TRUCK",
    
   });
 
@@ -45,7 +45,7 @@ export default function BookVehiclePage() {
         expectDeliveryDate: formData.expectDeliveryDate, // LocalDate (YYYY-MM-DD)
         goodsDescription: formData.goodsDescription.trim(),
         estimatedCost: Number(formData.estimatedCost),
-        vehicalType: formData.vehicalType,
+        vehicleType: formData.vehicleType,
         pickupDate: formData.pickupDate,
         capacity :Number(formData.capacity) ,
       };
@@ -61,9 +61,9 @@ export default function BookVehiclePage() {
         expectDeliveryDate: "",
         goodsDescription: "",
         estimatedCost: "",
-        vehicalType: "TRUCK",
-       pickupDate:"",
-       capacity:"",
+        vehicleType: "TRUCK",
+        pickupDate:"",
+        capacity:"",
       });
     } catch (error: any) {
       console.error("Error creating booking:", error);
@@ -207,8 +207,8 @@ export default function BookVehiclePage() {
               Vehicle Type
             </label>
             <select
-              name="vehicalType"
-              value={formData.vehicalType}
+              name="vehicleType"
+              value={formData.vehicleType}
               onChange={handleChange}
               className="w-full border border-gray-300 text-gray-800 dark:text-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
             >
