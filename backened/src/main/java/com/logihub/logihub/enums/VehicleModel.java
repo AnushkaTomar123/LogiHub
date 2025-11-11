@@ -1,6 +1,6 @@
 package com.logihub.logihub.enums;
 
-public enum VehicalModel {
+public enum VehicleModel {
     TATA_407,
     TATA_709,
     MAHINDRA_BOLERO_PICKUP,
