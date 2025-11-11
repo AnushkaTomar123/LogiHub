@@ -2,8 +2,9 @@ package com.logihub.logihub.controller;
 
 import com.logihub.logihub.dto.VehicleDTO;
 import com.logihub.logihub.dto.VehicleResponseDTO;
-import com.logihub.logihub.enums.VehicalModel;
-import com.logihub.logihub.enums.VehicalType;
+
+import com.logihub.logihub.enums.VehicleModel;
+import com.logihub.logihub.enums.VehicleType;
 import com.logihub.logihub.service.VehicleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +53,13 @@ public class VehicleController {
     }
     @GetMapping("/api/vehicle/types")
     public List<String> getVehicleTypes() {
-        return Arrays.stream(VehicalType.values())
+        return Arrays.stream(VehicleType.values())
                 .map(Enum::name)
                 .toList();
     }
     @GetMapping("/api/vehicle/models")
     public List<String> getVehicleModels() {
-        return Arrays.stream(VehicalModel.values())
+        return Arrays.stream(VehicleModel.values())
                 .map(Enum::name)
                 .toList();
     }

@@ -85,7 +85,7 @@ public class WalletServiceImpl implements WalletService {
         // Record transaction
         WalletTransaction tx = WalletTransaction.builder()
                 .walletId(wallet.getId())
-                .transactionType(TransactionType.ADD)
+                .transactionType(TransactionType.SELF_ADD)
                 .amount(request.getAmount())
                 .description("Money added to wallet")
                 .timestamp(LocalDateTime.now())
@@ -129,7 +129,7 @@ public class WalletServiceImpl implements WalletService {
         // Record transactions
         transactionRepository.save(WalletTransaction.builder()
                 .walletId(sender.getId())
-                .transactionType(TransactionType.TRANSFER)
+                .transactionType(TransactionType.TRANSFER_OUT)
                 .amount(-request.getAmount())
                 .description("Transferred to wallet ID: " + receiver.getId())
                 .timestamp(LocalDateTime.now())
@@ -139,7 +139,7 @@ public class WalletServiceImpl implements WalletService {
 
         transactionRepository.save(WalletTransaction.builder()
                 .walletId(receiver.getId())
-                .transactionType(TransactionType.TRANSFER)
+                .transactionType(TransactionType.TRANSFER_IN)
                 .amount(request.getAmount())
                 .description("Received from wallet ID: " + sender.getId())
                 .timestamp(LocalDateTime.now())
@@ -176,6 +176,15 @@ public class WalletServiceImpl implements WalletService {
     public List<WalletTransactionResponseDTO> getTransactionHistory(Long walletId) {
         return transactionRepository.findByWalletId(walletId)
                 .stream()
+                .map(tx -> modelMapper.map(tx, WalletTransactionResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<WalletTransactionResponseDTO> getTransactionsByType(Long walletId, TransactionType transactionType) {
+        List<WalletTransaction> transactions = transactionRepository.findByWalletIdAndTransactionType(walletId, transactionType);
+
+        return transactions.stream()
                 .map(tx -> modelMapper.map(tx, WalletTransactionResponseDTO.class))
                 .collect(Collectors.toList());
     }

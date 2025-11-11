@@ -5,7 +5,7 @@ import com.logihub.logihub.dto.DriverResponseDTO;
 import com.logihub.logihub.entity.Driver;
 import com.logihub.logihub.entity.Transporter;
 import com.logihub.logihub.enums.DriverStatus;
-import com.logihub.logihub.enums.VehicalStatus;
+
 import com.logihub.logihub.repository.DriverRepository;
 import com.logihub.logihub.repository.TransporterRepository;
 import com.logihub.logihub.service.DriverService;

@@ -1,7 +1,7 @@
 package com.logihub.logihub.dto;
 
 
-import com.logihub.logihub.enums.VehicalStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

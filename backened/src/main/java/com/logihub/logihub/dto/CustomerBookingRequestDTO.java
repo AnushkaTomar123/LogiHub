@@ -1,7 +1,7 @@
 package com.logihub.logihub.dto;
 
 import com.logihub.logihub.enums.BookingStatus;
-import com.logihub.logihub.enums.VehicalType;
+import com.logihub.logihub.enums.VehicleType;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -26,7 +26,7 @@ public class CustomerBookingRequestDTO {
     private String goodsDescription;
    // @Positive(message = "Estimated cost must be positive")
     private Double estimatedCost;
-    private VehicalType vehicalType;
+    private VehicleType vehicleType;
 //    @NotNull(message = "Booking status is required")
 //    private BookingStatus bookingStatus;
     private LocalDate pickupDate;

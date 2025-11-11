@@ -2,7 +2,7 @@ package com.logihub.logihub.entity;
 
 import com.logihub.logihub.enums.BookingStatus;
 import com.logihub.logihub.enums.PaymentStatus;
-import com.logihub.logihub.enums.VehicalType;
+import com.logihub.logihub.enums.VehicleType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -49,7 +49,7 @@ public class CustomerBooking {
     private Double estimatedDistanceKm;
     private Double estimatedCost;
     private String goodsDescription;  // kya saman hai
-    private VehicalType vehicleType;
+    private VehicleType vehicleType;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
