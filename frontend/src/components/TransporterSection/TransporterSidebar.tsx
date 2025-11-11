@@ -22,7 +22,6 @@ import {
 
 export default function TransporterSidebar() {
   const pathname = usePathname();
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("sidebarCollapsed") === "true";
@@ -79,9 +78,7 @@ export default function TransporterSidebar() {
     },
   ];
 
-  const toggleDropdown = (label: string) => {
-    setOpenDropdown(openDropdown === label ? null : label);
-  };
+  
 
   const handleCollapseToggle = () => {
     if (window.innerWidth > 768) setCollapsed((s) => !s);

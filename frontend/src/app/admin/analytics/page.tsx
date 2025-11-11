@@ -1,129 +1,198 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MdBarChart, MdPeople, MdOutlineLocalShipping, MdCurrencyRupee } from "react-icons/md";
+import axios from "axios";
+import {
+  MdBarChart,
+  MdPeople,
+  MdOutlineLocalShipping,
+  MdCurrencyRupee,
+} from "react-icons/md";
 import {
   ResponsiveContainer,
   LineChart,
   Line,
   XAxis,
   YAxis,
-  Tooltip,
   CartesianGrid,
+  Tooltip,
+  Legend,
   PieChart,
   Pie,
   Cell,
-  Legend,
 } from "recharts";
+import AdminHeader from "@/components/AdminSection/AdminHeader";
 
-const adminAnalyticsData = {
-  revenue: [
-    { day: "Mon", revenue: 50000 },
-    { day: "Tue", revenue: 60000 },
-    { day: "Wed", revenue: 55000 },
-    { day: "Thu", revenue: 70000 },
-    { day: "Fri", revenue: 65000 },
-    { day: "Sat", revenue: 80000 },
-    { day: "Sun", revenue: 75000 },
-  ],
-  trips: [
-    { day: "Mon", completed: 50, pending: 20 },
-    { day: "Tue", completed: 60, pending: 15 },
-    { day: "Wed", completed: 55, pending: 25 },
-    { day: "Thu", completed: 70, pending: 10 },
-    { day: "Fri", completed: 65, pending: 18 },
-    { day: "Sat", completed: 80, pending: 12 },
-    { day: "Sun", completed: 75, pending: 20 },
-  ],
-  users: [
-    { name: "Customers", value: 450 },
-    { name: "Transporters", value: 120 },
-    { name: "Admins", value: 5 },
-  ],
-  colors: ["#3b82f6", "#10b981", "#f59e0b"],
-};
+interface BookingData {
+  completed: number;
+  pending: number;
+  cancelled: number;
+}
 
-const AdminAnalyticsSection = () => {
+interface UserCount {
+  Customers: number;
+  Transporters: number;
+  Admins: number;
+}
 
-  
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b"];
+
+export default function AdminAnalyticsSection() {
+  const [bookings, setBookings] = useState<BookingData>({
+    completed: 0,
+    pending: 0,
+    cancelled: 0,
+  });
+  const [users, setUsers] = useState<UserCount>({
+    Customers: 0,
+    Transporters: 0,
+    Admins: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalyticsData = async () => {
+      try {
+        const [pending, completed, cancelled] = await Promise.all([
+          axios.get("http://localhost:8080/api/bookings/status/PENDING"),
+          axios.get("http://localhost:8080/api/bookings/status/COMPLETED"),
+          axios.get("http://localhost:8080/api/bookings/status/CANCELLED"),
+        ]);
+
+        setBookings({
+          pending: pending.data.length,
+          completed: completed.data.length,
+          cancelled: cancelled.data.length,
+        });
+
+        const userRes = await axios.get("http://localhost:8080/api/profile/all");
+        const data = userRes.data;
+
+        setUsers({
+          Customers: data.filter((u: any) => u.role === "CUSTOMER").length,
+          Transporters: data.filter((u: any) => u.role === "TRANSPORTER").length,
+          Admins: data.filter((u: any) => u.role === "ADMIN").length,
+        });
+      } catch (err) {
+        console.error("Error fetching analytics:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalyticsData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-gray-700 dark:text-gray-200">
+        Loading Analytics...
+      </div>
+    );
+  }
+
+  const tripStatusLineData = [
+    { day: "Mon", Completed: bookings.completed, Pending: bookings.pending, Cancelled: bookings.cancelled },
+    { day: "Tue", Completed: bookings.completed - 1, Pending: bookings.pending + 1, Cancelled: bookings.cancelled },
+    { day: "Wed", Completed: bookings.completed - 2, Pending: bookings.pending + 2, Cancelled: bookings.cancelled },
+    { day: "Thu", Completed: bookings.completed + 1, Pending: bookings.pending - 1, Cancelled: bookings.cancelled },
+    { day: "Fri", Completed: bookings.completed + 2, Pending: bookings.pending - 2, Cancelled: bookings.cancelled },
+  ];
+
+  const userDistributionData = [
+    { name: "Customers", value: users.Customers },
+    { name: "Transporters", value: users.Transporters },
+    { name: "Admins", value: users.Admins },
+  ];
+
   return (
-    <section  className="bg-white rounded-xl shadow-lg p-6 mb-8">
-      <h2 className="text-xl font-semibold text-slate-800 flex items-center space-x-2 mb-6">
-        <MdBarChart className="w-5 h-5 text-blue-500" />
-        <span>Analytics</span>
-      </h2>
+    <section className="bg-gray-50 dark:bg-background text-gray-900 dark:text-gray-100 min-h-screen">
+      <AdminHeader />
 
-      {/* Revenue Trend */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold text-slate-700 flex items-center space-x-2 mb-2">
-          <MdCurrencyRupee className="w-5 h-5 text-green-500" />
-          <span>Revenue Trend (Weekly)</span>
-        </h3>
-        <div className="w-full h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={adminAnalyticsData.revenue}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={3} />
-            </LineChart>
-          </ResponsiveContainer>
+      <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+
+        {/* Header */}
+        <h2 className="text-2xl font-bold flex items-center gap-2 text-slate-800 dark:text-gray-100">
+          <MdBarChart className="text-purple-600" /> Analytics Overview
+        </h2>
+
+        {/* Trip Status Line Chart */}
+        <div className="bg-white dark:bg-card rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-purple-600 dark:text-purple-600 mb-4">
+            <MdOutlineLocalShipping /> Shipment Status
+          </h3>
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={tripStatusLineData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="day" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip contentStyle={{ backgroundColor: '#1f2937', borderRadius: '8px', border: 'none' }} />
+                <Legend wrapperStyle={{ color: '#d1d5db' }} />
+                <Line type="monotone" dataKey="Completed" stroke="#10b981" strokeWidth={3} />
+                <Line type="monotone" dataKey="Pending" stroke="#f59e0b" strokeWidth={3} />
+                <Line type="monotone" dataKey="Cancelled" stroke="#ef4444" strokeWidth={3} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-      </div>
 
-      {/* Trips Completed vs Pending */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold text-slate-700 flex items-center space-x-2 mb-2">
-          <MdOutlineLocalShipping className="w-5 h-5 text-purple-500" />
-          <span>Trips Status (Weekly)</span>
-        </h3>
-        <div className="w-full h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={adminAnalyticsData.trips}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="completed" stroke="#10b981" strokeWidth={3} />
-              <Line type="monotone" dataKey="pending" stroke="#f59e0b" strokeWidth={3} />
-            </LineChart>
-          </ResponsiveContainer>
+        {/* User Distribution Pie Chart */}
+        <div className="bg-white dark:bg-card rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-yellow-500 dark:text-orange-400 mb-4">
+            <MdPeople /> User Distribution
+          </h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={userDistributionData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={90}
+                  label
+                  dataKey="value"
+                >
+                  {userDistributionData.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: 'none' }} />
+                <Legend wrapperStyle={{ color: '#d1d5db' }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-      </div>
 
-      {/* Users Distribution */}
-      <div>
-        <h3 className="text-lg font-semibold text-slate-700 flex items-center space-x-2 mb-2">
-          <MdPeople className="w-5 h-5 text-yellow-500" />
-          <span>User Distribution</span>
-        </h3>
-        <div className="w-full h-64 flex justify-center items-center">
-          <ResponsiveContainer width="60%" height="100%">
-            <PieChart>
-              <Pie
-                data={adminAnalyticsData.users}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                label
+        {/* Revenue Line Chart */}
+        <div className="bg-white dark:bg-card rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-green-600 dark:text-green-400 mb-4">
+            <MdCurrencyRupee /> Revenue Trend (Sample)
+          </h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={[
+                  { day: "Mon", revenue: 50000 },
+                  { day: "Tue", revenue: 60000 },
+                  { day: "Wed", revenue: 55000 },
+                  { day: "Thu", revenue: 70000 },
+                  { day: "Fri", revenue: 65000 },
+                  { day: "Sat", revenue: 80000 },
+                  { day: "Sun", revenue: 75000 },
+                ]}
               >
-                {adminAnalyticsData.users.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={adminAnalyticsData.colors[index]} />
-                ))}
-              </Pie>
-              <Legend />
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="day" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
+                <Tooltip contentStyle={{ backgroundColor: '#1f2937', borderRadius: '8px', border: 'none' }} />
+                <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
+
       </div>
     </section>
   );
-};
-
-export default AdminAnalyticsSection;
+}

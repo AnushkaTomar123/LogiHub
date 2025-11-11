@@ -17,6 +17,7 @@ import {
   MdMenu,
   MdClose,
   MdFeedback,
+  MdLocalShipping,
 } from "react-icons/md";
 
 interface Admin {
@@ -82,6 +83,7 @@ export default function AdminSidebar() {
     {
       title: "General",
       items: [
+        { href: "/admin/shipments", label: "Shipment", icon: MdLocalShipping },
         { href: "/admin/feedback", label: "Feedback", icon: MdFeedback },
         
       ],
@@ -111,7 +113,7 @@ export default function AdminSidebar() {
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-300 dark:border-white/10 shadow-sm">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 p-2">
           <div className="w-6 h-6 rounded-full flex items-center justify-center bg-purple-600 text-white">
             <MdOutlineLocalShipping size={18} />
           </div>
@@ -120,7 +122,7 @@ export default function AdminSidebar() {
               <span className="font-semibold text-gray-900 dark:text-gray-50 text-lg tracking-wide">
                 LogiHub
               </span>
-              <p className="text-xs text-gray-500">Admin Panel</p>
+              
             </div>
           )}
         </div>
