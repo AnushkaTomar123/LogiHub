@@ -56,8 +56,8 @@ public class DriverController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<DriverResponseDTO>> statusDrivers(@PathVariable DriverStatus driverStatus){
-        List<DriverResponseDTO> drivers = driverService.getDriverByStatus(driverStatus);
+    public ResponseEntity<List<DriverResponseDTO>> statusDrivers(@PathVariable DriverStatus status){
+        List<DriverResponseDTO> drivers = driverService.getDriverByStatus(status);
         return ResponseEntity.ok(drivers);
     }
 }

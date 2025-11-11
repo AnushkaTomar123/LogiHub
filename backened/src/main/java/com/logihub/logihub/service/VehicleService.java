@@ -15,7 +15,7 @@ public interface VehicleService {
     void deleteVehicle(Long id);
     List<VehicleResponseDTO> getVehiclesByTransporterAndStatus(Long transporterId, String status);
 
-    List<DriverResponseDTO> getVehiclesByStatus(VehicleStatus vehicleStatus);
+    List<VehicleResponseDTO> getVehiclesByStatus(VehicleStatus vehicleStatus);
 }
 
 

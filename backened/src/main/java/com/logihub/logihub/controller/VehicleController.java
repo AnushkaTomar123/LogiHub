@@ -76,8 +76,8 @@ public class VehicleController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<VehicleResponseDTO>> statusDrivers(@PathVariable VehicleStatus vehicleStatus){
-        List<DriverResponseDTO> vehicles = vehicleService.getVehiclesByStatus(vehicleStatus);
+    public ResponseEntity<List<VehicleResponseDTO>> statusDrivers(@PathVariable VehicleStatus status){
+        List<VehicleResponseDTO> vehicles = vehicleService.getVehiclesByStatus(status);
         return ResponseEntity.ok(vehicles);
     }
 

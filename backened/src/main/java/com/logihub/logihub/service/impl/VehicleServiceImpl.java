@@ -105,8 +105,8 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public List<VehicleResponseDTO> getDriverByStatus(VehicleStatus vehicleStatus) {
-        List<Driver> vehicles = vehicleRepository.findByStatus(vehicleStatus);
+    public List<VehicleResponseDTO> getVehiclesByStatus(VehicleStatus vehicleStatus) {
+        List<Vehicle> vehicles = vehicleRepository.findByStatus(vehicleStatus);
 
         // ✅ ModelMapper converts Driver → DriverResponseDTO automatically
         return vehicles.stream()
