@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import RoleTable from "../../../components/admin/RoleTable";
-import RoleModal from "../../../components/admin/RoleModal";
+import RoleTable from "../../../components/AdminSection/RoleTable";
+import RoleModal from "../../../components/AdminSection/RoleModal";
 import { MdAdd } from "react-icons/md";
 
 interface Role {

@@ -7,13 +7,6 @@ import {
   MdLocalShipping,
   MdRoute,
   MdPerson,
-  MdCalendarToday,
-  MdAttachMoney,
-  MdTrendingUp,
-  MdTrendingDown,
-  MdMoneyOff,
-  MdCheckCircle,
-  MdClose,
 } from "react-icons/md";
 import TransporterHeader from "../../../components/TransporterSection/TransporterHeader";
 import { useTheme } from "next-themes";
@@ -60,7 +53,7 @@ const MOCK_SUMMARY: ShipmentSummary = {
 
 // Dark Themed Stats Card (Reused from previous components)
 const StatCard = ({ title, value, icon }: { title: string; value: number | string; icon: React.ElementType }) => (
-    <div className="p-4 rounded-xl shadow-md bg-gray-100 dark:bg-card text-gray-700 dark:text-gray-700 dark:text-gray-700 dark:text-gray-700 dark:text-gray-700 dark:text-white flex flex-col justify-between h-20">
+    <div className="p-4 rounded-xl shadow-md bg-gray-100 dark:bg-card text-gray-700  dark:text-white flex flex-col justify-between h-20">
         <p className="text-sm text-gray-500 dark:text-gray-300">{title}</p>
         <p className="text-xl font-bold">{value}</p>
     </div>
@@ -68,7 +61,7 @@ const StatCard = ({ title, value, icon }: { title: string; value: number | strin
 
 // Progress Card (Matching the left side of the screenshot)
 const ProgressCard = ({ status, isRunning }: { status: string, isRunning: boolean }) => (
-    <div className={`p-4 rounded-xl border-l-4 ${isRunning ? 'border-violet-600 bg-gray-100 dark:bg-card' : 'border-green-600 bg-gray-100 dark:bg-card'} shadow-lg text-gray-700 dark:text-gray-700 dark:text-gray-700 dark:text-gray-700 dark:text-gray-700 dark:text-white mb-4`}>
+    <div className={`p-4 rounded-xl border-l-4 ${isRunning ? 'border-violet-600 bg-gray-100 dark:bg-card' : 'border-green-600 bg-gray-100 dark:bg-card'} shadow-lg text-gray-700   dark:text-white mb-4`}>
         <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-semibold">MP08HAI1122</span>
             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${isRunning ? 'bg-orange-600' : 'bg-green-600'}`}>
@@ -116,26 +109,7 @@ export default function ShipmentTracking() {
   const [searchTerm, setSearchTerm] = useState("");
   const { theme } = useTheme();
 
-  // ✅ SIDEBAR ADJUSTMENT LOGIC
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-        return localStorage.getItem("sidebarCollapsed") === "true";
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-        setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-  // --- End Sidebar Logic ---
-
-  // --- API Placeholder ---
-  // A function to fetch shipments would go here
-  // const fetchShipments = async (status: string) => { /* ... API call ... */ };
+  
   
   const filteredShipments = shipments.filter(s => {
     const term = searchTerm.toLowerCase();
@@ -151,15 +125,11 @@ export default function ShipmentTracking() {
     return matchesSearch && matchesTab;
   });
 
-  // --- Main Render ---
-  const sidebarWidth = sidebarCollapsed ? 80 : 256;
+  
 
   return (
     <div
-        style={{
-            marginLeft: sidebarWidth,
-            transition: "margin-left 300ms ease",
-        }}
+        
         className={`min-h-screen bg-white dark:bg-background text-gray-100 transition-colors duration-300`}
     >
       <TransporterHeader />

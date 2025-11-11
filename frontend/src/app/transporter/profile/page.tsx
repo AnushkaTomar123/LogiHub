@@ -155,21 +155,7 @@ export default function TransporterProfilePage() {
     setTimeout(() => setMessage(null), 3500);
   }, []);
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("sidebarCollapsed") === "true";
-    }
-    return false;
-  });
-const sidebarWidth = sidebarCollapsed ? 80 : 256;
-  // ✅ Sidebar Collapse Sync
-  useEffect(() => {
-    const updateSidebar = () => {
-      setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
-    };
-    window.addEventListener("storage", updateSidebar);
-    return () => window.removeEventListener("storage", updateSidebar);
-  }, []);
+  
 
   // --- Fetch Data ---
   const fetchTransporter = async () => {
@@ -333,12 +319,12 @@ const sidebarWidth = sidebarCollapsed ? 80 : 256;
     </div>
   );
     
-  // 2. FIX: Ensure transporter is definitely not null before accessing its properties in JSX
+  
   const avatarUrl = transporter.profilePhotoUrl || `https://ui-avatars.com/api/?name=${transporter.contactPersonName || 'TR'}&background=0D83DD&color=fff&size=256&rounded=true`;
 
 
   return (
-    <div  style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }} className="p-0 bg-gray-50 dark:bg-background min-h-screen text-gray-800 dark:text-gray-200">
+    <div   className="p-0 bg-gray-50 dark:bg-background min-h-screen text-gray-800 dark:text-gray-200">
       <TransporterHeader/>
       
       {/* Toast Notification */}

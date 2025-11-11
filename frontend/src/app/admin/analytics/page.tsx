@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { MdBarChart, MdPeople, MdOutlineLocalShipping, MdCurrencyRupee } from "react-icons/md";
 import {
   ResponsiveContainer,
@@ -43,8 +44,10 @@ const adminAnalyticsData = {
 };
 
 const AdminAnalyticsSection = () => {
+
+  
   return (
-    <section className="bg-white rounded-xl shadow-lg p-6 mb-8">
+    <section  className="bg-white rounded-xl shadow-lg p-6 mb-8">
       <h2 className="text-xl font-semibold text-slate-800 flex items-center space-x-2 mb-6">
         <MdBarChart className="w-5 h-5 text-blue-500" />
         <span>Analytics</span>

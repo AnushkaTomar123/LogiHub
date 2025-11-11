@@ -1,100 +1,102 @@
-"use client"
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+"use client";
 
-interface CustomerOrder {
+import CustomerHeader from "@/components/CustomerSection/Customerheader";
+import { useEffect, useState } from "react";
+import { FaSearch } from "react-icons/fa";
+import { FaFaceGrinStars } from "react-icons/fa6";
+
+
+interface Transporter {
   id: number;
-  pickupAddress: string;
-  dropAddress: string;
-  bookingDate: string;
-  pickupDate: string;
-  deliveryDate: string;
-  status: string;
-  paymentStatus: string;
-  estimatedCost: number;
+  name: string;
+  location: string;
+  rating: number;
+  vehicles: number;
 }
 
-export default function MyOrdersCustomer() {
-  const [orders, setOrders] = useState<CustomerOrder[]>([]);
-  const [loading, setLoading] = useState(true);
+const transporterList: Transporter[] = [
+  { id: 1, name: "Raj Logistic", location: "Delhi", rating: 4, vehicles: 22 },
+  { id: 2, name: "FastMove Cargo", location: "Indore", rating: 3, vehicles: 14 },
+  { id: 3, name: "Sky Transporters", location: "Kanpur", rating: 5, vehicles: 18 },
+  { id: 4, name: "BlueLine Movers", location: "Mumbai", rating: 4, vehicles: 25 },
+];
 
-  useEffect(() => {
-    const fetchCustomerOrders = async () => {
-      try {
-        setLoading(true);
-        const customerId = localStorage.getItem("customerId"); // Logged-in customer ID
-        const response = await axios.get(
-          `http://localhost:8080/api/bookings/customer/${customerId}`
-        );
+export default function FindTransporter() {
+  const [search, setSearch] = useState("");
 
-        const formattedOrders = response.data.map((order: any) => ({
-          id: order.id,
-          pickupAddress: order.pickupAddress,
-          dropAddress: order.dropAddress,
-          bookingDate: order.bookingDate
-            ? new Date(order.bookingDate).toLocaleDateString("en-IN")
-            : "N/A",
-          pickupDate: order.pickupDate
-            ? new Date(order.pickupDate).toLocaleDateString("en-IN")
-            : "N/A",
-          deliveryDate: order.deliveryDate
-            ? new Date(order.deliveryDate).toLocaleDateString("en-IN")
-            : "N/A",
-          status: order.status,
-          paymentStatus: order.paymentStatus,
-          estimatedCost: order.estimatedCost,
-        }));
-
-        setOrders(formattedOrders);
-      } catch (error) {
-        console.error("Error fetching customer orders:", error);
-      } finally {
-        setLoading(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+      if (typeof window !== "undefined") {
+        return localStorage.getItem("sidebarCollapsed") === "true";
       }
-    };
+      return false;
+    });
+  
+    useEffect(() => {
+      const updateSidebar = () => {
+        setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
+      };
+      window.addEventListener("storage", updateSidebar);
+      return () => window.removeEventListener("storage", updateSidebar);
+    }, []);
+    const sidebarWidth = sidebarCollapsed ? 80 : 256;
+  
 
-    fetchCustomerOrders();
-  }, []);
-
-  if (loading) return <p>Loading your orders...</p>;
+  const filteredTransporters = transporterList.filter(
+    (t) =>
+      t.name.toLowerCase().includes(search.toLowerCase()) ||
+      t.location.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="p-4 space-y-4">
-      <h2 className="text-xl font-semibold">My Orders</h2>
-      {orders.length === 0 ? (
-        <p>No bookings found.</p>
-      ) : (
-        <div className="grid gap-4">
-          {orders.map((order) => (
+    <div style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }} className="bg-gray-900 rounded-lg ">
+      <CustomerHeader/>
+      <div className="flex justify-between items-center mt-2 mb-5 px-4">
+        <h2 className="text-lg font-semibold">Find Transporter</h2>
+
+        <div className="flex items-center bg-gray-800 rounded-lg px-3 py-1">
+          <FaSearch className="text-gray-400 mr-2" size={18} />
+          <input
+            type="text"
+            placeholder="Search by name or city..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-transparent text-sm outline-none text-white placeholder-gray-400"
+          />
+        </div>
+      </div>
+
+      {filteredTransporters.length > 0 ? (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+          {filteredTransporters.map((t) => (
             <div
-              key={order.id}
-              className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700"
+              key={t.id}
+              className="bg-gray-800 rounded-lg p-4 flex justify-between items-center hover:bg-gray-700 transition"
             >
-              <p><strong>Booking ID:</strong> {order.id}</p>
-              <p><strong>Pickup:</strong> {order.pickupAddress}</p>
-              <p><strong>Drop:</strong> {order.dropAddress}</p>
-              <p><strong>Booking Date:</strong> {order.bookingDate}</p>
-              <p><strong>Pickup Date:</strong> {order.pickupDate}</p>
-              <p><strong>Delivery Date:</strong> {order.deliveryDate}</p>
-              <p>
-                <strong>Status:</strong>{" "}
-                <span
-                  className={`font-semibold ${
-                    order.status === "REQUESTED"
-                      ? "text-yellow-600"
-                      : order.status === "ACCEPTED"
-                      ? "text-green-600"
-                      : "text-gray-400"
-                  }`}
-                >
-                  {order.status}
-                </span>
-              </p>
-              <p><strong>Payment Status:</strong> {order.paymentStatus}</p>
-              <p><strong>Estimated Cost:</strong> ₹{order.estimatedCost}</p>
+              <div>
+                <p className="font-semibold text-white">{t.name}</p>
+                <p className="text-sm text-gray-400">{t.location}</p>
+                <p className="text-xs text-gray-500">{t.vehicles} Vehicles</p>
+                <div className="flex mt-1">
+                  {[...Array(5)].map((_, idx) => (
+                    <FaFaceGrinStars
+                      key={idx}
+                      size={14}
+                      className={
+                        idx < t.rating ? "text-yellow-400" : "text-gray-600"
+                      }
+                      fill={idx < t.rating ? "yellow" : "none"}
+                    />
+                  ))}
+                </div>
+              </div>
+              <button className="text-green-400 text-sm font-semibold hover:underline">
+                View Profile
+              </button>
             </div>
           ))}
         </div>
+      ) : (
+        <p className="text-gray-400 text-sm">No transporters found.</p>
       )}
     </div>
   );

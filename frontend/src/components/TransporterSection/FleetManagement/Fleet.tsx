@@ -17,12 +17,7 @@ export default function FleetTracking() {
   const [loading, setLoading] = useState(true);
   const [transporterId, setTransporterId] = useState<number | null>(null);
   const [username, setUsername] = useState("Transporter");
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
-    if (typeof window !== "undefined")
-      return localStorage.getItem("sidebarCollapsed") === "true";
-    return false;
-  });
-
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState(null);
 
@@ -34,17 +29,7 @@ export default function FleetTracking() {
     status: "AVAILABLE",
   });
 
-  // Handle sidebar toggle sync
-  useEffect(() => {
-    const handler = () => {
-      setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
-    };
-    window.addEventListener("storage", handler);
-    return () => window.removeEventListener("storage", handler);
-  }, []);
-
-  const sidebarWidth = sidebarCollapsed ? 80 : 256;
-
+  
   // Fetch vehicle types & models
   useEffect(() => {
     (async () => {
@@ -143,7 +128,7 @@ export default function FleetTracking() {
 
   return (
     <div
-      style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }}
+     
       className="min-h-screen p-0 bg-gray-50 dark:bg-background transition-colors duration-300"
     >
       <TransporterHeader />

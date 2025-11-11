@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import PermissionCheckbox from "../admin/Permissioncheckbox";
+import PermissionCheckbox from "../AdminSection/Permissioncheckbox";
 
 interface Role {
   id?: number;

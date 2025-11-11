@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import TransporterHeader from "../../../components/TransporterSection/TransporterHeader";
+import CustomerHeader from "../../../components/CustomerSection/Customerheader";
 import {
   FaCreditCard,
   FaCheckCircle,
@@ -11,42 +11,67 @@ import {
   FaTimesCircle,
   FaRupeeSign,
   FaWallet,
+  FaExchangeAlt,
 } from "react-icons/fa";
 
-export default function Payments() {
+export default function CustomerPayments() {
   const [wallet, setWallet] = useState<any>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [filter, setFilter] = useState("All");
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState("");
   const [receiverId, setReceiverId] = useState("");
-  //const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const BASE_URL = "http://localhost:8080/api/wallets";
-  const OWNER_TYPE = "TRANSPORTER";
-  const OWNER_ID = localStorage.getItem("transporterId");
+  const OWNER_TYPE = "CUSTOMER";
+  const OWNER_ID = localStorage.getItem("customerId");
 
-  
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
+      const handleStorageChange = () => {
+        setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
+      };
+      window.addEventListener("storage", handleStorageChange);
+      return () => window.removeEventListener("storage", handleStorageChange);
+    }
+  }, []);
 
-  // ✅ Fetch wallet first, then get transactions by walletId
+  const sidebarWidth = sidebarCollapsed ? 80 : 256;
+
   const fetchWallet = async () => {
     try {
-      const walletRes = await axios.get(`${BASE_URL}/${OWNER_TYPE}/${OWNER_ID}`);
-      setWallet(walletRes.data);
-      await fetchTransactions(walletRes.data.id); // use walletId
-    } catch (err) {
-      console.error("Error fetching wallet:", err);
-      toast.error("Failed to fetch wallet data");
+      const res = await axios.get(`${BASE_URL}/${OWNER_TYPE}/${OWNER_ID}`);
+      setWallet(res.data);
+      fetchTransactions(res.data.id);
+    } catch (err: any) {
+      if (err.response?.status === 404) {
+        await createWallet();
+      } else {
+        toast.error("Failed to fetch wallet data");
+      }
     }
   };
 
-  // ✅ Fetch transactions by walletId
+  const createWallet = async () => {
+    try {
+      const res = await axios.post(`${BASE_URL}/create`, {
+        ownerId: OWNER_ID,
+        ownerType: OWNER_TYPE,
+      });
+      toast.success("Wallet created successfully!");
+      setWallet(res.data);
+    } catch {
+      toast.error("Failed to create wallet");
+    }
+  };
+
   const fetchTransactions = async (walletId: number) => {
     try {
-      const txnRes = await axios.get(`${BASE_URL}/transactions/${walletId}`);
-      setTransactions(txnRes.data);
-    } catch (err) {
-      console.error("Error fetching transactions:", err);
+      const res = await axios.get(`${BASE_URL}/transactions/${walletId}`);
+      setTransactions(res.data);
+    } catch {
       toast.error("Failed to fetch transactions");
     }
   };
@@ -54,23 +79,6 @@ export default function Payments() {
   useEffect(() => {
     fetchWallet();
   }, []);
-
-  const handleCreateWallet = async () => {
-    if (wallet) return toast.error("Wallet already exists");
-    setLoading(true);
-    try {
-      const res = await axios.post(`${BASE_URL}/create`, {
-        ownerId: OWNER_ID,
-        ownerType: OWNER_TYPE,
-      });
-      setWallet(res.data);
-      toast.success("Wallet created successfully!");
-    } catch (err) {
-      toast.error("Failed to create wallet");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddMoney = async () => {
     if (!amount) return toast.error("Enter amount");
@@ -100,7 +108,7 @@ export default function Payments() {
         senderId: OWNER_ID,
         senderType: OWNER_TYPE,
         receiverId: parseInt(receiverId),
-        receiverType: "CUSTOMER",
+        receiverType: "TRANSPORTER",
         amount: parseFloat(amount),
       });
       toast.success("Money transferred successfully!");
@@ -132,19 +140,19 @@ export default function Payments() {
 
   return (
     <div
-     
-      className="min-h-screen bg-white dark:bg-background text-gray-900 dark:text-gray-200 p-0"
+      style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }}
+      className="min-h-screen bg-white dark:bg-background text-gray-900 dark:text-gray-200"
     >
-      <TransporterHeader />
+      <CustomerHeader />
 
-      {/* Top Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 p-4 gap-4">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 p-6 gap-4">
         <h1 className="text-3xl font-medium text-violet-700 dark:text-violet-400">
           Payments & Wallet
         </h1>
         <div className="flex gap-3 flex-wrap">
           <button
-            onClick={handleCreateWallet}
+            onClick={createWallet}
             disabled={loading || wallet}
             className={`px-5 py-2 rounded-xl shadow-md font-semibold ${
               wallet
@@ -168,7 +176,7 @@ export default function Payments() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6 mb-6">
         {[
           {
             label: "Total Transactions",
@@ -179,7 +187,7 @@ export default function Payments() {
           {
             label: "Completed",
             amount: completed,
-            color: "violet",
+            color: "green",
             icon: <FaCheckCircle />,
           },
           {
@@ -197,7 +205,7 @@ export default function Payments() {
         ].map((item, i) => (
           <div
             key={i}
-            className={`bg-white dark:bg-card p-5 rounded-2xl shadow-md hover:scale-[1.03] transition-transform`}
+            className="bg-white dark:bg-card p-5 rounded-2xl shadow-md hover:scale-[1.03] transition-transform"
           >
             <div className="flex justify-between items-center mb-2">
               <span className={`text-${item.color}-500 text-2xl`}>
@@ -213,51 +221,73 @@ export default function Payments() {
       </div>
 
       {/* Wallet & Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10 p-4">
-        {wallet && (
-          <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-semibold flex items-center gap-2 text-violet-600 dark:text-violet-400">
-              <FaWallet /> Wallet Details
-            </h2>
-            <p className="mt-3">
-              Owner Type: <b>{wallet.ownerType}</b>
-            </p>
-          
-            <p className="mt-2 text-2xl font-bold text-violet-600">
-              Balance: ₹{wallet.balance?.toLocaleString()}
-            </p>
-          </div>
-        )}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-6 mb-10">
+       {wallet && (
+  <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700">
+    <h2 className="text-xl font-semibold flex items-center gap-2 text-violet-600 dark:text-violet-400">
+      <FaWallet /> Wallet Details
+    </h2>
+    <p className="mt-3">
+      Owner Type: <b>{wallet.ownerType}</b>
+    </p>
+    <p className="mt-2 text-2xl font-bold text-violet-600">
+      Balance: ₹{wallet.balance?.toLocaleString()}
+    </p>
+    <p className="mt-2 text-gray-500 text-sm">
+      Updated on:{" "}
+      {wallet.updatedAt
+        ? new Date(wallet.updatedAt).toLocaleString()
+        : "Not available"}
+    </p>
+  </div>
+)}
+
 
         {/* Add / Transfer Money */}
-        <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 m-4">
+        <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold mb-4 text-violet-600 dark:text-violet-400">
-            Add 
+            Add or Transfer Money
           </h2>
+
           <div className="flex flex-col gap-3">
-            <label htmlFor="amt">Enter Your Amount :</label>
+            <label htmlFor="amt">Enter Amount (₹):</label>
             <input
               type="number"
-              placeholder="Enter Amount (₹)"
-              value={amount}
+              placeholder="Enter amount"
               id="amt"
+              value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="border border-gray-300 dark:border-gray-700 dark:bg-card px-4 py-2 rounded-lg w-full"
             />
             <button
               onClick={handleAddMoney}
-              className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-lg w-full"
+              className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-lg"
             >
               Add Money
             </button>
-          
+
+            <label htmlFor="receiver">Receiver (Transporter ID):</label>
+            <input
+              type="number"
+              placeholder="Enter Receiver ID"
+              id="receiver"
+              value={receiverId}
+              onChange={(e) => setReceiverId(e.target.value)}
+              className="border border-gray-300 dark:border-gray-700 dark:bg-card px-4 py-2 rounded-lg w-full"
+            />
+            <button
+              onClick={handleTransferMoney}
+              className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg"
+            >
+              Transfer Money
+            </button>
           </div>
         </div>
       </div>
 
       {/* Transactions Table */}
-      <div className="overflow-x-auto bg-white dark:bg-card shadow-lg rounded-2xl border border-gray-200 p-6 dark:border-gray-700 mb-10">
-        <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 p-4">
+      <div className="overflow-x-auto bg-white dark:bg-card shadow-lg rounded-2xl border border-gray-200 dark:border-gray-700 px-6 py-6 mb-10">
+        <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
           <h2 className="text-xl font-semibold">Recent Transactions</h2>
           <select
             value={filter}
@@ -270,6 +300,7 @@ export default function Payments() {
             <option>Failed</option>
           </select>
         </div>
+
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 uppercase text-sm">
             <tr>

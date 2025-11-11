@@ -19,20 +19,7 @@ const Driver=()=> {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [transporterId, setTransporterId] = useState<number | null>(null);
-   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
-      if (typeof window !== "undefined")
-        return localStorage.getItem("sidebarCollapsed") === "true";
-      return false;
-    });
-  const sidebarWidth = sidebarCollapsed ? 80 : 256;
-
-    useEffect(() => {
-    const handler = () => {
-      setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
-    };
-    window.addEventListener("storage", handler);
-    return () => window.removeEventListener("storage", handler);
-  }, []);
+  
 
   // Fetch transporter ID
   useEffect(() => {
@@ -82,7 +69,7 @@ const Driver=()=> {
 
 
   return (
-    <div  style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }} className="min-h-screen bg-gray-50 dark:bg-background text-gray-900 dark:text-gray-100">
+    <div   className="min-h-screen bg-gray-50 dark:bg-background text-gray-900 dark:text-gray-100">
       <TransporterHeader />
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
