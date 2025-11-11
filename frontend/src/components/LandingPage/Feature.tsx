@@ -36,16 +36,16 @@ function Feature() {
 
   return (
    <>
-   <section id="features" className="py-24 bg-white">
+   <section id="features" className="py-24 bg-white dark:bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-50 mb-6">
               Meet Your AI-Powered
               <span className="block bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                 Logistics Assistant
               </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl  dark:bg-200 max-w-3xl mx-auto leading-relaxed">
               Revolutionary AI technology that thinks, learns, and optimizes your logistics operations 24/7
             </p>
           </div>
@@ -58,8 +58,8 @@ function Feature() {
                     {feature.icon}
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50 mb-3">{feature.title}</h3>
+                    <p className=" dark:bg-200 leading-relaxed">{feature.description}</p>
                   </div>
                 </div>
               ))}
@@ -69,10 +69,10 @@ function Feature() {
               <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-8 rounded-3xl">
                 <div className="bg-white p-8 rounded-2xl shadow-xl">
                   <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-xl font-bold text-gray-900">AI Control Center</h4>
+                    <h4 className="text-xl font-bold text-gray-900 dark:text-50">AI Control Center</h4>
                     <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-sm font-medium text-green-600">Live</span>
+                      <div className="w-3 h-3 bg-green-500 dark:bg-purple-500 rounded-full animate-pulse"></div>
+                      <span className="text-sm font-medium text-green-600 dark:text-purple-500">Live</span>
                     </div>
                   </div>
                   

@@ -234,7 +234,7 @@ export default function Payments() {
             <p className="mt-3">
               Owner Type: <b>{wallet.ownerType}</b>
             </p>
-            <p>Owner ID: <b>{wallet.ownerId}</b></p>
+          
             <p className="mt-2 text-2xl font-bold text-violet-600">
               Balance: ₹{wallet.balance?.toLocaleString()}
             </p>
@@ -244,13 +244,15 @@ export default function Payments() {
         {/* Add / Transfer Money */}
         <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 m-4">
           <h2 className="text-xl font-semibold mb-4 text-violet-600 dark:text-violet-400">
-            Add / Transfer Money
+            Add 
           </h2>
           <div className="flex flex-col gap-3">
+            <label htmlFor="amt">Enter Your Amount :</label>
             <input
               type="number"
               placeholder="Enter Amount (₹)"
               value={amount}
+              id="amt"
               onChange={(e) => setAmount(e.target.value)}
               className="border border-gray-300 dark:border-gray-700 dark:bg-card px-4 py-2 rounded-lg w-full"
             />
@@ -260,19 +262,7 @@ export default function Payments() {
             >
               Add Money
             </button>
-            <input
-              type="number"
-              placeholder="Receiver ID"
-              value={receiverId}
-              onChange={(e) => setReceiverId(e.target.value)}
-              className="border border-gray-300 dark:border-gray-700 dark:bg-card px-4 py-2 rounded-lg w-full"
-            />
-            <button
-              onClick={handleTransferMoney}
-              className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-lg flex items-center justify-center gap-2 w-full"
-            >
-              <FaExchangeAlt /> Transfer Money
-            </button>
+          
           </div>
         </div>
       </div>
