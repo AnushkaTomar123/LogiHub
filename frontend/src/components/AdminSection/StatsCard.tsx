@@ -7,7 +7,7 @@ interface StatsCardProps {
 
 export default function StatsCard({ title, value, icon, color = "bg-primary" }: StatsCardProps) {
   return (
-    <div className="flex items-center justify-between p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
+    <div className="flex items-center justify-between p-6 bg-white dark:bg-card rounded-xl shadow hover:shadow-lg transition">
       <div>
         <p className="text-gray-500">{title}</p>
         <p className="text-2xl font-bold">{value}</p>

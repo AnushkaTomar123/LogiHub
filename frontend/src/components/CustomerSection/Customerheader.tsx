@@ -7,23 +7,23 @@ import {
 } from "react-icons/md";
 import Link from "next/link";
 
-interface Transporter {
+interface Customer {
   username: string;
   email: string;
   role: string;
 }
 
-export default function TransporterHeader() {
+export default function CustomerHeader() {
   const [showNotifications, setShowNotifications] = useState(false);
- 
-  const [transporter, setTransporter] = useState<Transporter | null>(null);
-  const [showMobileSearch, setShowMobileSearch] = useState(false); // 🔹 For toggling mobile search input
+  const [showProfilePanel, setShowProfilePanel] = useState(false);
+  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   useEffect(() => {
     const username = localStorage.getItem("username");
     const email = localStorage.getItem("email");
     const role = localStorage.getItem("role");
-    if (username && email && role) setTransporter({ username, email, role });
+    if (username && email && role) setCustomer({ username, email, role });
   }, []);
 
   return (
@@ -76,18 +76,20 @@ export default function TransporterHeader() {
         {/* Profile */}
         <div className="relative">
           <Link
-            href="/transporter/profile"
+            href="/customer/profile"
             className="flex items-center gap-2 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-card"
           >
             <div className="w-8 h-8 bg-violet-300 dark:bg-card rounded-full flex items-center justify-center text-white font-semibold">
-              {transporter ? transporter.username.charAt(0) : "T"}
+              {customer ? customer.username.charAt(0) : "T"}
             </div>
             <span className="text-gray-700 dark:text-gray-200 font-medium hidden sm:inline">
-              {transporter ? transporter.username : "Transporter"}
+              {customer ? customer.username : "Customer"}
             </span>
           </Link>
         </div>
       </div>
+
+        
 
       {/* 🔹 Mobile Search Input Overlay */}
       {showMobileSearch && (

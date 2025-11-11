@@ -140,29 +140,13 @@ export default function CustomerChats() {
   const [activeSection, setActiveSection] = useState<ActiveSection>('chats');
   const [activeChat, setActiveChat] = useState<ChatUser>(MOCK_CHAT_LIST[0]);
   const [isMobile, setIsMobile] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false); 
+  
   const [chatSearchTerm, setChatSearchTerm] = useState(""); // New state for chat list search
   const [newMessage, setNewMessage] = useState(""); // New state for message input
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES); // State for chat messages
   
-  const { theme } = useTheme();
+  
 
-  // --- Side bar & Resize Logic (Unchanged) ---
-  useEffect(() => {
-    const handleResize = () => { setIsMobile(window.innerWidth < 768); };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    
-    const handleStorageChange = () => { setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true"); };
-    setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
-    window.addEventListener("storage", handleStorageChange);
-    
-    return () => {
-        window.removeEventListener('resize', handleResize);
-        window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-  // --- End Sidebar Logic ---
   
   // Tab data (Unchanged)
   const tabs: { label: string; section: ActiveSection }[] = [
@@ -204,17 +188,14 @@ export default function CustomerChats() {
   };
 
 
-  const sidebarWidth = sidebarCollapsed ? 80 : 256;
+  
   
   const showChatList = !isMobile || (isMobile && activeSection === 'chats' && !activeChat);
   const showChatPanel = !isMobile || (isMobile && activeSection === 'chats' && activeChat);
 
   return (
     <div
-        style={{
-            marginLeft: sidebarWidth,
-            transition: "margin-left 300ms ease",
-        }}
+        
         className={`min-h-screen bg-[#1A1F26] text-gray-100 transition-colors duration-300`}
     >
       <TransporterHeader />
