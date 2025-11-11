@@ -2,13 +2,16 @@ package com.logihub.logihub.controller;
 
 import com.logihub.logihub.dto.*;
 import com.logihub.logihub.entity.Wallet;
+import com.logihub.logihub.enums.TransactionType;
 import com.logihub.logihub.service.WalletService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/wallets")
@@ -41,4 +44,23 @@ public class WalletController {
     public ResponseEntity<List<WalletTransactionResponseDTO>> getTransactionHistory(@PathVariable Long userId) {
         return ResponseEntity.ok(walletService.getTransactionHistory(userId));
     }
+
+    @GetMapping("/transaction-types")
+    public ResponseEntity<List<String>> getTransactionTypes() {
+        List<String> types = Arrays.stream(TransactionType.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(types);
+    }
+
+    @GetMapping("/transactions/{walletId}/type/{type}")
+    public ResponseEntity<List<WalletTransactionResponseDTO>> searchTransactionsByType(
+            @PathVariable Long walletId,
+            @PathVariable String type) {
+
+        TransactionType transactionType = TransactionType.valueOf(type.toUpperCase());
+        return ResponseEntity.ok(walletService.getTransactionsByType(walletId, transactionType));
+    }
+
+
 }
