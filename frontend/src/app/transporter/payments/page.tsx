@@ -177,19 +177,19 @@ export default function Payments() {
             icon: <FaCreditCard />,
           },
           {
-            label: "Completed",
+            label: "SELF_ADD",
             amount: completed,
             color: "violet",
             icon: <FaCheckCircle />,
           },
           {
-            label: "Pending",
+            label: "TRANSFER_IN",
             amount: pending,
             color: "yellow",
             icon: <FaClock />,
           },
           {
-            label: "Failed",
+            label: "TRANSFER_OUT",
             amount: failed,
             color: "red",
             icon: <FaTimesCircle />,
@@ -265,9 +265,9 @@ export default function Payments() {
             className="border border-gray-300 dark:border-gray-700 dark:bg-card rounded-lg px-3 py-1"
           >
             <option>All</option>
-            <option>Completed</option>
-            <option>Pending</option>
-            <option>Failed</option>
+            <option>SELF_ADD</option>
+            <option>TRANSFER_IN</option>
+            <option>TRANSFER_OUT</option>
           </select>
         </div>
         <table className="w-full text-left border-collapse">
