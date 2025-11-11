@@ -28,8 +28,23 @@ function ConfirmationModal({
   onConfirm: () => void;
   onClose: () => void;
 }) {
+   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== "undefined")
+      return localStorage.getItem("sidebarCollapsed") === "true";
+    return false;
+  });
+  useEffect(() => {
+    const handler = () => {
+      setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
+    };
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, []);
+
+  const sidebarWidth = sidebarCollapsed ? 80 : 256;
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50 p-4">
+    <div  style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }} className="fixed inset-0 flex items-center justify-center bg-black/60 z-50 p-4">
       <motion.div
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -82,6 +97,7 @@ function UserModal({
       status: "Active",
     }
   );
+ 
 
   const [errors, setErrors] = useState({ name: "", email: "" });
 
@@ -123,6 +139,7 @@ function UserModal({
     );
   }, [formData]);
 
+  
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
       <motion.div

@@ -34,23 +34,7 @@ export default function TransporterDashboard() {
   const [transporterId, setTransporterId] = useState<number | null>(null);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("sidebarCollapsed") === "true";
-    }
-    return false;
-  });
-
-  // ✅ Sidebar Collapse Sync
-  useEffect(() => {
-    const updateSidebar = () => {
-      setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
-    };
-    window.addEventListener("storage", updateSidebar);
-    return () => window.removeEventListener("storage", updateSidebar);
-  }, []);
-
-  //  Fetch Transporter Details
+  
   useEffect(() => {
     const storedName = localStorage.getItem("username");
     if (storedName) setUsername(storedName);
@@ -120,11 +104,11 @@ export default function TransporterDashboard() {
     },
   ];
 
-  const sidebarWidth = sidebarCollapsed ? 80 : 256;
+  
 
   return (
     <div
-      style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }}
+     
       className="min-h-screen bg-gray-50 dark:bg-background transition-colors duration-300 p-0 m-0"
     >
       <TransporterHeader />

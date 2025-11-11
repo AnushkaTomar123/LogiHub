@@ -1,28 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import {
   MdOutlineLocalShipping,
   MdBarChart,
-  MdNavigation,
-  MdPeople,
-  MdFlashOn,
   MdCurrencyRupee,
   MdSettings,
   MdLogout,
-  MdPeopleAlt,
   MdMenu,
   MdClose,
   MdDarkMode,
   MdLightMode,
 } from "react-icons/md";
+import { FaClipboardList, FaFileInvoice, FaMapMarkerAlt, FaTruck } from "react-icons/fa";
+import { useTheme } from "next-themes";
 
-export default function TransporterSidebar() {
+export default function CustomerSidebar() {
   const pathname = usePathname();
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("sidebarCollapsed") === "true";
@@ -52,47 +48,42 @@ export default function TransporterSidebar() {
     }
   }, [collapsed]);
 
+  const handleCollapseToggle = () => {
+    if (window.innerWidth > 768) setCollapsed((s) => !s);
+  };
+
   const sections = [
     {
       title: "Main Menu",
       items: [
-        { href: "/transporter/dashboard", label: "Dashboard", icon: MdBarChart },
-        { href: "/transporter/fleet", label: "Fleet Management", icon: MdNavigation },
-        { href: "/transporter/drivers", label: "Driver Management", icon: MdPeople },
-        { href: "/transporter/routes", label: "Shipment Tracking", icon: MdOutlineLocalShipping },
-        { href: "/transporter/customer", label: "Customer Management", icon: MdPeopleAlt },
+        { href: "/customer/dashboard", label: "Dashboard", icon: MdBarChart },
+        { href: "/customer/load", label: "LoadPosting", icon: FaTruck },
+        { href: "/customer/myorders", label: "My Orders", icon: FaClipboardList },
+        { href: "/customer/billing", label: "Find Transporter", icon: FaFileInvoice },
       ],
     },
     {
-      title: "Load & Billing",
+      title: "Shipment & Payments",
       items: [
-        { href: "/transporter/freights", label: "Freight Management", icon: MdFlashOn },
-        { href: "/transporter/payments", label: "Payment", icon: MdCurrencyRupee },
+        { href: "/customer/shipment", label: "Shipment Track", icon: FaMapMarkerAlt },
+        { href: "/customer/payments", label: "Payments", icon: MdCurrencyRupee },
       ],
     },
     {
       title: "System",
       items: [
-        { href: "/transporter/settings", label: "Settings", icon: MdSettings },
+        { href: "/customer/settings", label: "Settings", icon: MdSettings },
         { label: "Theme", icon: theme === "dark" ? MdLightMode : MdDarkMode, isThemeToggle: true },
       ],
     },
   ];
 
-  const toggleDropdown = (label: string) => {
-    setOpenDropdown(openDropdown === label ? null : label);
-  };
-
-  const handleCollapseToggle = () => {
-    if (window.innerWidth > 768) setCollapsed((s) => !s);
-  };
-
   return (
     <aside
       className={`fixed top-0 left-0 h-screen flex flex-col justify-between transition-all duration-300 z-50 
       ${collapsed ? "w-20" : "w-64"}
-      bg-white dark:bg-background border-r border-white dark:border-zinc-700
-      text-white shadow-xl`}
+      bg-white dark:bg-background border-r border-gray-200 dark:border-zinc-700
+      shadow-xl`}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-4 border-b border-gray-300 dark:border-white/10 shadow-sm">
@@ -100,12 +91,16 @@ export default function TransporterSidebar() {
           <div className="w-8 h-8 rounded-full flex items-center justify-center bg-violet-700">
             <MdOutlineLocalShipping size={18} />
           </div>
-          {!collapsed && <span className="font-semibold text-black dark:text-gray-50 text-lg tracking-wide">LogiHub</span>}
+          {!collapsed && (
+            <span className="font-semibold text-black dark:text-gray-50 text-lg tracking-wide">
+              LogiHub
+            </span>
+          )}
         </div>
 
         <button
           onClick={handleCollapseToggle}
-          className="hidden md:inline-flex text-purple hover:text-white dark:text-white transition-all"
+          className="hidden md:inline-flex text-gray-700 dark:text-gray-200 hover:text-violet-500 transition-all"
         >
           {collapsed ? <MdMenu size={22} /> : <MdClose size={22} />}
         </button>
@@ -116,21 +111,19 @@ export default function TransporterSidebar() {
         {sections.map((section, idx) => (
           <div key={idx}>
             {!collapsed && (
-              <h4 className="text-xs uppercase font-semibold mb-3 tracking-wider text-violet-800 dark:text-gray-200 ">
+              <h4 className="text-xs uppercase font-semibold mb-3 tracking-wider text-violet-800 dark:text-gray-300">
                 {section.title}
               </h4>
             )}
-
             <div className="space-y-1">
               {section.items.map((item) =>
                 item.isThemeToggle ? (
                   <div
                     key={item.label}
-                    className="flex items-center justify-between px-3 py-2 rounded-md text-gray-700 dark:text-gray-200  hover:bg-gray-300 dark:hover:bg-card transition-all duration-200"
+                    className="flex items-center justify-between px-3 py-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-card transition-all duration-200"
                   >
                     <div className="flex items-center gap-2">
-                      <item.icon className="text-gray-700 dark:text-gray-200  
-                      hover:bg-gray-200 dark:hover:bg-card text-xl" />
+                      <item.icon className="text-gray-700 dark:text-gray-200 text-xl" />
                       {!collapsed && (
                         <span className="text-sm font-medium">
                           {theme === "dark" ? "Light Mode" : "Dark Mode"}
@@ -174,7 +167,7 @@ export default function TransporterSidebar() {
       <div className="px-4 py-4 border-t border-white/10 flex flex-col gap-1">
         <Link
           href="/auth/login"
-          className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-white/10 transition-all duration-200"
+          className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-white/10 transition-all duration-200 text-gray-700 dark:text-gray-200"
         >
           <MdLogout size={18} />
           {!collapsed && <span className="text-sm">Log Out</span>}

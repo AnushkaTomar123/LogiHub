@@ -21,25 +21,7 @@ export default function TransporterSettings() {
     emailAlerts: true,
   });
 
-  const [walletBalance, setWalletBalance] = useState<number | null>(null);
-  const [showWalletForm, setShowWalletForm] = useState(false);
-  const [loadingWallet, setLoadingWallet] = useState(false);
-
   
-     const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
-          if (typeof window !== "undefined")
-            return localStorage.getItem("sidebarCollapsed") === "true";
-          return false;
-        });
-      const sidebarWidth = sidebarCollapsed ? 80 : 256;
-    
-        useEffect(() => {
-        const handler = () => {
-          setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
-        };
-        window.addEventListener("storage", handler);
-        return () => window.removeEventListener("storage", handler);
-      }, []);
   
 
  
@@ -64,7 +46,7 @@ export default function TransporterSettings() {
   };
 
   return (
-    <div  style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }} className="min-h-screen bg-gray-100 dark:bg-background transition-all duration-300">
+    <div   className="min-h-screen bg-gray-100 dark:bg-background transition-all duration-300">
       {/* Header */}
       <TransporterHeader />
 

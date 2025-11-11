@@ -35,22 +35,7 @@ export default function FreightManagementPage() {
   const [vehicleType, setvehicleType] = useState("");
   const [commodity, setCommodity] = useState("");
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("sidebarCollapsed") === "true";
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    const updateSidebar = () => {
-      setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
-    };
-    window.addEventListener("storage", updateSidebar);
-    return () => window.removeEventListener("storage", updateSidebar);
-  }, []);
-
-  const sidebarWidth = sidebarCollapsed ? 80 : 256;
+  
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -112,7 +97,7 @@ export default function FreightManagementPage() {
 
   return (
     <div
-      style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }}
+     
       className="min-h-screen bg-white dark:bg-background text-gray-100"
     >
       <TransporterHeader />
