@@ -55,6 +55,56 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
         return bookingRepository.save(booking);
     }
 
+
+
+    @Override
+    public CustomerBooking cancelBooking(Long bookingId, Long customerId) {
+        CustomerBooking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        // ✅ Check if the same customer is canceling
+        if (!booking.getCustomerId().equals(customerId)) {
+            throw new RuntimeException("You are not authorized to cancel this booking");
+        }
+
+        // ✅ Only allow cancellation before payment
+        if (booking.getPaymentStatus() != PaymentStatus.PENDING) {
+            throw new RuntimeException("Booking cannot be cancelled after payment started");
+        }
+
+        // ✅ Reset booking details
+        booking.setTransporterId(null);
+        booking.setDriverId(null);
+        booking.setVehicleId(null);
+        booking.setProposedCost(null);
+        booking.setFinalCost(null);
+        booking.setHalfAmount(null);
+        booking.setRemainingAmount(null);
+        booking.setLastProposedBy(null);
+        booking.setIsCustomerProposed(null);
+        booking.setStatus(BookingStatus.PENDING);
+        booking.setPaymentStatus(PaymentStatus.PENDING);
+        booking.setUpdatedAt(LocalDateTime.now());
+
+        // ✅ Optionally reset driver/vehicle status if they were assigned
+        if (booking.getDriverId() != null) {
+            driverRepository.findById(booking.getDriverId()).ifPresent(driver -> {
+                driver.setStatus(DriverStatus.AVAILABLE);
+                driverRepository.save(driver);
+            });
+        }
+
+        if (booking.getVehicleId() != null) {
+            vehicleRepository.findById(booking.getVehicleId()).ifPresent(vehicle -> {
+                vehicle.setStatus(VehicleStatus.AVAILABLE);
+                vehicleRepository.save(vehicle);
+            });
+        }
+
+        return bookingRepository.save(booking);
+    }
+
+
     // ✅ Step 1: Propose new price (either customer or transporter)
     public CustomerBooking proposeNewPrice(PriceProposalDto dto) {
         CustomerBooking booking = bookingRepository.findById(dto.getBookingId())
@@ -222,7 +272,7 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
         // 🚚 After confirmation, automatically mark as delivered after 10 seconds
         new Thread(() -> {
             try {
-                Thread.sleep(10000); // 10 seconds delay
+                Thread.sleep(60000); // 60 seconds delay
                 savedBooking.setStatus(BookingStatus.DELIVERED);
                 bookingRepository.save(savedBooking);
 
