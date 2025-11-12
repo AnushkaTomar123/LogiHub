@@ -7,7 +7,6 @@ import TransporterHeader from "../../../components/TransporterSection/Transporte
 import {
   FaCreditCard,
   FaCheckCircle,
-  FaClock,
   FaTimesCircle,
   FaRupeeSign,
   FaWallet,
@@ -16,17 +15,18 @@ import {
 export default function Payments() {
   const [wallet, setWallet] = useState<any>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
-  const [filter, setFilter] = useState("All");
+  const [transactionTypes, setTransactionTypes] = useState<string[]>([]);
+  const [selectedType, setSelectedType] = useState<string>("ALL");
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState("");
   const [receiverId, setReceiverId] = useState("");
-  //const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [selfAddTotal, setSelfAddTotal] = useState(0);
+const [transferOutTotal, setTransferOutTotal] = useState(0);
+const [transferInTotal, setTransferInTotal] = useState(0);
 
   const BASE_URL = "http://localhost:8080/api/wallets";
   const OWNER_TYPE = "TRANSPORTER";
   const OWNER_ID = localStorage.getItem("transporterId");
-
-  
 
   // ✅ Fetch wallet first, then get transactions by walletId
   const fetchWallet = async () => {
@@ -37,6 +37,33 @@ export default function Payments() {
     } catch (err) {
       console.error("Error fetching wallet:", err);
       toast.error("Failed to fetch wallet data");
+    }
+  };
+
+
+  const fetchTransactionTotals = async (walletId: number) => {
+  try {
+    const [selfAddRes, outRes, inRes] = await Promise.all([
+      axios.get(`${BASE_URL}/transactions/${walletId}/type/SELF_ADD`),
+      axios.get(`${BASE_URL}/transactions/${walletId}/type/TRANSFER_OUT`),
+      axios.get(`${BASE_URL}/transactions/${walletId}/type/TRANSFER_IN`),
+    ]);
+
+    setSelfAddTotal(selfAddRes.data.reduce((sum: number, t: any) => sum + t.amount, 0));
+    setTransferOutTotal(outRes.data.reduce((sum: number, t: any) => sum + t.amount, 0));
+    setTransferInTotal(inRes.data.reduce((sum: number, t: any) => sum + t.amount, 0));
+  } catch (err) {
+    console.error("Error fetching transaction totals:", err);
+  }
+};
+
+  // ✅ Fetch all transaction types for dropdown
+  const fetchTransactionTypes = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/transaction-types`);
+      setTransactionTypes(["ALL", ...res.data]);
+    } catch (err) {
+      console.error("Error fetching transaction types:", err);
     }
   };
 
@@ -51,9 +78,34 @@ export default function Payments() {
     }
   };
 
+  // ✅ Fetch filtered transactions by type
+  const handleTypeFilterChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const type = e.target.value;
+    setSelectedType(type);
+
+    if (!wallet) return;
+
+    if (type === "ALL") {
+      await fetchTransactions(wallet.id);
+    } else {
+      try {
+        const res = await axios.get(`${BASE_URL}/transactions/${wallet.id}/type/${type}`);
+        setTransactions(res.data);
+      } catch (err) {
+        console.error("Error fetching filtered transactions:", err);
+        toast.error("Failed to fetch filtered transactions");
+      }
+    }
+  };
+
   useEffect(() => {
     fetchWallet();
+    fetchTransactionTypes();
   }, []);
+
+  useEffect(() => {
+  if (wallet) fetchTransactionTotals(wallet.id);
+}, [wallet]);
 
   const handleCreateWallet = async () => {
     if (wallet) return toast.error("Wallet already exists");
@@ -114,11 +166,6 @@ export default function Payments() {
     }
   };
 
-  const filteredPayments =
-    filter === "All"
-      ? transactions
-      : transactions.filter((t) => t.status === filter);
-
   const total = transactions.reduce((sum, p) => sum + p.amount, 0);
   const completed = transactions
     .filter((p) => p.status === "Completed")
@@ -131,10 +178,7 @@ export default function Payments() {
     .reduce((s, p) => s + p.amount, 0);
 
   return (
-    <div
-     
-      className="min-h-screen bg-white dark:bg-background text-gray-900 dark:text-gray-200 p-0"
-    >
+    <div className="min-h-screen bg-white dark:bg-background text-gray-900 dark:text-gray-200 p-0">
       <TransporterHeader />
 
       {/* Top Section */}
@@ -168,49 +212,49 @@ export default function Payments() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4 mb-6">
-        {[
-          {
-            label: "Total Transactions",
-            amount: total,
-            color: "violet",
-            icon: <FaCreditCard />,
-          },
-          {
-            label: "SELF_ADD",
-            amount: completed,
-            color: "violet",
-            icon: <FaCheckCircle />,
-          },
-          {
-            label: "TRANSFER_IN",
-            amount: pending,
-            color: "yellow",
-            icon: <FaClock />,
-          },
-          {
-            label: "TRANSFER_OUT",
-            amount: failed,
-            color: "red",
-            icon: <FaTimesCircle />,
-          },
-        ].map((item, i) => (
-          <div
-            key={i}
-            className={`bg-white dark:bg-card p-5 rounded-2xl shadow-md hover:scale-[1.03] transition-transform`}
-          >
-            <div className="flex justify-between items-center mb-2">
-              <span className={`text-${item.color}-500 text-2xl`}>
-                {item.icon}
-              </span>
-              <span className="text-gray-500 text-sm">{item.label}</span>
-            </div>
-            <h2 className="text-2xl font-bold">
-              ₹{item.amount.toLocaleString()}
-            </h2>
-          </div>
-        ))}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4 mb-6">
+  {[
+    {
+      label: "Total Transactions",
+      amount: total,
+      color: "violet",
+      icon: <FaCreditCard />,
+    },
+    {
+      label: "Self Add",
+      amount: selfAddTotal,
+      color: "green",
+      icon: <FaWallet />,
+    },
+    {
+      label: "Transfer Out",
+      amount: transferOutTotal,
+      color: "red",
+      icon: <FaTimesCircle />,
+    },
+    {
+      label: "Transfer In",
+      amount: transferInTotal,
+      color: "yellow",
+      icon: <FaCheckCircle />,
+    },
+  ].map((item, i) => (
+    <div
+      key={i}
+      className={`bg-white dark:bg-card p-5 rounded-2xl shadow-md hover:scale-[1.03] transition-transform`}
+    >
+      <div className="flex justify-between items-center mb-2">
+        <span className={`text-${item.color}-500 text-2xl`}>
+          {item.icon}
+        </span>
+        <span className="text-gray-500 text-sm">{item.label}</span>
       </div>
+      <h2 className="text-2xl font-bold">
+        ₹{item.amount.toLocaleString()}
+      </h2>
+    </div>
+  ))}
+</div>
 
       {/* Wallet & Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10 p-4">
@@ -222,20 +266,19 @@ export default function Payments() {
             <p className="mt-3">
               Owner Type: <b>{wallet.ownerType}</b>
             </p>
-          
             <p className="mt-2 text-2xl font-bold text-violet-600">
               Balance: ₹{wallet.balance?.toLocaleString()}
             </p>
           </div>
         )}
 
-        {/* Add / Transfer Money */}
+        {/* Add Money */}
         <div className="bg-white dark:bg-card p-6 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 m-4">
           <h2 className="text-xl font-semibold mb-4 text-violet-600 dark:text-violet-400">
-            Add 
+            Add Money
           </h2>
           <div className="flex flex-col gap-3">
-            <label htmlFor="amt">Enter Your Amount :</label>
+            <label htmlFor="amt">Enter Amount:</label>
             <input
               type="number"
               placeholder="Enter Amount (₹)"
@@ -250,7 +293,6 @@ export default function Payments() {
             >
               Add Money
             </button>
-          
           </div>
         </div>
       </div>
@@ -259,17 +301,21 @@ export default function Payments() {
       <div className="overflow-x-auto bg-white dark:bg-card shadow-lg rounded-2xl border border-gray-200 p-6 dark:border-gray-700 mb-10">
         <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 p-4">
           <h2 className="text-xl font-semibold">Recent Transactions</h2>
+
+          {/* Filter by Transaction Type */}
           <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
+            value={selectedType}
+            onChange={handleTypeFilterChange}
             className="border border-gray-300 dark:border-gray-700 dark:bg-card rounded-lg px-3 py-1"
           >
-            <option>All</option>
-            <option>SELF_ADD</option>
-            <option>TRANSFER_IN</option>
-            <option>TRANSFER_OUT</option>
+            {transactionTypes.map((t) => (
+              <option key={t} value={t}>
+                {t === "ALL" ? "All Types" : t}
+              </option>
+            ))}
           </select>
         </div>
+
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 uppercase text-sm">
             <tr>
@@ -281,8 +327,8 @@ export default function Payments() {
             </tr>
           </thead>
           <tbody>
-            {filteredPayments.length > 0 ? (
-              filteredPayments.map((p: any) => (
+            {transactions.length > 0 ? (
+              transactions.map((p: any) => (
                 <tr
                   key={p.id}
                   className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition"
