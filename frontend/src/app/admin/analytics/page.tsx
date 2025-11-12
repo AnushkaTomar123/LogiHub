@@ -93,10 +93,10 @@ export default function AdminAnalyticsSection() {
 
   const tripStatusLineData = [
     { day: "Mon", Completed: bookings.completed, Pending: bookings.pending, Cancelled: bookings.cancelled },
-    { day: "Tue", Completed: bookings.completed - 1, Pending: bookings.pending + 1, Cancelled: bookings.cancelled },
-    { day: "Wed", Completed: bookings.completed - 2, Pending: bookings.pending + 2, Cancelled: bookings.cancelled },
-    { day: "Thu", Completed: bookings.completed + 1, Pending: bookings.pending - 1, Cancelled: bookings.cancelled },
-    { day: "Fri", Completed: bookings.completed + 2, Pending: bookings.pending - 2, Cancelled: bookings.cancelled },
+    { day: "Tue", Completed: bookings.completed , Pending: bookings.pending, Cancelled: bookings.cancelled },
+    { day: "Wed", Completed: bookings.completed, Pending: bookings.pending, Cancelled: bookings.cancelled },
+    { day: "Thu", Completed: bookings.completed , Pending: bookings.pending , Cancelled: bookings.cancelled },
+    { day: "Fri", Completed: bookings.completed , Pending: bookings.pending , Cancelled: bookings.cancelled },
   ];
 
   const userDistributionData = [

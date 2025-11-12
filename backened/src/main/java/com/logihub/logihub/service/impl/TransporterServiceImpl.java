@@ -104,4 +104,10 @@ public class TransporterServiceImpl implements TransporterService {
                 ObjectUtils.asMap("resource_type", "auto"));
         return uploadResult.get("secure_url").toString();
     }
+
+    @Override
+    public List<Transporter> findByCompanyName(String companyName) {
+        return transporterRepository.findByCompanyNameContainingIgnoreCase(companyName);
+    }
+
 }

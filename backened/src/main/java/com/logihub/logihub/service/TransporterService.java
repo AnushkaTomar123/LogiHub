@@ -19,4 +19,7 @@ public interface TransporterService {
     Optional<Transporter> getTransporterByUserEmail(String email);
 
     void deleteTransporter(Long id);
+
+    List<Transporter> findByCompanyName(String companyName);
+
 }
