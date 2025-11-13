@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: logihub-backend
+    env: docker
+    plan: free
+    dockerfilePath: backened/Dockerfile
+    rootDir: backened
+    autoDeploy: true
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:mysql://logihub-db:3306/logihub_db
+      - key: SPRING_DATASOURCE_USERNAME
+        value: root
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: anushka
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+
+  - type: private_service
+    name: logihub-db
+    env: docker
+    plan: free
+    dockerCommand: |
+      docker run --name mysql -e MYSQL_ROOT_PASSWORD=anushka -e MYSQL_DATABASE=logihub_db -p 3306:3306 mysql:8
