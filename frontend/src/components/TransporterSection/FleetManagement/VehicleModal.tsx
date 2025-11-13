@@ -10,11 +10,11 @@ export default function VehicleModal({
   onClose,
 }: any) {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[100]">
-      <div className="bg-[#1e1e2d] rounded-2xl shadow-xl p-6 w-[90%] max-w-lg relative text-white">
+    <div className="fixed inset-0 bg-gray-50 dark:bg-background bg-opacity-70 flex items-center justify-center z-[100]">
+      <div className="bg-white dark:bg-card rounded-2xl shadow-xl p-6 w-[90%] max-w-lg relative text-black dark:text-white">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-400 hover:text-white"
+          className="absolute top-3 right-3 text-gray-400 hover:text-black dark:text-white"
         >
           <MdClose size={24} />
         </button>
@@ -29,14 +29,14 @@ export default function VehicleModal({
             value={form.vehicleNumber}
             onChange={(e) => onChange({ ...form, vehicleNumber: e.target.value })}
             required
-            className="w-full p-2 rounded bg-gray-800 border border-gray-600"
+            className="w-full p-2 rounded bg-gray-100 dark:bg-background border border-gray-50 dark:border-zinc-600"
           />
 
           <select
             value={form.vehicleType}
             onChange={(e) => onChange({ ...form, vehicleType: e.target.value })}
             required
-            className="w-full p-2 rounded bg-gray-800 border border-gray-600"
+            className="w-full p-2 rounded bg-gray-100 dark:bg-background border border-gray-50 dark:border-zinc-600"
           >
             <option value="">Select Vehicle Type</option>
             {vehicleTypes.map((type: string) => (
@@ -50,7 +50,7 @@ export default function VehicleModal({
             value={form.model}
             onChange={(e) => onChange({ ...form, model: e.target.value })}
             required
-            className="w-full p-2 rounded bg-gray-800 border border-gray-600"
+            className="w-full p-2 rounded bg-gray-100 dark:bg-background border border-gray-50 dark:border-zinc-600"
           >
             <option value="">Select Model</option>
             {vehicleModels.map((m: string) => (
@@ -68,13 +68,13 @@ export default function VehicleModal({
               onChange({ ...form, capacity: Number(e.target.value) })
             }
             required
-            className="w-full p-2 rounded bg-gray-800 border border-gray-600"
+            className="w-full p-2 rounded bg-gray-100 dark:bg-background border border-gray-50 dark:border-zinc-600"
           />
 
           <select
             value={form.status}
             onChange={(e) => onChange({ ...form, status: e.target.value })}
-            className="w-full p-2 rounded bg-gray-800 border border-gray-600"
+            className="w-full p-2 rounded bg-gray-100 dark:bg-background border border-gray-50 dark:border-zinc-600"
           >
             <option value="AVAILABLE">AVAILABLE</option>
             <option value="ON_ROUTE">ON_ROUTE</option>

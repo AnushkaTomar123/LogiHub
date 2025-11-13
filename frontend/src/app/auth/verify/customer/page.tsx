@@ -113,12 +113,12 @@ const handleSubmit = async (e: FormEvent) => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-xl bg-white shadow-2xl rounded-2xl p-8 md:p-10">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 dark:from-background dark:to-card  flex items-center justify-center p-4">
+      <div className="w-full max-w-xl bg-white dark:bg-background border border-white dark:border-zinc-700 shadow-2xl rounded-2xl p-8 md:p-10">
         {/* Header */}
         <div className="text-center mb-8">
           <FaUser className="text-blue-600 mx-auto text-5xl mb-3" />
-          <h2 className="text-3xl font-extrabold text-gray-800">
+          <h2 className="text-3xl font-extrabold text-gray-800 dark:text-gray-50">
             Customer Profile Setup & Verification
           </h2>
           <p className="text-gray-500 mt-2">
@@ -129,7 +129,7 @@ const handleSubmit = async (e: FormEvent) => {
         {/* Form */}
         <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Section 1 */}
-          <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-4 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 border-b pb-2 mb-4 flex items-center gap-2">
             <FaUser className="text-blue-600" /> Personal Information
           </h3>
 
@@ -189,13 +189,13 @@ const handleSubmit = async (e: FormEvent) => {
           </div>
 
           {/* Section 2 */}
-          <h3 className="text-lg font-semibold text-gray-700 border-b pb-2 mt-6 mb-4 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 border-b pb-2 mt-6 mb-4 flex items-center gap-2">
             <FaMapMarkerAlt className="text-blue-600" /> Address & Documents
           </h3>
 
           {/* Customer Address */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Customer Address
             </label>
             <textarea
@@ -211,7 +211,7 @@ const handleSubmit = async (e: FormEvent) => {
 
           {/* Profile Photo */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1 flex items-center gap-2">
               <FaCamera className="text-blue-600" />
               Upload Profile Photo
             </label>

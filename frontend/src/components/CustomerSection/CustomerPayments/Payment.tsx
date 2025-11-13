@@ -28,6 +28,24 @@ export default function CustomerPayments() {
   const OWNER_TYPE = "CUSTOMER";
   const OWNER_ID = localStorage.getItem("customerId");
 
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("sidebarCollapsed") === "true";
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const updateSidebar = () => {
+      setSidebarCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
+    };
+    window.addEventListener("storage", updateSidebar);
+    return () => window.removeEventListener("storage", updateSidebar);
+  }, []);
+
+  const sidebarWidth = sidebarCollapsed ? 80 : 256;
+
   const fetchWallet = async () => {
     try {
       const walletRes = await axios.get(`${BASE_URL}/${OWNER_TYPE}/${OWNER_ID}`);
@@ -160,7 +178,7 @@ export default function CustomerPayments() {
   const total = transactions.reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-background text-gray-900 dark:text-gray-200 p-0">
+    <div style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }} className="min-h-screen bg-white dark:bg-background text-gray-900 dark:text-gray-200 p-0">
       <CustomerHeader />
 
       {/* Header */}

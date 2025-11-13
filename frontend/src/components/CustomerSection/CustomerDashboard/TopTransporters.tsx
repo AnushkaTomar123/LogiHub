@@ -11,19 +11,19 @@ const transporters = [
 
 export default function TopTransporters() {
   return (
-    <div className="bg-gray-900 rounded-lg p-4">
+    <div className="bg-gray-100 dark:bg-card rounded-lg p-4">
       <div className="flex justify-between items-center mb-4">
         <p className="font-semibold">Top Transporters</p>
-        <button className="bg-gray-700 px-3 py-1 rounded text-sm">View More</button>
+        <button className="bg-gray-100 dark:bg-violet-600 px-3 py-1 rounded text-sm">View More</button>
       </div>
 
       {transporters.map((t, i) => (
         <div
           key={i}
-          className="flex items-center justify-between bg-gray-800 rounded-lg p-3 mb-2"
+          className="flex items-center justify-between bg-gray-50 dark:bg-background rounded-lg p-3 mb-2"
         >
           <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-green-600" />
+            <div className="w-6 h-6 rounded-full bg-violet-600" />
             <div>
               <p className="font-medium">{t.name}</p>
               <div className="flex">
@@ -40,7 +40,7 @@ export default function TopTransporters() {
           </div>
           <div className="flex items-center gap-6">
             <p className="text-gray-400">{t.location}</p>
-            <button className="text-green-400 hover:underline">View Profile</button>
+            <button className="text-violet-400 hover:underline">View Profile</button>
           </div>
         </div>
       ))}

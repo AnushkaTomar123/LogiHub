@@ -16,11 +16,11 @@ export default function DashboardHeader() {
 }, []);
 
   return (
-    <div className="flex justify-between items-center mb-6 p-2">
-      <div className="bg-gray-800 px-4 py-2 rounded-md font-semibold">
+    <div className="flex justify-between items-center mb-6 p-2 bg-white dark:bg-background">
+      <div className="bg-gray-100 dark:bg-card text-gray-800 dark:text-gray-50  px-4 py-2 rounded-md font-semibold">
         Welcome Back {userName}!!
       </div>
-      <div className="bg-gray-800 px-4 py-2 rounded-md text-sm">
+      <div className="bg-gray-100 dark:bg-card text-gray-800 dark:text-gray-50   px-4 py-2 rounded-md text-sm">
         {today}
       </div>
     </div>

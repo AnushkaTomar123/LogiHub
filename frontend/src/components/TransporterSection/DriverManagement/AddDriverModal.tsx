@@ -16,9 +16,9 @@ export default function AddDriverModal({ onClose, onAdd }: AddDriverModalProps) 
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gray-50 dark:bg-background bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-card p-6 rounded-xl w-[90%] max-w-md relative shadow-lg">
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+        <button onClick={onClose} className="absolute top-3 right-3 text-gray-700 dark:text-gray-500 hover:text-gray-700">
           <MdClose size={24} />
         </button>
         <h3 className="text-lg font-semibold mb-4 text-center">Add Driver</h3>
@@ -48,7 +48,7 @@ export default function AddDriverModal({ onClose, onAdd }: AddDriverModalProps) 
             className="w-full border rounded-lg px-3 py-2"
           />
           <div className="flex justify-end gap-3">
-            <button type="button" onClick={onClose} className="bg-gray-200 px-4 py-2 rounded-lg">
+            <button type="button" onClick={onClose} className="bg-gray-200 dark:bg-background px-4 py-2 rounded-lg">
               Cancel
             </button>
             <button type="submit" className="bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700">

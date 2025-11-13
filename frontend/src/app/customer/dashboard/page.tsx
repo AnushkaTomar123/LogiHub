@@ -26,7 +26,7 @@ export default function CustomerDashboard() {
   
     const sidebarWidth = sidebarCollapsed ? 80 : 256;
   return (
-    <div  style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }} className="min-h-screen bg-[#0f0f10] text-white p-0 m-0">
+    <div  style={{ marginLeft: sidebarWidth, transition: "margin-left 300ms ease" }} className="min-h-screen bg-white dark:bg-background text-gray-700  dark:text-white p-0 m-0">
       <CustomerHeader/>
       <DashboardHeader />
       <InfoCards />
