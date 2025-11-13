@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface CustomerBookingService {
 
     CustomerBooking createBooking(CustomerBookingRequestDTO dto);
+    CustomerBooking cancelBooking(Long bookingId, Long customerId);
    // CustomerBooking acceptBookingByTransporter(Long bookingId, Long transporterId);
     CustomerBooking confirmBooking(Long bookingId, Long transporterId);
     CustomerBooking acceptProposedPrice(AcceptPriceDto dto);

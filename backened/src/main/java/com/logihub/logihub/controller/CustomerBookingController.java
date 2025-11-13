@@ -110,4 +110,13 @@ public class CustomerBookingController {
         CustomerBooking booking = bookingService.payRemainingAmount(bookingId);
         return ResponseEntity.ok(booking);
     }
+
+    @PutMapping("/{bookingId}/cancel/{customerId}")
+    public ResponseEntity<CustomerBooking> cancelBooking(
+            @PathVariable Long bookingId,
+            @PathVariable Long customerId) {
+
+        CustomerBooking canceledBooking = bookingService.cancelBooking(bookingId, customerId);
+        return ResponseEntity.ok(canceledBooking);
+    }
 }

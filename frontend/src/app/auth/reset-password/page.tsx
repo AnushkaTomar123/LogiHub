@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function ResetPasswordPage() {
+export default function ResetPasswordContent() {
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
@@ -19,9 +20,12 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8080/api/auth/reset-password?token=${token}&newPassword=${newPassword}`, {
-        method: "POST",
-      });
+      const res = await fetch(
+        `http://localhost:8080/api/auth/reset-password?token=${token}&newPassword=${newPassword}`,
+        {
+          method: "POST",
+        }
+      );
 
       const text = await res.text();
       setMessage(text);
