@@ -4,15 +4,13 @@ services:
     env: docker
     plan: free
     region: oregon
-    buildCommand: "./mvnw clean package -DskipTests"
-    startCommand: "java -jar target/*.jar"
     envVars:
       - key: SPRING_DATASOURCE_URL
         value: jdbc:mysql://logihub-db:3306/logihub
       - key: SPRING_DATASOURCE_USERNAME
         value: root
       - key: SPRING_DATASOURCE_PASSWORD
-        value: root
+        value: anushka
 
 databases:
   - name: logihub-db
