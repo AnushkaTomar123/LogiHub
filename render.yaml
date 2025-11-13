@@ -1,5 +1,5 @@
 services:
-  # 🚀 Backend (Spring Boot Docker)
+  # 🚀 Backend (Spring Boot + Docker)
   - type: web
     name: logihub-backend
     env: docker
@@ -19,14 +19,17 @@ services:
       - key: SPRING_JPA_SHOW_SQL
         value: "true"
 
-  # 🗄️ MySQL Database (Render Private Service)
+  # 🗄️ MySQL Database (Docker Image)
   - type: web
     name: logihub-db
     env: docker
+    dockerfilePath: ""
     plan: free
-    imageName: mysql:8
+    autoDeploy: false
     envVars:
       - key: MYSQL_ROOT_PASSWORD
         value: anushka
       - key: MYSQL_DATABASE
         value: logihub_db
+    image:
+      url: mysql:8
