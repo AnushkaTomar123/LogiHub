@@ -1,4 +1,5 @@
 services:
+  # ✅ 1. Spring Boot Backend
   - type: web
     name: logihub-backend
     env: docker
@@ -15,10 +16,17 @@ services:
         value: anushka
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: update
+      - key: SPRING_JPA_SHOW_SQL
+        value: "true"
 
-  - type: private_service
+  # ✅ 2. MySQL Database (Private Service)
+  - type: pserv
     name: logihub-db
     env: docker
+    dockerImage: mysql:8
     plan: free
-    dockerCommand: |
-      docker run --name mysql -e MYSQL_ROOT_PASSWORD=anushka -e MYSQL_DATABASE=logihub_db -p 3306:3306 mysql:8
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        value: anushka
+      - key: MYSQL_DATABASE
+        value: logihub_db
