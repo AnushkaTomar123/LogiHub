@@ -27,17 +27,17 @@ const orders = [
 
 export default function OrderTable() {
   return (
-    <div className="bg-gray-900 rounded-lg p-4 mb-6">
+    <div className="bg-gray-100 dark:bg-background border border-white dark:border-card  rounded-lg p-4 mb-6">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-          <button className="bg-gray-700 px-3 py-1 rounded text-sm">Recent Order</button>
+          <button className="bg-violet-600 text-gray-50 px-3 py-1 rounded text-sm">Recent Order</button>
         </div>
         <div className="flex items-center gap-2">
           <input
             placeholder="Search Order..."
-            className="px-3 py-1 rounded bg-gray-800 text-sm text-white outline-none"
+            className="px-3 py-1 rounded bg-gray-100 dark:bg-card text-sm text-white outline-none"
           />
-          <button className="bg-gray-700 px-3 py-1 rounded text-sm">View More</button>
+          <button className="bg-violet-600 text-gray-50 px-3 py-1 rounded text-sm">View More</button>
         </div>
       </div>
 

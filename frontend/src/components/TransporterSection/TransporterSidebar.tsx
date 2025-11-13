@@ -58,7 +58,7 @@ export default function TransporterSidebar() {
         { href: "/transporter/dashboard", label: "Dashboard", icon: MdBarChart },
         { href: "/transporter/fleet", label: "Fleet Management", icon: MdNavigation },
         { href: "/transporter/drivers", label: "Driver Management", icon: MdPeople },
-        { href: "/transporter/routes", label: "Shipment Tracking", icon: MdOutlineLocalShipping },
+        { href: "/transporter/shipments", label: "Shipment Tracking", icon: MdOutlineLocalShipping },
         { href: "/transporter/customer", label: "Customer Management", icon: MdPeopleAlt },
       ],
     },

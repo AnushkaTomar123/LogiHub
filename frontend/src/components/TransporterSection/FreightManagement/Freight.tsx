@@ -119,7 +119,7 @@ export default function FreightManagementPage() {
               className={`px-4 py-2 rounded-lg font-semibold transition ${
                 status === key
                   ? "bg-violet-600 dark:bg-purple-800 text-white shadow-md scale-105"
-                  : "bg-gray-300 dark:bg-card text-gray-300 hover:bg-gray-700"
+                  : "bg-gray-50 dark:bg-card hover:bg-violet-600  text-gray-500 dark:text-gray-300 dark:hover:bg-gray-700 hover:text-gray-50"
               }`}
             >
               {label}

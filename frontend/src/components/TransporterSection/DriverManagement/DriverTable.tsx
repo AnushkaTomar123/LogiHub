@@ -36,7 +36,7 @@ const DriverTable=({ drivers, onEdit, onDelete, onStatusChange }: DriverTablePro
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
             <thead>
-              <tr className=" bg-violet-100 dark:bg-card border-b border-gray-300 dark:border-gray-700 ">
+              <tr className=" bg-gray-50 dark:bg-card border-b border-gray-300 dark:border-gray-700 ">
                 <th className="py-3 px-4 text-left">Name</th>
                 <th className="py-3 px-4 text-left">Status</th>
                 <th className="py-3 px-4 text-left">Phone</th>
@@ -46,7 +46,7 @@ const DriverTable=({ drivers, onEdit, onDelete, onStatusChange }: DriverTablePro
             </thead>
             <tbody>
               {drivers.map((d) => (
-                <tr key={d.id} className="bg-violet-100 dark:bg-card border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-violet-600">
+                <tr key={d.id} className="bg-gray-50 dark:bg-card border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-violet-600">
                   <td className="py-3 px-4">{d.driverName}</td>
                   <td className={`py-3 px-4 ${getStatusColor(d.status)}`}>
                     <select

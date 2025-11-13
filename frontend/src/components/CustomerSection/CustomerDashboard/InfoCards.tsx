@@ -13,9 +13,9 @@ export default function InfoCards() {
       {cards.map((card, i) => (
         <div
           key={i}
-          className="bg-gray-800 p-4 rounded-lg flex flex-col justify-between"
+          className="bg-gray-100 dark:bg-card p-4 rounded-lg flex flex-col justify-between"
         >
-          <p className="text-gray-400 text-sm">{card.title}</p>
+          <p className="text-gray-400 dark:text-gray-100 text-sm">{card.title}</p>
           {card.value && <p className="text-2xl font-semibold mt-1">{card.value}</p>}
         </div>
       ))}

@@ -6,7 +6,7 @@ import CustomerSidebar from "@/components/CustomerSection/CustomerSideBar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-     <div className="flex min-h-screen">
+     <div className="flex min-h-screen p-0 m-0">
          <CustomerSidebar/>
           <main className="flex-1 p-2">{children}</main>
             <Toaster position="top-right" />
