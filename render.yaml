@@ -20,7 +20,7 @@ services:
         value: "true"
 
   # 🗄️ MySQL Database (Render Private Service)
-  - type: privateService
+  - type: web
     name: logihub-db
     env: docker
     plan: free
