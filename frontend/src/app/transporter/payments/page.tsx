@@ -26,7 +26,8 @@ const [transferInTotal, setTransferInTotal] = useState(0);
 
   const BASE_URL = "http://localhost:8080/api/wallets";
   const OWNER_TYPE = "TRANSPORTER";
-  const OWNER_ID = localStorage.getItem("transporterId");
+  const OWNER_ID =
+  typeof window !== "undefined" ? localStorage.getItem("transporterId") : null;
 
   // ✅ Fetch wallet first, then get transactions by walletId
   const fetchWallet = async () => {
