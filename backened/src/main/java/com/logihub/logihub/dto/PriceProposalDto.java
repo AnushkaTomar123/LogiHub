@@ -10,6 +10,6 @@ import lombok.*;
 public class PriceProposalDto {
     private Long bookingId;
     private Long userId;
-    private boolean isCustomer;
+    private Boolean isCustomerProposed;
     private Double proposedPrice;
 }
