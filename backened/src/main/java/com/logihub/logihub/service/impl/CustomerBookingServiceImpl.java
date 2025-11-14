@@ -116,7 +116,7 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
 
         booking.setProposedCost(dto.getProposedPrice());
         booking.setLastProposedBy(dto.getUserId());
-        booking.setIsCustomerProposed(dto.isCustomer());
+        booking.setIsCustomerProposed(dto.isCustomerProposed());
         booking.setStatus(BookingStatus.NEGOTIATION_IN_PROGRESS);
         booking.setUpdatedAt(LocalDateTime.now());
 
@@ -132,8 +132,8 @@ public class CustomerBookingServiceImpl implements CustomerBookingService {
             throw new RuntimeException("No active negotiation for this booking");
         }
 
-        if ((booking.getIsCustomerProposed() && dto.isCustomer()) ||
-                (!booking.getIsCustomerProposed() && !dto.isCustomer())) {
+        if ((booking.getIsCustomerProposed() && dto.isCustomerProposed()) ||
+                (!booking.getIsCustomerProposed() && !dto.isCustomerProposed())) {
             throw new RuntimeException("You cannot accept your own proposal");
         }
 
