@@ -10,5 +10,5 @@ import lombok.*;
 public class AcceptPriceDto {
     private Long bookingId;
     private Long userId;
-    private boolean isCustomer;
+    private Boolean isCustomerProposed;
 }
